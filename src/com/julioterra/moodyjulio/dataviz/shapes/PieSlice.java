@@ -24,25 +24,25 @@ public class PieSlice extends Shape{
 		   ** CONSTRUCTOR METHODS 
 		   **/
 
-		  public PieSlice(int x_loc, int y_loc, float diameter, float percent_size, float angle_start, int color) {
+		  public PieSlice(int x_loc, int y_loc, float diameter, float size_in_percent, float angle_start, int color) {
 			  super(x_loc, y_loc, color);
 		      this.diameter = diameter;
 		      this.radius = this.diameter / 2;
-		      this.size_in_percent = percent_size;
+		      this.size_in_percent = size_in_percent;
 		      this.angle_start = PApplet.radians(angle_start);
 		      this.angle_slice = PApplet.radians(this.size_in_percent * 360);
 		      this.angle_end = this.angle_start + this.angle_slice;
 
 		      this.mouse_over = false;
 		      this.mouse_over_angle_slice = PApplet.degrees(this.angle_slice);
-		      this.mouse_over_angle_start = - PApplet.degrees(this.angle_start) - mouse_over_angle_slice;
+		      this.mouse_over_angle_start = -angle_start - mouse_over_angle_slice;
 		      this.mouse_over_location = new PVector (location.x - radius, location.y - radius);   
 		      this.mouse_over_shape = new java.awt.geom.Arc2D.Float(this.mouse_over_location.x, this.mouse_over_location.y, 
 		                                                       this.diameter, this.diameter, 
 		                                                       this.mouse_over_angle_start, this.mouse_over_angle_slice, 
 		                                                       java.awt.geom.Arc2D.PIE);
 
-		      PApplet.println("set-up arc: x " + x_loc + " y " + y_loc + " diameter " + diameter + " angle_start " +  angle_start + " angle_slice " +  PApplet.degrees(angle_slice) + " color " +  this.color + " percent " +  percent_size);      
+		      PApplet.println("set-up arc: x " + x_loc + " y " + y_loc + " diameter " + diameter + " angle_start " +  angle_start + " angle_slice " +  PApplet.degrees(angle_slice) + " color " +  this.color + " percent " +  size_in_percent);      
 		      PApplet.println("set-up mouse: x " + mouse_over_location.x + " y " + mouse_over_location.y + " radius " + radius + " angle_start " +  mouse_over_angle_start + " angle_slice " +  mouse_over_angle_slice + " color " +  color);
 		  }
 		  
@@ -87,7 +87,5 @@ public class PieSlice extends Shape{
 		  protected boolean contains(float x, float y) {
 		      return mouse_over_shape.contains(x, y);
 		  }
-
-		
 	
 }
