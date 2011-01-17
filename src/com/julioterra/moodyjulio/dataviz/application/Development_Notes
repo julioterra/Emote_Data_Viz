@@ -1,0 +1,6 @@
+MoodyJulio Data Vizualization - Dev Notes
+
+Changes to Consider:
+(1) make all movement and turning based on popmatrix and pushmatrix so that it can be encapsulated at a higher level of abstraction
+	- currently for the PieSlice Shape the rotations are being done to the shape coordinates themselves
+	- consider integrating this same paradigm to determine angle where pieSlices start
