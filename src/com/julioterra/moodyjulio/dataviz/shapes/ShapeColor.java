@@ -66,6 +66,7 @@ public class ShapeColor extends Shape {
 	/** Shift Methods **/
 
 	public void setColorShift(float hue_shift, float sat_shift, float bright_shift) {
+		// all values should range from 0 - 1
 		this.hue_shift = hue_shift;
 		this.sat_shift = sat_shift;
 		this.bright_shift = bright_shift;
@@ -97,18 +98,18 @@ public class ShapeColor extends Shape {
 
 	/** SET BASE COLOR METHODS **/
 
-	public void colorBase(int a, int r, int g, int b) {
+	public void setColorBaseARGB(int a, int r, int g, int b) {
 		this.color_base = ShapeColor.colorARGB(a, r, g, b);
 		this.color = this.color_base;
 	}
 	
-	public void colorBaseAlpha(int argb) {
+	public void setColorBaseARGB(int argb) {
 		this.color_base = argb;
 		this.color = this.color_base;
 	}
 
-	public void colorBase(int rgb) {
-		this.color_base = colorRGBaddAlpha(rgb);
+	public void setColorBase(int rgb) {
+		this.color_base = colorRGB(rgb);
 		this.color = this.color_base;
 	}
 
@@ -116,6 +117,10 @@ public class ShapeColor extends Shape {
 
 	public void colorReset() {
 		this.color = this.color_base;
+		float hue = processing_app.hue(this.color);
+		float saturation = processing_app.saturation(this.color);
+		float brightness = processing_app.brightness(this.color);
+		if (DataVizElement.debug_code) PApplet.println("current hue " + (hue) + " saturation " + saturation + " brightness " + brightness);
 	}
 
 	/** SET ACTIVE RGB COLOR METHODS **/
@@ -134,7 +139,7 @@ public class ShapeColor extends Shape {
 	}
 
 	public void setColorRGB(int rgb) {
-		this.color = colorRGBaddAlpha(rgb);
+		this.color = colorRGB(rgb);
 	}
 
 	/** SET ACTIVE HSB COLOR METHODS **/
@@ -156,7 +161,11 @@ public class ShapeColor extends Shape {
 	}
 
 	/** GET METHODS **/
-	
+
+	public int getBaseColor() {
+		return this.color_base;
+	}
+
 	public int getColor() {
 		return this.color;
 	}
@@ -194,7 +203,7 @@ public class ShapeColor extends Shape {
 		return  a | r | g | b;
 	}
 
-	public static int colorRGBaddAlpha(int rgb) {
+	public static int colorRGB(int rgb) {
 		int a = 255;
 		a = a << 24;  // bit shift a value by 24 bits
 		return  a | rgb;
@@ -209,7 +218,7 @@ public class ShapeColor extends Shape {
 		float brightness = (processing_app.brightness(color) / 255);
 		if (DataVizElement.debug_code) PApplet.println("color hue: hue " + hue + " sat " + saturation + " bright " + brightness);
 
-		return colorRGBaddAlpha(Color.HSBtoRGB(hue, saturation, brightness));
+		return colorRGB(Color.HSBtoRGB(hue, saturation, brightness));
 	}
 
 	public static int adjustSat(int color, float saturation) {
@@ -219,7 +228,7 @@ public class ShapeColor extends Shape {
 		float brightness = (processing_app.brightness(color) / 255);
 		if (DataVizElement.debug_code) PApplet.println("color sat: hue " + hue + " sat " + saturation + " bright " + brightness);
 
-		return colorRGBaddAlpha(Color.HSBtoRGB(hue, saturation, brightness));
+		return colorRGB(Color.HSBtoRGB(hue, saturation, brightness));
 	}
 	
 	public static int adjustBright(int color, float brightness) {
@@ -229,7 +238,7 @@ public class ShapeColor extends Shape {
 		float saturation = (processing_app.saturation(color) / 255);
 		if (DataVizElement.debug_code) PApplet.println("color bright: hue " + hue + " sat " + saturation + " bright " + brightness);
 
-		return colorRGBaddAlpha(Color.HSBtoRGB(hue, saturation, brightness));
+		return colorRGB(Color.HSBtoRGB(hue, saturation, brightness));
 	}
 
 }
