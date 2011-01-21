@@ -3,16 +3,11 @@ package com.julioterra.moodyjulio.dataviz.application;
 import com.julioterra.moodyjulio.dataviz.basicelements.DataVizElement;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
 import com.julioterra.moodyjulio.dataviz.shapes.pie.*;
-import com.julioterra.moodyjulio.dataviz.shapes.pie.PieSliceLine;
 
 import processing.core.PApplet;
 
 @SuppressWarnings("serial")
 public class MoodyJulioDataViz extends PApplet {
-
-	PieSliceArc[] slices;
-	PieSliceLine[] lines;
-	PieSliceLine line;
 
 	Pie_Arc pie_emotions;
 	Pie_Line pie_heart;
@@ -26,55 +21,51 @@ public class MoodyJulioDataViz extends PApplet {
 	                        120, 130, 125, 135, 140, 145, 150, 135, 130, 110, 120, 130,
 	                        120, 130, 125, 135, 140, 145, 150, 135, 130, 110, 120, 130,
 	                        120, 130, 125, 135, 140, 145, 150, 135, 130, 110, 120, 130,
-	                        120, 130, 125, 135, 140, 145, 150, 135, 130, 110, 120, 130};
-//	                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//	                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//	                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	                        120, 130, 125, 135, 140, 145, 150, 135, 130, 110, 120, 130,
+	                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	public void setup() {
 		DataVizElement.application_init(this);
+		DataVizElement.loadFonts("font_48");
 		size(900, 700);
 		background(100);
 		float radius = (float) (min(width, height) * 0.75) /2;
 
-		lines = new PieSliceLine[height_heart.length];
-
-		pie_emotions = new Pie_Arc(width/2, height/2, radius*2);
-		pie_emotions.setNumberOfSlices(angs.length);
-		pie_emotions.setColorSizeShiftAll((float) 0.15, (float) -0.15, (float) 0.15, (float) 0.1);
-		
-	    // load the pie chart
-		float lastAng = (float) 0.0;
-		for (int i = 0; i < pie_emotions.getNumberOfSlices(); i++){
+		pie_emotions = new Pie_Arc(width/2-100, height/2, radius*2);
+		pie_emotions.setName("Emotions");
+		for (int i = 0; i < angs.length; i++){
 			int cur_color = ShapeColor.colorARGB(255, (int)(angs[i] * 3), (int)(angs[i] * 3), 255);
+			pie_emotions.addSlice(("pie slice #" + i), ("description - number " + angs[i]), angs[i], cur_color);
 			pie_emotions.setSliceValue(i, angs[i]);
 			pie_emotions.setColorSlice(i, cur_color);
 		}
-		pie_emotions.calculateSliceExtentFromValues();
+		pie_emotions.setShiftMouseOverAll((float) 0.15, (float) -0.15, (float) 0.15, (float) 0.1, true);
+		pie_emotions.textLocationNameDescription((float)(width*0.85)-100, (float)(height*0.5), 0, 1200);
+		pie_emotions.textLocationNameDescriptionSlices((float)(width*0.85)-100, (float)(height*0.5+30), 0, 20);
+		pie_emotions.loadFontAll(1, 20);
+		pie_emotions.applyValuesToSliceDisplay();
 
-		
-		pie_heart = new Pie_Line(width/2, height/2, radius*2, height_heart.length);
+//		pie_emotions.textSetVisibleNameLocation();
 
-	    // load the heart rate lines
-		lastAng = (float) 0.0;
-		pie_heart.setColorSizeShiftAll((float) 0.0, (float) -0.25, (float) 0.0, (float) 0.0);
-		pie_heart.setWidthAll(7);
-		int color_line = ShapeColor.colorARGB(255, 255, (int)(360.0/60 * 3), (int)(360.0/60 * 3));
-		pie_heart.setColorAll(color_line);
+		// load the emotion chart
+		pie_heart = new Pie_Line(width/2-100, height/2, radius, height_heart.length, 10);
+		pie_heart.setName("Heart Rate");
+		int cur_color = ShapeColor.colorARGB(255, 255, (int)(360.0/60 * 3), (int)(360.0/60 * 3));
 		for (int i = 0; i < height_heart.length; i++){
 			pie_heart.setSliceValue(i, (float) (height_heart[i]));
-//			pie_heart.setColorSlice(i, color_line);
+			pie_heart.setColorSlice(i, cur_color);
+			pie_heart.textSetNameSlice(i, ("read " + i + " rate " + height_heart[i]));
+			pie_heart.textSetDescriptionSlice(i, ("description " + height_heart[i]));
 		}
-		pie_heart.calculateSliceRadiusFromValues();
+		pie_heart.setShiftMouseOverAll((float) 0.0, (float) -0.25, (float) 0.0, (float) 0.0, true);
+		pie_heart.loadFontAll(3, 15);
+		pie_heart.textLocationNameDescription((float)(width*0.5 + 60), (float)(height*0.5), 0, 1200);
+		pie_heart.textLocationNameDescriptionSlices((float)(width*0.5)+60, (float)(height*0.5+30), 0, 16);
+		pie_heart.scale((float) 0.5);
+		pie_heart.applyValuesToSliceDisplay();
 
-	    // load the heart rate lines
-//		lastAng = (float) 0.0;
-//		for (int i = 0; i < lines.length; i++){
-//			int cur_color_line = ShapeColor.colorARGB(255, 255, (int)(360.0/60 * 3), (int)(360.0/60 * 3));
-//			lines[i] = new PieSliceLine(width/2, height/2, (float) (height_heart[i]*0.8), (float) ((360/lines.length)/360.0), lastAng, cur_color_line);
-//			lines[i].setWidth(7);
-//			lastAng += 360.0/lines.length;  
-//		}
+//		pie_heart.textSetVisibleNameLocation();
 
 	}                        
 
@@ -85,26 +76,33 @@ public class MoodyJulioDataViz extends PApplet {
 	    pie_emotions.display();
 	    pie_heart.display();
 	    
-	    // draw the heart rate lines
-//	    for (int i = 0; i < lines.length; i++){
-//	        lines[i].mouseOver();
-//	        lines[i].display();
-//	    }
 	}
 
 
 	public void keyPressed() {
 	    if (key == 'r') {
 	    	pie_emotions.move(pie_emotions.location.x + 50, pie_emotions.location.y);
-//	       for (int i = 0; i < lines.length; i++) lines[i].move(lines[i].location.x + 50, lines[i].location.y);
+	    	pie_heart.move(pie_heart.location.x + 50, pie_heart.location.y);
 	    } 
 	    else if (key == 'l') {
 	    	pie_emotions.move(pie_emotions.location.x - 50, pie_emotions.location.y);
-//	       for (int i = 0; i < lines.length; i++) lines[i].move(lines[i].location.x - 50, lines[i].location.y);
+	    	pie_heart.move(pie_heart.location.x - 50, pie_heart.location.y);
 	    } 
+	    else if (key == 's') {
+	    	pie_heart.scale((float) 0.75);
+	    }
+	    else if (key == 'b') {
+	    	pie_heart.scale((float) 1.25);
+	    }
+	    else if (key == 'z') {
+	    	pie_heart.scaleShiftResetToBase();
+	    }
+	    else if (key == 'x') {
+	    	pie_heart.scaleShiftReset();
+	    }
 	    else {
 	    	pie_emotions.turn(-40);
-//	      for (int i = 0; i < lines.length; i++) lines[i].turn(-40);
+	    	pie_heart.turn(-40);
 	    }
 	}
 	

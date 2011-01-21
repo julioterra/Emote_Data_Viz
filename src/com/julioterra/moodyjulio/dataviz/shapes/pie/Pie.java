@@ -1,7 +1,6 @@
 package com.julioterra.moodyjulio.dataviz.shapes.pie;
 
 import java.util.ArrayList;
-
 import processing.core.PApplet;
 
 public class Pie extends PieElement {
@@ -46,19 +45,23 @@ public class Pie extends PieElement {
 	public void setNumberOfSlices(int number_of_slices) {
 		this.number_of_slices = number_of_slices;
 		this.slices = new ArrayList<PieSlice>();
+		this.value_one = 0;
 
 		if (this.number_of_slices > PApplet.degrees(this.angle_start)) {
 			double temp_angle_start = PApplet.degrees(0);
 			double degrees_per_slice = 360 / this.number_of_slices;
 			double size_in_percent = degrees_per_slice / 360;
 			for (int i = 0; i < this.number_of_slices; i++) {
-				if (this.pie_shape_type == PIE_ARC)
+				if (this.pie_shape_type == PIE_ARC) {
 					this.slices.add(new PieSliceArc((int)this.location.x, (int)this.location.y, this.diameter/2, (float) size_in_percent, (float) temp_angle_start, this.color));
-				else if (this.pie_shape_type == PIE_LINE)
+					this.value_one += degrees_per_slice;
+				}
+				else if (this.pie_shape_type == PIE_LINE) {
 					this.slices.add(new PieSliceLine((int)this.location.x, (int)this.location.y, 0, (float)size_in_percent, (float) temp_angle_start, this.color));
+					this.value_one = degrees_per_slice; 
+				}
 				temp_angle_start = i * degrees_per_slice;
 				this.angle_total_degrees = (float) temp_angle_start;
-				this.value = 0;
 				this.angle_total_percent = this.angle_total_degrees / 360;
 
 				PApplet.println("Preset Mode: number of slices: " + i + " this one " + this.number_of_slices + " degrees per slice " + degrees_per_slice + " size in percent " + size_in_percent);
@@ -73,6 +76,8 @@ public class Pie extends PieElement {
 	   **/
 
 	  public void display() {
+		  super.display();
+		  this.mouseOver();
 		  for (int i = 0; i < slices.size(); i++) {
 			  PieSlice slice = slices.get(i);
 		      slice.mouseOver();
@@ -102,6 +107,23 @@ public class Pie extends PieElement {
 			  PieSlice slice = slices.get(i);
 			  slice.scale(percent_scale);
 		  }
+		  this.scaleShiftReset();
+	  }
+
+	  public void scaleShiftReset() {
+		  super.scaleShiftReset();
+		  for (int i = 0; i < slices.size(); i++) {
+			  PieSlice slice = slices.get(i);
+			  slice.scaleShiftReset();
+		  }
+	  }
+
+	  public void scaleShiftResetToBase() {
+		  super.scaleShiftResetToBase();
+		  for (int i = 0; i < slices.size(); i++) {
+			  PieSlice slice = slices.get(i);
+			  slice.scaleShiftResetToBase();
+		  }
 	  }
 
 	/*****************************************
@@ -109,14 +131,43 @@ public class Pie extends PieElement {
 	 **
 	 **/
 
+	  public void addSlice(String name, String description, double value, int color){
+		  this.addSlice(value, color);
+		  if (this.pie_shape_type == PIE_ARC) {
+			  PieSlice slice = slices.get(slices.size()-1);
+			  slice.setName(name);
+			  slice.setDescription(description);		  
+			  PApplet.println(slice.name + " " + slice.description);
+		  } else if (this.pie_shape_type == PIE_LINE) {
+			  PieSlice slice = slices.get(slices.size()-1);
+			  slice.setName(name);
+			  slice.setDescription(description);		  
+			  PApplet.println(slice.name + " " + slice.description);
+		  }
+	  }
+	  
 	  public void addSlice(double value, int color){
-		  slices.add(new PieSlice((int)this.location.x, (int)this.location.y, 0, 0, 0, color));
-		  this.calculateSliceExtentFromValues();
+		if (this.pie_shape_type == PIE_ARC) {
+			this.slices.add(new PieSliceArc((int)this.location.x, (int)this.location.y, this.radius_base, 0, 0, this.color));
+			this.value_one += value;
+			PieSlice slice = slices.get(slices.size()-1);
+			slice.setValue(value);
+			if (name_font_loaded) slice.loadFontDescription(this.name_font, this.name_font_size);
+		}
+		else if (this.pie_shape_type == PIE_LINE) {
+			this.slices.add(new PieSliceLine((int)this.location.x, (int)this.location.y, 0, 0, 0, this.color));
+			if (value > this.value_one) this.value_one = value; 
+			PieSlice slice = slices.get(slices.size()-1);
+			slice.setValue(value);
+			if (name_font_loaded) slice.loadFontDescription(this.name_font, this.name_font_size);
+		}
+		this.applyValuesToSliceDisplay();
+		this.setShiftMouseOverAll();
 	  }
 
 	  public void removeSlice(int index) {
 		  slices.remove(index);
-		  this.calculateSliceExtentFromValues();
+		  this.applyValuesToSliceDisplay();
 	  }
 	  
 	/*****************************************
@@ -131,21 +182,41 @@ public class Pie extends PieElement {
 		}
 	}
 
-	public void setColorSizeShiftAll(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift) {
-		for (int i = 0; i < slices.size(); i++) {
-			PieSlice slice = slices.get(i);
-			slice.setColorShift(hue_shift, saturation_shift, brightness_shift);
-			slice.setScaleShift(radius_shift);
-		}
+	// SET_SHIFT_MOUSE_OVER_ALL - call this method to set the mouse over shift settings on all pie slices
+	public void setShiftMouseOverAll(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
+		super.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+		setShiftMouseOverAll();
 	}
 
+	public void setShiftMouseOverSlices(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
+		for (int i = 0; i < slices.size(); i++) {
+			PieSlice slice = slices.get(i);
+			slice.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+		}
+	}
+	
+	public void setShiftMouseOverAll() {
+		for (int i = 0; i < slices.size(); i++) {
+			PieSlice slice = slices.get(i);
+			slice.setShiftMouseOverAll(this.hue_shift_mouse_over, this.sat_shift_mouse_over, this.bright_shift_mouse_over, this.scale_shift_mouse_over, this.text_shift_mouse_over);
+		}
+	}	
+	
 	public void scaleShiftAll() {
-		super.scaleShift();
+		super.scaleShiftMouseOver();
 		  for (int i = 0; i < slices.size(); i++) {
 			  PieSlice slice = slices.get(i);
-			  slice.scaleShift();
+			  slice.scaleShiftMouseOver();
 		  }
 	  }
+
+	public void scaleShiftResetAllBase() {
+		super.scaleShiftResetToBase();
+		for (int i = 0; i < slices.size(); i++) {
+			PieSlice slice = slices.get(i);
+			slice.scaleShiftResetToBase();
+		}
+	}
 
 	public void scaleShiftResetAll() {
 		super.scaleShiftReset();
@@ -154,7 +225,15 @@ public class Pie extends PieElement {
 			slice.scaleShiftReset();
 		}
 	}
-	
+
+	public void setWidthAll(float width) {
+		for (int i = 0; i < slices.size(); i++) {
+			PieSlice slice = slices.get(i);
+			slice.setWidth(width);
+		}
+	}
+
+
 
 	/*****************************************
 	 ** SET SLICE METHODS 
@@ -169,11 +248,10 @@ public class Pie extends PieElement {
 		}
 	}
 
-	public void setMouseOverShiftSlice(int index, float hue_shift, float saturation_shift, float brightness_shift, float radius_shift) {
+	public void setMouseOverShiftSlice(int index, float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
 		if (index < slices.size()) {
 			PieSlice slice = slices.get(index);
-			slice.setColorShift(hue_shift, saturation_shift, brightness_shift);
-			slice.setScaleShift(radius_shift);
+			slice.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
 		}
 	}
 	
@@ -184,7 +262,6 @@ public class Pie extends PieElement {
 		}	
 	}
 
-	
 	public void setAngleExtentSliceDegrees(int index, float slice_angle) {
 		if (index < slices.size()) {
 			PieSlice slice = slices.get(index);
@@ -195,19 +272,102 @@ public class Pie extends PieElement {
 	public void setRadiusSlice(int index, float radius) {
 		if (slices.size() > index) {
 			PieSlice slice = slices.get(index);
-			slice.setWidth(radius);
+			slice.setRadius(radius);
 		}
 
 		if (radius > this.radius) this.radius = radius;
 	}
 
-	public void setWidthAll(float width) {
+
+	/*****************************************
+	 ** SET TEXT SLICE METHODS 
+	 **
+	 **/
+	
+	public void loadFontAll(int new_font_number, int size) {
+		super.loadFontAll(new_font_number, size);
 		for (int i = 0; i < slices.size(); i++) {
 			PieSlice slice = slices.get(i);
-			slice.setWidth(width);
+			slice.loadFontAll(new_font_number, size);
 		}
 	}
 
+	public void textLocationNameDescription(float x, float y, float offset_x, float offset_y) {
+		super.textLocationNameDescription(x, y, offset_x, offset_y);
+	}
+
+	public void textLocationNameDescriptionSlices(float x, float y, float offset_x, float offset_y) {
+		for (int i = 0; i < slices.size(); i++) {
+			PieSlice slice = slices.get(i);
+			slice.textLocationNameDescription(x, y, offset_x, offset_y);
+		}
+	}
+
+	public void textSetNameSlice(int index, String name) {
+		if (slices.size() > index) {
+			PieSlice slice = slices.get(index);
+			slice.setName(name);
+		}		
+	}
+
+	public void textSetDescriptionSlice(int index, String description) {
+		if (slices.size() > index) {
+			PieSlice slice = slices.get(index);
+			slice.setDescription(description);
+		}		
+	}
+
+	public void setFontColorSlice(int index, int font_color) {
+		if (slices.size() > index) {
+			PieSlice slice = slices.get(index);
+			slice.setDescription(description);
+			this.setFontColorAll(font_color);
+		}
+	}
+
+
+	public void textVisibleSlice(int index) {
+		if (slices.size() > index) {
+			PieSlice slice = slices.get(index);
+			slice.textSetVisibleNameLocation();
+		}		
+	}
+
+	public void textInvisibleSlice(int index) {
+		if (slices.size() > index) {
+			PieSlice slice = slices.get(index);
+			slice.textSetInvisibleNameLocation();
+		}		
+	}
+
+	public void textNameVisibleSlice(int index) {
+		if (slices.size() > index) {
+			PieSlice slice = slices.get(index);
+			slice.textNameSetVisible();
+		}		
+	}
+
+	public void textNameInvisibleSlice(int index) {
+		if (slices.size() > index) {
+			PieSlice slice = slices.get(index);
+			slice.textNameSetInvisible();
+		}		
+	}
+	
+	public void textDescriptionVisibleSlice(int index) {
+		if (slices.size() > index) {
+			PieSlice slice = slices.get(index);
+			slice.textDescriptionSetVisible();
+		}		
+	}
+
+	public void textDescriptionInisibleSlice(int index) {
+		if (slices.size() > index) {
+			PieSlice slice = slices.get(index);
+			slice.textDescriptionSetInvisible();
+		}		
+	}
+	
 	// ******************************************************
 	// SET VALUE and CALCULATE EXTEND ANGLES
 	// functionality to add here
@@ -219,58 +379,53 @@ public class Pie extends PieElement {
 		set_slice.setValue(new_value);
 	}
 	
-	  public void calculateSliceExtentFromValues() {
+	  public void applyValuesToSliceDisplay() {
 		  if (this.pie_shape_type == PIE_ARC) {
-			  this.value = 0;
+			  this.value_one = 0;
 			  for (int i = 0; i < slices.size(); i++) {
 					PieSlice slice = slices.get(i);
-					this.value += slice.getValue();
+					this.value_one += slice.getValue();
 			  }
 	
 			  double slice_start_degrees = 0; 
 			  for (int j = 0; j < slices.size(); j++) {
 					PieSlice slice = this.slices.get(j);
-					double slice_extent_percent = slice.getValue() / this.value;
+					double slice_extent_percent = slice.getValue() / this.value_one;
 					double slice_extent_degrees = slice_extent_percent * 360;
 					this.setAngleStartSlice(j, (float) slice_start_degrees);
 					this.setAngleExtentSliceDegrees(j, (float) (slice_extent_degrees));
 					slice_start_degrees += slice_extent_degrees;
 			  }
 		  }
-	  }
-
-	  public void calculateSliceRadiusFromValues() {
-			PApplet.println("recalculate radius - number method ************************* " + this.pie_shape_type);
-		  if (this.pie_shape_type == PIE_LINE) {
-			  this.value = 0;
+		  else if (this.pie_shape_type == PIE_LINE) {
+			  this.value_one = 0;
 			  for (int i = 0; i < slices.size(); i++) {
 					PieSlice slice = slices.get(i);
-					if (this.value < slice.getValue()) this.value = slice.getValue();
-					slice.setRadius((float) slice.getValue());
-					PApplet.println("recalculate radius - number: " + i + " radius: " + slice.radius + " value: " + slice.value);
+					if (this.value_one < slice.getValue()) this.value_one = slice.getValue();
+					slice.setBaseRadius((float) (slice.getValue()) );
 			  }
 
-//		  double start_angle_temp = 0;
-		  	  double extend_angle = (360 / slices.size());
-			  double start_angle_temp = 0; 
+		  	  double extend_angle = (360.0 / slices.size());
+			  double start_angle_temp = 0.0; 
 			  for (int j = 0; j < slices.size(); j++) {
-//					PieSlice slice = this.slices.get(j);
 					this.setAngleStartSlice(j, (float) start_angle_temp);
-					this.setAngleExtentSliceDegrees(j, (float) (extend_angle));
+					this.setAngleExtentSliceDegrees(j, (float) extend_angle);
 					start_angle_temp += extend_angle;
-					PApplet.println("recalculate size - number: " + j + " start angle: " + start_angle_temp + " extend "+ extend_angle + " " + slices.size()*extend_angle);
 			  }
+			  this.setBaseRadius((float) (this.value_one));
 		  }
+		  // makes sure the proper scalling is applied to radius of pies 
+		  this.scaleShiftReset();
 	  }
 
 	public void setShiftScaleSlice(int index) {
 		  PieSlice slice = slices.get(index);
-		  slice.scaleShift();
+		  slice.scaleShiftMouseOver();
 	}
 
 	public void shiftScaleResetSlice(int index) {
 		PieSlice slice = slices.get(index);
-		slice.scaleShiftReset();
+		slice.scaleShiftResetToBase();
 	}
 			
 	public void scaleSlice(int index, int percent_larger) {

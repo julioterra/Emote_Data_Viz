@@ -7,19 +7,28 @@ import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
 
 public class PieElement extends ShapeColor{
 
-	  public static final int PIE_UNDEFINED = -1;
+	  public static final int UNDEFINED = -1;
 	  public static final int PIE_ARC = 0;
 	  public static final int PIE_LINE = 1; 
-	  protected int pie_shape_type = PIE_UNDEFINED;
-	
+	  protected int pie_shape_type = UNDEFINED;
+
+	  public static final int ANGLE = 0;
+	  public static final int RADIUS = 1;
+	  public static final int HUE = 2; 
+	  public static final int SATURATION = 3; 
+	  protected int value_1_type = UNDEFINED;
+	  protected int value_2_type = UNDEFINED;
+	  protected int value_3_type = UNDEFINED;
+
 	  protected float radius;
 	  protected float radius_base;
-	  protected	float scale_shift;
 	  protected float diameter;
 	  protected float diameter_base;
 	  protected float angle_start;
 	  protected float angle_slice;
-	  public double value;
+	  public double value_one;
+	  public double value_two;
+	  public double value_three;
 
 	  // the slice_mouse_over variable holds a Arc2D object used to determine if mouse is hovering
 	  // the slice that is displayed on screen is created using the PApplet arc() method.
@@ -37,13 +46,11 @@ public class PieElement extends ShapeColor{
 		  super(x_loc, y_loc, ShapeColor.colorARGB(255,255,255,255));
 	      this.radius = radius;
 	      this.radius_base = this.radius;
-	      this.scale_shift = 0;
 	      this.diameter = this.radius*2;
 	      this.diameter_base = this.diameter;
-	      this.mouse_over = false;
 
 	      this.angle_slice = 0;
-	      this.value = PApplet.degrees(this.angle_slice);
+	      this.value_one = PApplet.degrees(this.angle_slice);
 	      this.angle_start = PApplet.radians(angle_start - 90);
 	      this.angle_slice = PApplet.radians(360);
 
@@ -67,9 +74,6 @@ public class PieElement extends ShapeColor{
 	   ** DISPLAY METHODS 
 	   **/
 
-	  public void display() {
-	  }
-
 	  public void turn(float turn_start_angle) {
 		  this.angle_start += PApplet.radians(turn_start_angle);
 	      this.mouse_over_shape.setAngleStart(mouse_over_shape.getAngleStart() - turn_start_angle);
@@ -81,23 +85,27 @@ public class PieElement extends ShapeColor{
 	  }
 
 	  public void scale(float percent_scale) {
-		  this.radius = this.radius_base + (this.radius_base * percent_scale);
-		  this.diameter = this.radius * 2;
+		  super.scale(percent_scale);
+		  setRadius((float) (this.radius_base * this.scale));
 		  this.resetMouseOverShape();
 	  }
 
-	  public void setScaleShift(float radius_shift) {
-		  // input parameter should range from 0 - 1;
-		  this.scale_shift = radius_shift;
-	  }
 
-	  public void scaleShift() {
-		  this.shiftRadius(this.radius + (this.radius_base * this.scale_shift));
-		  this.resetMouseOverShape();
+	  /*********************************************************
+	   ** SCALE SHIFT METHODS 
+	   **/
+	  
+	  public void scaleShift(float shift_scale) {		  
+		  this.setRadius((float) (this.radius * (1.0+shift_scale)));
 	  }
 
 	  public void scaleShiftReset() {
-		  this.resetRadius();
+		  this.setRadius((float) (this.radius_base * this.scale));
+	  }
+
+	  public void scaleShiftResetToBase() {
+		  this.scale = 1;
+		  this.setRadius(this.radius_base);
 	  }
 
 	  /*********************************************************
@@ -105,8 +113,22 @@ public class PieElement extends ShapeColor{
 	   **/
 
 	  public void mouseOver() {
+		  boolean is_mouse_over = this.contains(processing_app.mouseX, processing_app.mouseY);
+	      if (this.mouse_over != is_mouse_over) {
+	            if (is_mouse_over) {
+	            	this.shiftHueMouseOver();
+	            	this.shiftBrightMouseOver();
+	            	this.shiftSatMouseOver();
+	            	this.scaleShiftMouseOver();
+	            	this.shiftTextNameLocation();
+	            } else {
+	            	this.colorReset();
+	            	this.scaleShiftReset();
+	            	this.shiftResetTextNameLocation();
+	            }
+	            mouse_over = is_mouse_over;
+	      }        
 	  }
-	  
 	  protected boolean contains(float x, float y) {
 	      return mouse_over_shape.contains(x, y);
 	  }
@@ -117,7 +139,7 @@ public class PieElement extends ShapeColor{
 
 	  /* ****** SET METHODS ******* */
 
-	  public void setRadius(float radius) {
+	  public void setBaseRadius(float radius) {
 		  this.radius = radius;
 	      this.radius_base = this.radius;
 		  this.diameter = this.radius * 2;
@@ -125,14 +147,15 @@ public class PieElement extends ShapeColor{
 		  this.resetMouseOverShape();
 	  }
 
-	  public void shiftRadius(float radius) {
+	  public void setRadius(float radius) {
+		  PApplet.println(this.name + " new radius " + radius  + " current radius " + this.radius);
 		  this.radius = radius;
 		  this.diameter = this.radius * 2;
 		  this.resetMouseOverShape();
   }
 
 	  public void resetRadius() {
-		  this.shiftRadius(this.radius_base);
+		  this.setRadius(this.radius_base);
 	  }
 
 	  /* ****** GET METHODS ******* */
@@ -158,15 +181,34 @@ public class PieElement extends ShapeColor{
 	  public void setPieElementAngleStart(float angle_start) {
 		  this.angle_start = PApplet.radians(angle_start - 90);
 	      this.mouse_over_shape.setAngleStart(mouse_over_shape.getAngleStart() - angle_start);
-//		  this.resetMouseOverShape();
 	  }
 	  
+	  /*********************************************************
+	   ** SET VALUE METHODS 
+	   **/
+	  
 	  public void setValue(double new_value) {
-		  this.value = new_value;
+		  this.value_one = new_value;
 	  }
 	  
 	  public double getValue() {
-		  return this.value;
+		  return this.value_one;
+	  }
+
+	  public void setValue2(double new_value) {
+		  this.value_two = new_value;
+	  }
+	  
+	  public double getValue2() {
+		  return this.value_two;
+	  }
+
+	  public void setValue3(double new_value) {
+		  this.value_three = new_value;
+	  }
+	  
+	  public double getValue3() {
+		  return this.value_three;
 	  }
 
 }

@@ -1,17 +1,19 @@
 package com.julioterra.moodyjulio.dataviz.shapes;
 
 import java.awt.Color;
-import com.julioterra.moodyjulio.dataviz.basicelements.DataVizElement;
-import processing.core.PApplet;
 
 public class ShapeColor extends Shape {
 
 	protected int color;
 	protected int color_base;
-	protected float hue_shift;
-	protected float sat_shift;
-	protected float bright_shift;	
-	protected boolean mouse_over;
+
+	protected float 	hue_shift_mouse_over;
+	protected float 	sat_shift_mouse_over;
+	protected float 	bright_shift_mouse_over;	
+
+	protected float 	hue_shift_mouse_press;
+	protected float 	sat_shift_mouse_press;
+	protected float 	bright_shift_mouse_press;	
 
 	/*********************************************************
 	 ** CONSTRUCTOR METHODS 
@@ -33,28 +35,13 @@ public class ShapeColor extends Shape {
 
 	/*********************************************************
 	 ** DISPLAY METHODS 
+	 ** defined in shape class along with move, turn, scale
 	 **/
 	
-	public void display() {
-		processing_app.smooth();
-		processing_app.noStroke();
-	    processing_app.fill(color);
-	}
-
-	  public void turn(float new_start_angle) {
-	  }
-
-	  public void move(float x, float y) {
-	      super.move(x, y);
-	  }
-
 	/*********************************************************
 	 ** MOUSE OVER METHODS 
 	 **/
 
-	public void mouseOver() {
-	}
-	
 	protected boolean contains(float x, float y) {
 		return false;
 	}
@@ -65,35 +52,49 @@ public class ShapeColor extends Shape {
 
 	/** Shift Methods **/
 
-	public void setColorShift(float hue_shift, float sat_shift, float bright_shift) {
-		// all values should range from 0 - 1
-		this.hue_shift = hue_shift;
-		this.sat_shift = sat_shift;
-		this.bright_shift = bright_shift;
+	public void setShiftMouseOverAll(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
+		this.hue_shift_mouse_over = hue_shift;
+		this.sat_shift_mouse_over = saturation_shift;
+		this.bright_shift_mouse_over = brightness_shift;
+		this.scale_shift_mouse_over = radius_shift;
+		this.text_shift_mouse_over = text_shift_mouse_over;
 	}
 	
-	public void shiftHue() {
+	public void setColorShiftMouseOver(float hue_shift, float sat_shift, float bright_shift) {
+		// all values should range from 0 - 1
+		this.hue_shift_mouse_over = hue_shift;
+		this.sat_shift_mouse_over = sat_shift;
+		this.bright_shift_mouse_over = bright_shift;
+	}
+
+	public void shiftHueMouseOver() {
+		shiftHue(this.hue_shift_mouse_over);
+	}
+
+	public void shiftSatMouseOver() {
+		this.shiftSat(this.sat_shift_mouse_over);
+	}
+
+	public void shiftBrightMouseOver() {
+		shiftBright(this.bright_shift_mouse_over);
+	}
+
+	public void shiftHue(float shift_hue) {
 		float hue = processing_app.hue(this.color_base);
-		float hue_offshift = (float) (hue*this.hue_shift);
+		float hue_offshift = (float) (hue*shift_hue);
 		this.color = adjustHue(this.color, (hue + hue_offshift));
-
-		if (DataVizElement.debug_code) PApplet.println("current hue " + (hue / 255) + " hue shift " + this.hue_shift);
 	}
-
-	public void shiftSat() {
+	
+	public void shiftSat(float shift_sat) {
 		float saturation = processing_app.saturation(this.color_base);
-		float sat_offshift = (float) (saturation*this.sat_shift);
+		float sat_offshift = (float) (saturation*shift_sat);
 		this.color = adjustSat(this.color, (saturation + sat_offshift));
-
-		if (DataVizElement.debug_code) PApplet.println("saturation " + (saturation / 255) + " saturation shift " + this.sat_shift);
 	}
-
-	public void shiftBright() {
+	
+	public void shiftBright(float shift_bright) {
 		float brightness = processing_app.brightness(this.color_base);
-		float bright_shift = (float) (brightness*this.bright_shift);
+		float bright_shift = (float) (brightness*shift_bright);
 		this.color = adjustBright(this.color, (brightness + bright_shift));
-
-		if (DataVizElement.debug_code) PApplet.println("brightness " + (brightness / 255)  + " brightness shift " + this.bright_shift);
 	}
 
 	/** SET BASE COLOR METHODS **/
@@ -117,10 +118,6 @@ public class ShapeColor extends Shape {
 
 	public void colorReset() {
 		this.color = this.color_base;
-		float hue = processing_app.hue(this.color);
-		float saturation = processing_app.saturation(this.color);
-		float brightness = processing_app.brightness(this.color);
-		if (DataVizElement.debug_code) PApplet.println("current hue " + (hue) + " saturation " + saturation + " brightness " + brightness);
 	}
 
 	/** SET ACTIVE RGB COLOR METHODS **/
@@ -216,7 +213,7 @@ public class ShapeColor extends Shape {
 		else hue = (hue / 255);
 		float saturation = (processing_app.saturation(color) / 255);
 		float brightness = (processing_app.brightness(color) / 255);
-		if (DataVizElement.debug_code) PApplet.println("color hue: hue " + hue + " sat " + saturation + " bright " + brightness);
+//		if (DataVizElement.debug_code) PApplet.println("color hue: hue " + hue + " sat " + saturation + " bright " + brightness);
 
 		return colorRGB(Color.HSBtoRGB(hue, saturation, brightness));
 	}
@@ -226,7 +223,7 @@ public class ShapeColor extends Shape {
 		else saturation = (saturation / 255);
 		float hue = (processing_app.hue(color) / 255);
 		float brightness = (processing_app.brightness(color) / 255);
-		if (DataVizElement.debug_code) PApplet.println("color sat: hue " + hue + " sat " + saturation + " bright " + brightness);
+//		if (DataVizElement.debug_code) PApplet.println("color sat: hue " + hue + " sat " + saturation + " bright " + brightness);
 
 		return colorRGB(Color.HSBtoRGB(hue, saturation, brightness));
 	}
@@ -236,7 +233,7 @@ public class ShapeColor extends Shape {
 		else brightness = (brightness / 255);
 		float hue = (processing_app.hue(color) / 255);
 		float saturation = (processing_app.saturation(color) / 255);
-		if (DataVizElement.debug_code) PApplet.println("color bright: hue " + hue + " sat " + saturation + " bright " + brightness);
+//		if (DataVizElement.debug_code) PApplet.println("color bright: hue " + hue + " sat " + saturation + " bright " + brightness);
 
 		return colorRGB(Color.HSBtoRGB(hue, saturation, brightness));
 	}

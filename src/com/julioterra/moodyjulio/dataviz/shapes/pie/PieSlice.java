@@ -23,8 +23,6 @@ public class PieSlice extends PieElement {
 
 	      resetMouseOverShape();
 
-//	      PApplet.println("set-up arc: x " + x_loc + " y " + y_loc + " diameter " + diameter + " angle_start " +  angle_start + " angle_slice " +  PApplet.degrees(angle_slice) + " color " +  this.color + " percent " +  size_in_percent);      
-//	      PApplet.println("set-up mouse: x " + mouse_over_location.x + " y " + mouse_over_location.y + " radius " + radius + " angle_start " +  mouse_over_angle_start + " angle_slice " +  mouse_over_angle_slice + " color " +  color);
 	  }
 	  
 	  /*********************************************************
@@ -38,7 +36,7 @@ public class PieSlice extends PieElement {
 		      processing_app.rotate(this.angle_start);
 		      switch (this.pie_shape_type) {
 		      	  case PIE_ARC:
-				      processing_app.noStroke();
+		      		  processing_app.noStroke();
 				      processing_app.fill(this.color);
 				      processing_app.arc(0, 0, diameter, diameter, 0, angle_slice);
 				      break;
@@ -48,54 +46,36 @@ public class PieSlice extends PieElement {
 				      processing_app.line(this.radius,0,0,0);
 				      break;
 		      }		      
-//		      if (pie_shape_type == PIE_ARC) {
-//			      processing_app.noStroke();
-//			      processing_app.fill(this.color);
-//			      processing_app.arc(0, 0, diameter, diameter, 0, angle_slice);
-//			      PApplet.println("got to PIE_ARC DISPLAY - radius " + this.radius);
-//		      } else if (pie_shape_type == PIE_LINE) {
-//			      processing_app.strokeWeight(this.width);
-//			      processing_app.stroke(this.color);
-//			      processing_app.line(this.radius,0,0,0);
-//			      PApplet.println("got to PIE_LINE DISPLAY - radius " + this.radius);
-//		      }		      
 		 processing_app.popMatrix();
 	  }
 
-	  /*********************************************************
-	   ** MOUSE OVER METHODS 
-	   **/
-
-	  public void mouseOver() {
-		  boolean is_mouse_over = this.contains(processing_app.mouseX, processing_app.mouseY);
-	      if (this.mouse_over != is_mouse_over) {
-	            if (is_mouse_over) {
-	            	this.shiftHue();
-	            	this.shiftBright();
-	            	this.shiftSat();
-	            	this.scaleShift();
-	            } else {
-	            	super.colorReset();
-	            	this.resetRadius();
-	            }
-	            mouse_over = is_mouse_over;
-	      }        
-	  }
-	  
 	  /*********************************************************
 	   ** SIZE SETTING METHODS 
 	   **/
 
 	  /* ****** SET METHODS ******* */
 
+	  public void scale(float percent_scale) {
+		  super.scale(percent_scale);
+		  this.scaleWidth();
+		  PApplet.println(" WIDTH " + this.width + " SCALE " + this.scale);
+	  }
+	  
 	  public void setWidth(float width) {
 	      this.width = width;		  
 		  this.width_base = this.width;
 	  }
 
-	  public void resetRadius() {
-		  this.radius = this.radius - (this.scale_shift * this.radius_base);
-		  this.diameter = this.radius * 2;
+//	  public void setWidth(float width) {
+//	      this.width = (float) (width * this.scale);		  
+//	  }
+
+	  public void scaleWidth() {
+		  if (this.scale > 0) this.width = (float) (this.width_base * this.scale);		  
+	  }
+
+	  public void resetScaleWidth() {
+		  if (this.scale > 0) this.width = (this.width_base);		  
 	  }
 
 	  public void setAngleExtentPercent(float size_in_percent) {
@@ -111,7 +91,7 @@ public class PieSlice extends PieElement {
 	  }
 	  
 	  public void setPieSliceValue(double this_slice) {
-	  	this.value = this_slice;
+	  	this.value_one = this_slice;
 	  }
 
 	  /* ****** GET METHODS ******* */
