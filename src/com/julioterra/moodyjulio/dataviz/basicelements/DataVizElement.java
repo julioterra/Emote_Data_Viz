@@ -7,22 +7,37 @@ import processing.core.PFont;
 public class DataVizElement {
 
 	public static PApplet 			processing_app;
-	public static MySQL 			database;
 	public static boolean 			processing_app_linked = false;	
+
+	public static MySQL 			database;
 
 	public static final PFont [] 	fonts = new PFont[10];
 	public static boolean 			font_loaded = false;
 	
-	public static int				data_view = 		0;
-	public static final int			day_avg = 			1;
-	public static final int			day_specific = 		2;
-	public static final int			location_avg = 		3;
-	public static final int			picture_avg = 		4;
+	// Data Types for Use in Data Processor
+	// RAW Data Type
+	public static final int 		MOBILE = 0;
+	public static final int 		JOURNAL = 1;
+	// PROCESSED Data Type
+	public static final int 		EMOTION = 2;
+	public static final int 		ACTIVITY = 3;
+	public static final int 		HEART_RATE = 4;
+	public static final int 		PEOPLE = 5;
 
-	public static String			active_data_table	= "JournalData";
-	public static final String []	database_name		= {"JournalData", "MobileData"};
-	public static final int 		JournalData = 		0;
-	public static final int 		MobileData = 		1;
+	public static final int 		EmotionAgeThreshold = 3;
+	// Data Views for Use in Data Processor
+	public static int				data_view = 		0;
+	public static final int			EMOTION_PIE = 		1;
+	public static final int			ACTIVITY_PIE = 		2;
+	public static final int			PEOPLE_PIE = 		3;
+
+	public String					active_data_table	= "JournalData";
+	public static final String []	database_name		= {"MobileData", "JournalData", "PieData_Emotion", "PieData_HeartRate", "PieData_Activity"};
+	public static final int 		MobileData = 		0;
+	public static final int 		JournalData = 		1;
+	public static final int 		PieData_Emotion =	2;
+	public static final int 		PieData_HeartRate = 3;
+	public static final int 		PieData_Activity =	4;
 	
 	public static boolean 			debug_code = 		true;
 	public static boolean 			auto_read = 		true;
@@ -33,14 +48,15 @@ public class DataVizElement {
 	public static boolean 			file_active;
 	public static boolean 			file_read;
 	public static boolean 			file_completed;
-	public static int 				total_readings;
-	public static int 				valid_readings;	
-	public static int 				data_batch;
+
+	public int 						total_readings;
+	public int 						valid_readings;	
+	public int 						data_batch;
 
 	public static void application_init (PApplet processing_app) {
 		DataVizElement.processing_app = processing_app; 
 		DataVizElement.processing_app_linked = true;
-//		DataVizElement.database_connect();
+		DataVizElement.database_connect();
 	}
 
 	public static void loadFonts(String filename_prefix) {
@@ -57,9 +73,5 @@ public class DataVizElement {
 		DataVizElement.database = new MySQL(processing_app, "localhost:8889", "MoodyJULIO", "root", "root" );
 		DataVizElement.database.connect();
 	}
-	
-	public static void updated_data_table(int source_number) {
-		DataVizElement.active_data_table = database_name[source_number];
-	}
-			
+				
 }

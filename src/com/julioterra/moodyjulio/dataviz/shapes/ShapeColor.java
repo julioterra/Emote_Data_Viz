@@ -184,7 +184,15 @@ public class ShapeColor extends Shape {
 	 **/
 
 	/** GET COLOR METHODS **/
-	
+
+	public static int colorHSB(int hue, int saturation, int brightness) {
+		hue = hue/255;
+		saturation = saturation/255;
+		brightness = brightness/255;
+		return Color.HSBtoRGB(hue, saturation, brightness);
+	}
+
+
 	public static int colorARGB(int a, int r, int g, int b) {
 		a = a << 24;  // bit shift a value by 24 bits
 		r = r << 16;  // bit shift r value by 16 bits

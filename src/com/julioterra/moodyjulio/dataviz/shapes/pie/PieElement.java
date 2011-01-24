@@ -24,6 +24,7 @@ public class PieElement extends ShapeColor{
 	  protected float radius_base;
 	  protected float diameter;
 	  protected float diameter_base;
+
 	  protected float angle_start;
 	  protected float angle_slice;
 	  public double value_one;
@@ -56,8 +57,8 @@ public class PieElement extends ShapeColor{
 
 	      resetMouseOverShape();
 
-	      PApplet.println("set-up arc: x " + x_loc + " y " + y_loc + " diameter " + diameter + " angle_start " +  angle_start + " angle_slice " +  PApplet.degrees(angle_slice) + " color " +  this.color);      
-	      PApplet.println("set-up mouse: x " + mouse_over_location.x + " y " + mouse_over_location.y + " radius " + radius + " angle_start " +  mouse_over_angle_start + " angle_slice " +  mouse_over_angle_slice + " color " +  color);
+//	      PApplet.println("set-up arc: x " + x_loc + " y " + y_loc + " diameter " + diameter + " angle_start " +  angle_start + " angle_slice " +  PApplet.degrees(angle_slice) + " color " +  this.color);      
+//	      PApplet.println("set-up mouse: x " + mouse_over_location.x + " y " + mouse_over_location.y + " radius " + radius + " angle_start " +  mouse_over_angle_start + " angle_slice " +  mouse_over_angle_slice + " color " +  color);
 	  }
 	  
 	  public void resetMouseOverShape() {
@@ -148,7 +149,6 @@ public class PieElement extends ShapeColor{
 	  }
 
 	  public void setRadius(float radius) {
-		  PApplet.println(this.name + " new radius " + radius  + " current radius " + this.radius);
 		  this.radius = radius;
 		  this.diameter = this.radius * 2;
 		  this.resetMouseOverShape();

@@ -137,12 +137,12 @@ public class Pie extends PieElement {
 			  PieSlice slice = slices.get(slices.size()-1);
 			  slice.setName(name);
 			  slice.setDescription(description);		  
-			  PApplet.println(slice.name + " " + slice.description);
+//			  if (debug_code) PApplet.println(slice.name + " " + slice.description);
 		  } else if (this.pie_shape_type == PIE_LINE) {
 			  PieSlice slice = slices.get(slices.size()-1);
 			  slice.setName(name);
 			  slice.setDescription(description);		  
-			  PApplet.println(slice.name + " " + slice.description);
+//			  if (debug_code) PApplet.println(slice.name + " " + slice.description);
 		  }
 	  }
 	  

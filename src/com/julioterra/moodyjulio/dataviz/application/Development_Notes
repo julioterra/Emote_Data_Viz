@@ -4,3 +4,32 @@ Changes to Consider:
 (1) make all movement and turning based on popmatrix and pushmatrix so that it can be encapsulated at a higher level of abstraction
 	- currently for the PieSlice Shape the rotations are being done to the shape coordinates themselves
 	- consider integrating this same paradigm to determine angle where pieSlices start
+	
+	
+	
+	
+			/*
+		 * DONE - create an array of processed objects that includes one element for each hour of the day.
+		 * DONE - Set the start and end time for each of these objects as they are created.
+		 * 
+		 * loop through each element of this array and calculate the emotion and description data
+		 * 
+		 * DONE - A. How to calculate the emotion and intensity data for each record:
+		 * 		DONE - 1. process two or more raw data readings at a time - all readings that happen in the time range, and the one reading preceding
+		 * 			DONE - a. using emotion_L1 calculate a number between 1 and -1 that reflects what percentage of this time was positive (1) and negative (-1)
+		 * 			DONE - b. using emotion_l2 calculate a number between 1 and 4 that reflects the intensity of the emotion (strong (4) and weak (1))
+		 * 
+		 * DONE - B. How to create the name for each record:
+		 * 		DONE - 1. use same approach as listed in A.1 above - processing two or more raw readings at at time
+		 * 			DONE - a. using the emotion score calculated in A.1.a add "Positive" or "Negative" to the name
+		 * 			DONE - b. add a space followed by the emotion intensity calculated above in A.1.b
+		 * 
+		 * DONE - C. How to create the description for each record: 
+		 * 		 DONE - 1. use same approach as listed in A.1 above - processing two or more raw readings at at time
+		 * 			 DONE - a. using emotion_L1, L2, and L3 complete the emotion field by adding all emotions experienced in that time.
+		 * 			 DONE - c. using activity complete the activity field field by adding all emotions experienced in that time.
+		 * 			 DONE - d. using people calculate average number of people around during these times of day: "number of people involved: "
+		 * 			  DONE - first line of the description: "emotions experienced: "
+		 * 			second line of the description: "activities in progress: "
+		 * 
+		 */

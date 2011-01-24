@@ -1,6 +1,8 @@
 package com.julioterra.moodyjulio.dataviz.application;
 
-import com.julioterra.moodyjulio.dataviz.basicelements.DataVizElement;
+import com.julioterra.moodyjulio.dataviz.basicelements.*;
+import com.julioterra.moodyjulio.dataviz.datahandlers.DataProcessor;
+import com.julioterra.moodyjulio.dataviz.datahandlers.EmotionPieDataProcessor;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
 import com.julioterra.moodyjulio.dataviz.shapes.pie.*;
 
@@ -11,7 +13,8 @@ public class MoodyJulioDataViz extends PApplet {
 
 	Pie_Arc pie_emotions;
 	Pie_Line pie_heart;
-
+	EmotionPieDataProcessor data_processor;
+	
 	int[] angs =           {30, 10, 45, 35, 60, 38, 75, 67};
 	int[] height_heart =   {120, 130, 125, 135, 140, 145, 150, 135, 130, 110, 120, 130,
 	                        120, 130, 125, 135, 140, 145, 150, 135, 130, 110, 120, 130,
@@ -32,6 +35,8 @@ public class MoodyJulioDataViz extends PApplet {
 		background(100);
 		float radius = (float) (min(width, height) * 0.75) /2;
 
+		data_processor = new EmotionPieDataProcessor();
+		
 		pie_emotions = new Pie_Arc(width/2-100, height/2, radius*2);
 		pie_emotions.setName("Emotions");
 		for (int i = 0; i < angs.length; i++){
@@ -46,8 +51,6 @@ public class MoodyJulioDataViz extends PApplet {
 		pie_emotions.loadFontAll(1, 20);
 		pie_emotions.applyValuesToSliceDisplay();
 
-//		pie_emotions.textSetVisibleNameLocation();
-
 		// load the emotion chart
 		pie_heart = new Pie_Line(width/2-100, height/2, radius, height_heart.length, 10);
 		pie_heart.setName("Heart Rate");
@@ -59,13 +62,11 @@ public class MoodyJulioDataViz extends PApplet {
 			pie_heart.textSetDescriptionSlice(i, ("description " + height_heart[i]));
 		}
 		pie_heart.setShiftMouseOverAll((float) 0.0, (float) -0.25, (float) 0.0, (float) 0.0, true);
-		pie_heart.loadFontAll(3, 15);
 		pie_heart.textLocationNameDescription((float)(width*0.5 + 60), (float)(height*0.5), 0, 1200);
 		pie_heart.textLocationNameDescriptionSlices((float)(width*0.5)+60, (float)(height*0.5+30), 0, 16);
-		pie_heart.scale((float) 0.5);
+		pie_heart.scale((float) 0.7);
+		pie_heart.loadFontAll(3, 15);
 		pie_heart.applyValuesToSliceDisplay();
-
-//		pie_heart.textSetVisibleNameLocation();
 
 	}                        
 
@@ -73,32 +74,51 @@ public class MoodyJulioDataViz extends PApplet {
 	    smooth();
 	    background(100);
 
-	    pie_emotions.display();
+	    data_processor.display();
+//	    pie_emotions.display();
 	    pie_heart.display();
 	    
 	}
 
 
 	public void keyPressed() {
-	    if (key == 'r') {
+	    if (key == '1') {
 	    	pie_emotions.move(pie_emotions.location.x + 50, pie_emotions.location.y);
 	    	pie_heart.move(pie_heart.location.x + 50, pie_heart.location.y);
 	    } 
-	    else if (key == 'l') {
+	    else if (key == '2') {
 	    	pie_emotions.move(pie_emotions.location.x - 50, pie_emotions.location.y);
 	    	pie_heart.move(pie_heart.location.x - 50, pie_heart.location.y);
 	    } 
-	    else if (key == 's') {
+	    else if (key == '-') {
 	    	pie_heart.scale((float) 0.75);
+	    	pie_emotions.scale((float) 0.75);
 	    }
-	    else if (key == 'b') {
+	    else if (key == '+') {
 	    	pie_heart.scale((float) 1.25);
+	    	pie_emotions.scale((float) 1.25);
 	    }
 	    else if (key == 'z') {
-	    	pie_heart.scaleShiftResetToBase();
+	    	data_processor.createProcessedDL_wTimeRange(new Date(2010, 11, 17), new Date(2010, 12, 9), new Time(0, 0, 0), new Time(23, 59, 59), (float) 1);
+	    	data_processor.updateProcessedDL_wRawData();
 	    }
 	    else if (key == 'x') {
-	    	pie_heart.scaleShiftReset();
+//	    	data_processor.updateProcessedDL_wRawData();
+//	    	pie_heart.scaleShiftReset();
+//	    	pie_emotions.scaleShiftReset();
+	    }
+	    else if (key == 'r') {
+	    	data_processor.loadPie(new Date(2010, 11, 22), new Time(0, 0, 0), new Date(2010, 11, 22), new Time(23, 59, 59));
+//	    	data_processor.load_time_range(new Time(12, 0, 0), new Time(15, 59, 59));
+//	    	data_processor.load_date_range(DataVizElement.JOURNAL, new Date(2010, 11, 01), new Date(2010, 12, 20));
+	    }
+	    else if (key == 'l') {
+	    	data_processor.load_2_database();
+	    }
+	    else if (key == 'L') {
+	    }
+	    else if (key == 'p') {
+	    	data_processor.print();
 	    }
 	    else {
 	    	pie_emotions.turn(-40);
