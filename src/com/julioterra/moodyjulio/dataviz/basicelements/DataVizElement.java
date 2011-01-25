@@ -1,5 +1,7 @@
 package com.julioterra.moodyjulio.dataviz.basicelements;
 
+import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
+
 import de.bezier.data.sql.MySQL;
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -25,12 +27,16 @@ public class DataVizElement {
 	public static final int 		PEOPLE = 5;
 
 	public static final int 		EmotionAgeThreshold = 3;
+
 	// Data Views for Use in Data Processor
 	public static int				data_view = 		0;
 	public static final int			EMOTION_PIE = 		1;
 	public static final int			ACTIVITY_PIE = 		2;
 	public static final int			PEOPLE_PIE = 		3;
 
+	public static int				Base_Background_Color =	ShapeColor.colorARGB(255, 240, 240, 240);
+	public static int				Cur_Background_Color =	Base_Background_Color;
+	
 	public String					active_data_table	= "JournalData";
 	public static final String []	database_name		= {"MobileData", "JournalData", "PieData_Emotion", "PieData_HeartRate", "PieData_Activity"};
 	public static final int 		MobileData = 		0;
@@ -41,7 +47,7 @@ public class DataVizElement {
 	
 	public static boolean 			debug_code = 		true;
 	public static boolean 			auto_read = 		true;
-	public static boolean 			load_data = 		false;	
+	public static boolean 			load_data = 		true;	
 	
 	public static String 			file_name = 		"";
 	public static String 			file_name_short = 	"";

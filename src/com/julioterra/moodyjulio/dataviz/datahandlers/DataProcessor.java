@@ -14,8 +14,8 @@ public class DataProcessor extends DataVizElement{
 	public int data_type_raw;
 	ArrayList <Data> data_list_processed;
 	public int data_type_processed;
-	Pie pie;
-
+    public float radius;
+	
 	public boolean ready_to_start;			// flags master start
 	public boolean reading_data;			// flags part of cycle
 	public boolean processing_data;

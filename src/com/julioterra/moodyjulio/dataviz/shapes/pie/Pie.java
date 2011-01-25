@@ -22,8 +22,8 @@ public class Pie extends PieElement {
 	public Pie(int x, int y, float diameter, int pie_shape_type) {
 		super(x, y, (diameter/2), 0);
 		this.pie_shape_type = pie_shape_type;
-		if (this.pie_shape_type == PIE_ARC) this.pie_value_assign = ANGLE;
-		else if (this.pie_shape_type == PIE_LINE) this.pie_value_assign = RADIUS;
+		if (this.pie_shape_type == PIE_ARC_SET_RADIUS) this.pie_value_assign = ANGLE;
+		else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) this.pie_value_assign = RADIUS;
 
 		this.slices = new ArrayList<PieSlice>();
 		this.diameter = diameter;
@@ -33,8 +33,8 @@ public class Pie extends PieElement {
 	public Pie(int x, int y, float diameter,  int pie_shape_type, int number_of_slices) {
 		super(x, y, (diameter/2), 0);
 		this.pie_shape_type = pie_shape_type;
-		if (this.pie_shape_type == PIE_ARC) this.pie_value_assign = ANGLE;
-		else if (this.pie_shape_type == PIE_LINE) this.pie_value_assign = RADIUS;
+		if (this.pie_shape_type == PIE_ARC_SET_RADIUS) this.pie_value_assign = ANGLE;
+		else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) this.pie_value_assign = RADIUS;
 		this.setNumberOfSlices(number_of_slices);
 	}
 	
@@ -52,11 +52,11 @@ public class Pie extends PieElement {
 			double degrees_per_slice = 360 / this.number_of_slices;
 			double size_in_percent = degrees_per_slice / 360;
 			for (int i = 0; i < this.number_of_slices; i++) {
-				if (this.pie_shape_type == PIE_ARC) {
+				if (this.pie_shape_type == PIE_ARC_SET_RADIUS) {
 					this.slices.add(new PieSliceArc((int)this.location.x, (int)this.location.y, this.diameter/2, (float) size_in_percent, (float) temp_angle_start, this.color));
 					this.value_one += degrees_per_slice;
 				}
-				else if (this.pie_shape_type == PIE_LINE) {
+				else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) {
 					this.slices.add(new PieSliceLine((int)this.location.x, (int)this.location.y, 0, (float)size_in_percent, (float) temp_angle_start, this.color));
 					this.value_one = degrees_per_slice; 
 				}
@@ -133,12 +133,12 @@ public class Pie extends PieElement {
 
 	  public void addSlice(String name, String description, double value, int color){
 		  this.addSlice(value, color);
-		  if (this.pie_shape_type == PIE_ARC) {
+		  if (this.pie_shape_type == PIE_ARC_SET_RADIUS) {
 			  PieSlice slice = slices.get(slices.size()-1);
 			  slice.setName(name);
 			  slice.setDescription(description);		  
 //			  if (debug_code) PApplet.println(slice.name + " " + slice.description);
-		  } else if (this.pie_shape_type == PIE_LINE) {
+		  } else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) {
 			  PieSlice slice = slices.get(slices.size()-1);
 			  slice.setName(name);
 			  slice.setDescription(description);		  
@@ -147,14 +147,14 @@ public class Pie extends PieElement {
 	  }
 	  
 	  public void addSlice(double value, int color){
-		if (this.pie_shape_type == PIE_ARC) {
-			this.slices.add(new PieSliceArc((int)this.location.x, (int)this.location.y, this.radius_base, 0, 0, this.color));
+		if (this.pie_shape_type == PIE_ARC_SET_RADIUS) {
+			this.slices.add(new PieSliceArc((int)this.location.x, (int)this.location.y, this.radius_base, 0, 0, color));
 			this.value_one += value;
 			PieSlice slice = slices.get(slices.size()-1);
 			slice.setValue(value);
 			if (name_font_loaded) slice.loadFontDescription(this.name_font, this.name_font_size);
 		}
-		else if (this.pie_shape_type == PIE_LINE) {
+		else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) {
 			this.slices.add(new PieSliceLine((int)this.location.x, (int)this.location.y, 0, 0, 0, this.color));
 			if (value > this.value_one) this.value_one = value; 
 			PieSlice slice = slices.get(slices.size()-1);
@@ -292,6 +292,17 @@ public class Pie extends PieElement {
 		}
 	}
 
+	public void loadFontPie(int new_font_number, int size) {
+		super.loadFontAll(new_font_number, size);
+	}
+
+	public void loadFontSlices(int new_font_number, int size) {
+		for (int i = 0; i < slices.size(); i++) {
+			PieSlice slice = slices.get(i);
+			slice.loadFontAll(new_font_number, size);
+		}
+	}
+
 	public void textLocationNameDescription(float x, float y, float offset_x, float offset_y) {
 		super.textLocationNameDescription(x, y, offset_x, offset_y);
 	}
@@ -380,7 +391,7 @@ public class Pie extends PieElement {
 	}
 	
 	  public void applyValuesToSliceDisplay() {
-		  if (this.pie_shape_type == PIE_ARC) {
+		  if (this.pie_shape_type == PIE_ARC_SET_RADIUS) {
 			  this.value_one = 0;
 			  for (int i = 0; i < slices.size(); i++) {
 					PieSlice slice = slices.get(i);
@@ -397,7 +408,7 @@ public class Pie extends PieElement {
 					slice_start_degrees += slice_extent_degrees;
 			  }
 		  }
-		  else if (this.pie_shape_type == PIE_LINE) {
+		  else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) {
 			  this.value_one = 0;
 			  for (int i = 0; i < slices.size(); i++) {
 					PieSlice slice = slices.get(i);

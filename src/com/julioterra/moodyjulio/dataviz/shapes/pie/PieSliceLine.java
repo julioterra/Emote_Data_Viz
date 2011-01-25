@@ -8,7 +8,7 @@ public class PieSliceLine extends PieSlice {
 
 	  public PieSliceLine(int x_loc, int y_loc, float radius, float size_in_percent, float angle_start, int color) {
 		  super(x_loc, y_loc, radius, size_in_percent, angle_start, color);
-		  this.pie_shape_type = PIE_LINE;
+		  this.pie_shape_type = PIE_LINE_VAR_RADIUS;
 	  }
 
 	  /*********************************************************

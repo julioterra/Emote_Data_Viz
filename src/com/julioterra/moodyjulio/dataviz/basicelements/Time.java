@@ -212,6 +212,8 @@ public class Time {
 
 	public static long calculate_time_dif_seconds(Time start_time, Time end_time) {		
 		long time_dif = end_time.get_time_in_seconds() - start_time.get_time_in_seconds();		
+		if (end_time.get_time_in_seconds() < start_time.get_time_in_seconds())
+			time_dif = (end_time.get_time_in_seconds() + (24*60*60))- start_time.get_time_in_seconds();		
 		return time_dif; 	
 	}
 

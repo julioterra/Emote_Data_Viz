@@ -8,8 +8,10 @@ import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
 public class PieElement extends ShapeColor{
 
 	  public static final int UNDEFINED = -1;
-	  public static final int PIE_ARC = 0;
-	  public static final int PIE_LINE = 1; 
+	  public static final int PIE_ARC_SET_RADIUS = 0;
+	  public static final int PIE_ARC_VAR_RADIUS = 1;
+	  public static final int PIE_LINE_SET_RADIUS = 2;
+	  public static final int PIE_LINE_VAR_RADIUS = 3; 
 	  protected int pie_shape_type = UNDEFINED;
 
 	  public static final int ANGLE = 0;

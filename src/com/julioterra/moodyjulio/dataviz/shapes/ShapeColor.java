@@ -185,10 +185,10 @@ public class ShapeColor extends Shape {
 
 	/** GET COLOR METHODS **/
 
-	public static int colorHSB(int hue, int saturation, int brightness) {
-		hue = hue/255;
-		saturation = saturation/255;
-		brightness = brightness/255;
+	public static int colorHSB(float hue, float saturation, float brightness) {
+		hue = (float) (hue/255.0);
+		saturation = (float) (saturation/255.0);
+		brightness = (float) (brightness/255.0);
 		return Color.HSBtoRGB(hue, saturation, brightness);
 	}
 

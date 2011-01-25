@@ -8,7 +8,7 @@ public class PieSliceArc extends PieSlice{
 	
 	  public PieSliceArc(int x_loc, int y_loc, float radius, float size_in_percent, float angle_start, int color) {
 		  super(x_loc, y_loc, radius, size_in_percent, angle_start, color);
-		  this.pie_shape_type = PIE_ARC;
+		  this.pie_shape_type = PIE_ARC_SET_RADIUS;
 	  }
 
 	  /*********************************************************
