@@ -54,7 +54,7 @@ public class DataProcessor extends DataVizElement{
 					new_entry = new MobileData(data_entry);								
 					break;
 				case EMOTION:
-					new_entry = new DataPieEmotion(data_entry);				
+					new_entry = new PieEmotionData(data_entry);				
 					break;
 				case ACTIVITY:
 					break;
@@ -83,6 +83,20 @@ public class DataProcessor extends DataVizElement{
 	public void load_2_database() {
 	}
 	
+	// ************************************
+	// CREATE_PROCESSED_DATA_LIST - USING A TIME RANGE
+	// function that creates an array of emotion data objects based on a specified time window 
+	public void createProcessedDataList_usingDateRange(Date start_date, Date date_end, Time start_time, Time time_end, float interval_hours) {		
+	}
+
+	// ************************************
+	// UPDATE_PROCESSED_DATA_LIST - USING DATA FROM RAW DATA ARRAY
+	// data from Journal database and re-saving it to the Emotion Pie table
+	// **
+	public void updateProcessedDataList_usingRawDataList() {
+	}
+
+
 	public void print() {
 		PApplet.println("** RAW DATA ** total rows " + data_list_raw.size()); 
 		for (int i = 0; i < data_list_raw.size(); i++) {
@@ -101,73 +115,28 @@ public class DataProcessor extends DataVizElement{
 	 *** GET FUNCTIONS 
 	 ***************************/
 	
-	public int get_size() {
+	public int get_size_raw() {
 		return data_list_raw.size();
 	}
 	
-	public Data get(int index) {
+	public Data get_raw(int index) {
 		return data_list_raw.get(index);
 	}
-	
-	public ArrayList<Data> get() {
+
+	public ArrayList<Data> get_raw() {
 		return data_list_raw;
 	}
 
-	public int loadDataFromTable(int data_table_name) {
-		int count = 0;
-		if (data_table_name == JournalData) {
-			this.data_type_raw = JOURNAL;
-			while (database.next()) {
-				JournalData most_recent = new JournalData(database.getString("time_stamp"), database.getString("date_stamp"), 
-								database.getString("emotion_L1"), database.getString("emotion_L2"),
-								database.getString("emotion_L3"), database.getString("activity"), 
-								database.getString("location"), database.getString("people"), 
-								database.getString("description"));
-				this.add(JOURNAL, most_recent);
-				count++;
-			}
-		}
-		if (data_table_name == MobileData) {
-			this.data_type_raw = MOBILE;
-			while (database.next()) {
-				MobileData most_recent = new MobileData(database.getString("gsr"), database.getString("heart_rate"), 
-						database.getString("emotion"), database.getString("time_stamp"), database.getString("date_stamp"), 
-						database.getString("gps_status"), database.getString("longitude"), database.getString("long_orient"), 
-						database.getString("latitude"), database.getString("lat_orient"));
-				this.add(MOBILE, most_recent);
-				count++;
-			}
-		}
-		if (data_table_name == PieData_Emotion) {
-			this.data_type_processed = EMOTION;
-			while (database.next()) {
-				DataPieEmotion most_recent = new DataPieEmotion(database.getString("date_stamp"), database.getString("time_stamp"), 
-						database.getString("date_end"), database.getString("time_end"), database.getString("emotion_number"), 
-						database.getString("emotion_intensity"), database.getString("name"), database.getString("description"), 
-						database.getString("emotion"), database.getString("activity"), database.getString("place"),
-						database.getString("people"));
-				this.add(EMOTION, most_recent);
-				count++;
-			}
-		}
-		return count;
+	public int get_size_processed() {
+		return data_list_processed.size();
+	}
+	
+	public Data get_processed(int index) {
+		return data_list_processed.get(index);
 	}
 
-
-
-	// ************************************
-	// CREATE_PROCESSED_DATA_LIST - USING A TIME RANGE
-	// function that creates an array of emotion data objects based on a specified time window 
-	public void createProcessedDL_wTimeRange(Date start_date, Date date_end, Time start_time, Time time_end, float interval_hours) {
-		
-	}
-
-	// ************************************
-	// UPDATE_PROCESSED_DATA_LIST - USING DATA FROM RAW DATA ARRAY
-	// data from Journal database and re-saving it to the Emotion Pie table
-	// **
-	public void updateProcessedDL_wRawData() {
-		
+	public ArrayList<Data> get_processed() {
+		return data_list_processed;
 	}
 
 	/***************************
@@ -208,17 +177,23 @@ public class DataProcessor extends DataVizElement{
 		return most_recent;
 	}
 
+	// LOAD_DATE_RANGE - loads data from database into an array list of data objects.  
+	// input: the number of the source data table, the start date and end date of the range to laod 
+	// returns: an array list with data objects - specific class of objects will depend on database that was read		
 	public static ArrayList<Data> load_date_range(int data_table_number, Date date_range_start, Date date_range_end) {
 		ArrayList<Data> new_list = new ArrayList<Data>();
 		if(database.connection != null) {
 			database.query("SELECT * FROM "  + database_name[data_table_number] + 
 							 " WHERE date_stamp >= \"" + date_range_start.get_date_in_string() + 
 							 "\" AND date_stamp <= \"" + date_range_end.get_date_in_string() + "\"");
-			new_list = getDataFromTable(data_table_number);
+			new_list = read_query_results(data_table_number);
 		}
 		return new_list;
 	}
 
+	// LOAD_DATE_TIME_RANGE - loads data from database into an array list of data objects.  
+	// input: the number of the source data table, the start date and time, and the end date and time of the range to laod 
+	// returns: an array list with data objects - specific class of objects will depend on database that was read		
 	public static ArrayList<Data> load_date_and_time_range(int data_table_number, Date date_range_start, Time time_range_start, Date date_range_end, Time time_range_end) {
 		ArrayList<Data> new_list = new ArrayList<Data>();
 		if(database.connection != null) {
@@ -234,33 +209,44 @@ public class DataProcessor extends DataVizElement{
 
 			if (debug_code) PApplet.println(query_str);
 			
-			new_list = getDataFromTable(data_table_number);
+			new_list = read_query_results(data_table_number);
 		}
 		return new_list;
 	}
 	
+	// LOAD_DATE - loads data from database into an array list of data objects.  
+	// input: the number of the source data table, the date for the query 
+	// returns: an array list with data objects - specific class of objects will depend on database that was read		
 	public static ArrayList<Data> load_date(int data_table_number, Date date_selected) {
 		ArrayList<Data> new_list = new ArrayList<Data>();
 		if(database.connection != null) {
 			database.query("SELECT * FROM "  + database_name[data_table_number] + 
 							 " WHERE date_stamp >= \"" + date_selected.get_date_in_string() + 
 							 "\" AND date_stamp <= \"" + date_selected.get_date_in_string() + "\"");
-			new_list = getDataFromTable(data_table_number);
+			new_list = read_query_results(data_table_number);
 		}
 		return new_list;
 	}
 
+	// LOAD_TIME_RANGE - loads data from database into an array list of data objects.  
+	// input: the number of the source data table, the start and end time of the time range 
+	// returns: an array list with data objects - specific class of objects will depend on database that was read		
+	// note: the results will use include records from the same window time from multiple different days
 	public static ArrayList<Data> load_time_range(int data_table_number, Time time_range_start, Time time_range_end) {
 		ArrayList<Data> new_list = new ArrayList<Data>();
 		if(database.connection != null) {
 			database.query("SELECT * FROM "  + database_name[data_table_number] + 
 							 " WHERE time_stamp >= \"" + time_range_start.get_time_in_string() + 
 							 "\" AND time_stamp <= \"" + time_range_end.get_time_in_string() + "\"");
-			new_list = getDataFromTable(data_table_number);
+			new_list = read_query_results(data_table_number);
 		}
 		return new_list;
 	}
-	public static ArrayList<Data> getDataFromTable(int data_table_name) {
+
+	// READ_QUERY_RESULTS - reads results from any query using the appropriate data type.  
+	// input: the number of the source data table 
+	// returns: an array list with data objects - specific class of objects will depend on database that was read		
+	public static ArrayList<Data> read_query_results(int data_table_name) {
 		ArrayList<Data> new_list = new ArrayList<Data>();
 		int count = 0;
 
@@ -287,7 +273,7 @@ public class DataProcessor extends DataVizElement{
 		}
 		if (data_table_name == PieData_Emotion) {
 			while (database.next()) {
-				DataPieEmotion most_recent = new DataPieEmotion(database.getString("date_stamp"), database.getString("time_stamp"), 
+				PieEmotionData most_recent = new PieEmotionData(database.getString("date_stamp"), database.getString("time_stamp"), 
 						database.getString("date_end"), database.getString("time_end"), database.getString("emotion_number"), 
 						database.getString("emotion_intensity"), database.getString("name"), database.getString("description"), 
 						database.getString("emotion"), database.getString("activity"),
@@ -301,6 +287,69 @@ public class DataProcessor extends DataVizElement{
 		return new_list;
 	}
 
+	/***************************
+	 *** STATIC FUNCTIONS 
+	 *********************
+	 *************
+	 *****
+	 *** LIST PROCESSING METHODS  
+	 ***************************/
+
+	// JOIN LIST METHOD - Joins two strings that contain comma separate lists
+	// input: two strings with command separated values
+	// output: a string with all entries from both original lists, dedupped
+	public static String joinLists(String base_string, String new_string) {
+		String final_string = base_string + ", " + new_string;
+		String[] temp_string_array = PApplet.trim(PApplet.split(final_string, ","));
+		ArrayList<String> final_string_phrases = new ArrayList<String>();
+
+		for (int i = 0; i < temp_string_array.length; i ++) {
+			if (!temp_string_array[i].equals("")) {
+				final_string_phrases.add(temp_string_array[i]);
+			}
+		}
+		for (int i = final_string_phrases.size()-1; i >= 1; i --) {
+			String current_word = final_string_phrases.get(i); 
+			for (int j = i-1; j >= 0; j --) {
+	 			if (current_word.equals(final_string_phrases.get(j))) final_string_phrases.remove(i);
+			}
+		}		
+		if (final_string_phrases.size() > 0) {
+			final_string = final_string_phrases.get(0);
+			for (int i = 1; i < final_string_phrases.size(); i ++) {
+				final_string += ", " + final_string_phrases.get(i);
+			}
+		}
+		return final_string;
+	}	
+
+	// ************************************
+	// ** JOIN LIST AND REPLACE STRING METHOD
+	// ** Join two strings that contain comma separate lists, and replaces specified text.
+	// ** the text to remove can be matched using Regex.
+	// **
+	public static String joinLists_People(String base_string, String new_string, String remove_string, String replace_string) {
+		String updated_string = joinLists(base_string, new_string);
+		updated_string = updated_string.replaceAll(remove_string, replace_string);
+		return updated_string;
+	}
+
+	// ************************************
+	// ** JOIN STRINGS AND REPLACE METHOD
+	// ** Join two strings that contain comma separate lists, and replaces specified text
+	// **
+	public static int countListItems(String base_string) {
+		String[] string_count = PApplet.split(base_string, ",");
+		int count = string_count.length;
+		if(base_string.contains("more")) count += 5;
+		if(base_string.contains("many")) count += 5;
+		return count;
+	}
+
+	// ************************************
+	// ** CONVERT INT TO STRING FOR  TIME AND DATE (BASE-10)
+	// ** Join two strings that contain comma separate lists, and replaces specified text
+	// **
 	public static String time_date_part_to_string(long current_time) {
 		String time_date_in_string = String.valueOf(current_time);
 		if (current_time < 10) {

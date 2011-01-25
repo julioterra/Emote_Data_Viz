@@ -2,7 +2,7 @@ package com.julioterra.moodyjulio.dataviz.application;
 
 import com.julioterra.moodyjulio.dataviz.basicelements.*;
 import com.julioterra.moodyjulio.dataviz.datahandlers.DataProcessor;
-import com.julioterra.moodyjulio.dataviz.datahandlers.EmotionPieCreator;
+import com.julioterra.moodyjulio.dataviz.datahandlers.PieDataProcessor;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
 import com.julioterra.moodyjulio.dataviz.shapes.pie.*;
 
@@ -13,7 +13,7 @@ public class MoodyJulioDataViz extends PApplet {
 
 	Pie_Arc pie_emotions;
 	Pie_Line pie_heart;
-	EmotionPieCreator data_processor;
+	PieDataProcessor data_processor;
 	
 	int[] angs =           {30, 10, 45, 35, 60, 38, 75, 67};
 	int[] height_heart =   {120, 130, 125, 135, 140, 145, 150, 135, 130, 110, 120, 130,
@@ -35,7 +35,7 @@ public class MoodyJulioDataViz extends PApplet {
 		background(100);
 		float radius = (float) (min(width, height) * 0.75) /2;
 
-		data_processor = new EmotionPieCreator(width/2-100, height/2, (int) (height*0.75));
+		data_processor = new PieDataProcessor(width/2-100, height/2, (int) (height*0.75));
     	data_processor.loadPie(new Date(2010, 11, 24), new Time(0, 0, 0), new Date(2010, 11, 24), new Time(23, 59, 59));
 
 		pie_emotions = new Pie_Arc(width/2-100, height/2, radius*2, PieElement.PIE_ARC_SET_RADIUS);
@@ -77,8 +77,8 @@ public class MoodyJulioDataViz extends PApplet {
 	    background(DataVizElement.Cur_Background_Color);
 
 //	    pie_emotions.display();
-//	    pie_heart.display();
 	    data_processor.pie.display();
+//	    pie_heart.display();
 	    
 	}
 
@@ -93,28 +93,19 @@ public class MoodyJulioDataViz extends PApplet {
 	    	pie_heart.move(pie_heart.location.x - 50, pie_heart.location.y);
 	    } 
 	    else if (key == '-') {
-//	    	pie_heart.scale((float) 0.75);
-//	    	pie_emotions.scale((float) 0.75);
 	    	data_processor.scrollDays(-1);
 	    }
 	    else if (key == '+') {
-//	    	pie_heart.scale((float) 1.25);
-//	    	pie_emotions.scale((float) 1.25);
 	    	data_processor.scrollDays(1);
 	    }
 	    else if (key == 'z') {
-	    	data_processor.createProcessedDL_wTimeRange(new Date(2010, 11, 17), new Date(2010, 12, 9), new Time(0, 0, 0), new Time(23, 59, 59), (float) 1);
-	    	data_processor.updateProcessedDL_wRawData();
+	    	data_processor.createProcessedDataList_usingDateRange(DataVizElement.EMOTION, new Date(2010, 11, 17), new Date(2010, 12, 9), new Time(0, 0, 0), new Time(23, 59, 59), (float) 1);
+	    	data_processor.updateProcessedDataList_usingRawDataList();
 	    }
 	    else if (key == 'x') {
-//	    	data_processor.updateProcessedDL_wRawData();
-//	    	pie_heart.scaleShiftReset();
-//	    	pie_emotions.scaleShiftReset();
 	    }
 	    else if (key == 'r') {
 	    	data_processor.loadPie(new Date(2010, 11, 24), new Time(0, 0, 0), new Date(2010, 11, 24), new Time(23, 59, 59));
-//	    	data_processor.load_time_range(new Time(12, 0, 0), new Time(15, 59, 59));
-//	    	data_processor.load_date_range(DataVizElement.JOURNAL, new Date(2010, 11, 01), new Date(2010, 12, 20));
 	    }
 	    else if (key == 'l') {
 	    	data_processor.load_2_database();

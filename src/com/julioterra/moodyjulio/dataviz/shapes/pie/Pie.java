@@ -201,6 +201,10 @@ public class Pie extends PieElement {
 			slice.setShiftMouseOverAll(this.hue_shift_mouse_over, this.sat_shift_mouse_over, this.bright_shift_mouse_over, this.scale_shift_mouse_over, this.text_shift_mouse_over);
 		}
 	}	
+
+	public void setShiftMouseOverPie(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
+		super.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+	}
 	
 	public void scaleShiftAll() {
 		super.scaleShiftMouseOver();

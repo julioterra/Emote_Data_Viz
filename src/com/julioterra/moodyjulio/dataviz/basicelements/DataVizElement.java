@@ -47,7 +47,7 @@ public class DataVizElement {
 	
 	public static boolean 			debug_code = 		true;
 	public static boolean 			auto_read = 		true;
-	public static boolean 			load_data = 		true;	
+	public static boolean 			load_data = 		false;	
 	
 	public static String 			file_name = 		"";
 	public static String 			file_name_short = 	"";
