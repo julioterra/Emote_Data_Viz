@@ -9,20 +9,24 @@ public class Shape extends DataVizElement{
 
 	public PVector location;
 	public boolean visible;
+	public double scale;
 
-	protected boolean mouse_over;
+	protected boolean mouse_over_active;		// not yet integrated
+	public boolean mouse_over;	
 	protected float scale_shift_mouse_over;
 	protected float scale_shift_mouse_press;
-	protected boolean 	text_shift_mouse_over;
-	protected boolean 	text_shift_mouse_press;
 
-	public double scale;
+	protected boolean mouse_press_active;		// not yet integrated
+	public boolean mouse_pressed;			// not yet integrated
+	protected boolean text_shift_mouse_over;
+	protected boolean text_shift_mouse_press;
 
 	public String name;
 	public PFont name_font;
 	protected boolean name_font_loaded;
 	public int name_font_size;
 	public int name_font_color;
+	public int name_font_number;
 	public PVector name_location;
 	public boolean name_visible;
 
@@ -31,10 +35,10 @@ public class Shape extends DataVizElement{
 	protected boolean description_font_loaded;
 	public int description_font_size;
 	public int description_font_color;
+	public int description_font_number;
 	public PVector description_location;
 	public boolean description_visible;
 
-	
 	public Shape () {
 		this(0,0);
 	}
@@ -59,6 +63,9 @@ public class Shape extends DataVizElement{
 		
 		this.description_visible = false;
 		this.name_visible = false;
+		
+		this.mouse_over_active = true;
+		this.mouse_press_active = true;
 	}
 	
 	/*********************************************************
@@ -81,19 +88,21 @@ public class Shape extends DataVizElement{
 		return this.description;
 	}
 
-	public void loadFontAll(int new_font_number, int size) {
-		this.loadFontName(DataVizElement.fonts[new_font_number], size);
-		this.loadFontDescription(DataVizElement.fonts[new_font_number], (int) (size*0.7));
+	public void loadFontAll(int new_font_number, int size, float font_scale) {
+		this.loadFontName(new_font_number, size);
+		this.loadFontDescription(new_font_number, (int) (size*font_scale));
 	}
 
-	public void loadFontName(PFont new_font, int size) {
-		this.name_font = new_font;
+	public void loadFontName(int new_font_number, int size) {
+		this.name_font_number = new_font_number;
+		this.name_font = DataVizElement.fonts[new_font_number];
 		this.name_font_size = size;
 		this.name_font_loaded = true;
 	}
 
-	public void loadFontDescription(PFont new_font, int size) {
-		this.description_font = new_font;
+	public void loadFontDescription(int new_font_number, int size) {
+		this.description_font_number = new_font_number;
+		this.description_font = DataVizElement.fonts[new_font_number];
 		this.description_font_size = size;
 		this.description_font_loaded = true;
 	}
@@ -109,6 +118,14 @@ public class Shape extends DataVizElement{
 
 	public void setFontColorDescription(int font_color) {
 		this.description_font_color = font_color;
+	}
+
+	public PVector getLocation() {
+		return location;
+	}
+
+	public void setLocation(int x, int y) {
+		this.location = new PVector(x, y);
 	}
 
 	public void textLocationNameDescription(float x, float y, float offset_x, float offset_y) {
@@ -128,43 +145,43 @@ public class Shape extends DataVizElement{
 		this.description_location = new PVector(this.name_location.x+x, this.name_location.y+y);
 	}
 	
-	public void textSetVisibleNameLocation() {
-		this.textNameSetVisible();
-		this.textDescriptionSetVisible();
+	public void setTextVisibleNameLocation() {
+		this.setTextVisibleName();
+		this.setTextVisibleDescription();
 	}
 
 	public void shiftTextNameLocation() {
 		if(this.text_shift_mouse_over) {
 			PApplet.println(this.name + " got to shift text visible ");
-			this.textSetVisibleNameLocation();
+			this.setTextVisibleNameLocation();
 		}
 	}
 
-	public void shiftResetTextNameLocation() {
+	public void shiftTextNameLocationReset() {
 		if(this.text_shift_mouse_over) {
 			PApplet.println(this.name + " got to shift text INvisible ");
-			this.textSetInvisibleNameLocation();
+			this.setTextInvisibleNameLocation();
 		}
 	}
 
-	public void textSetInvisibleNameLocation() {
-		this.textNameSetInvisible();
-		this.textDescriptionSetInvisible();
+	public void setTextInvisibleNameLocation() {
+		this.setTextInvisibleName();
+		this.setTextInvisibleDescription();
 	}
 
-	public void textNameSetVisible() {
+	public void setTextVisibleName() {
 		this.name_visible = true;
 	}
 
-	public void textDescriptionSetVisible() {
+	public void setTextVisibleDescription() {
 		this.description_visible = true;
 	}
 	
-	public void textNameSetInvisible() {
+	public void setTextInvisibleName() {
 		this.name_visible = false;
 	}
 
-	public void textDescriptionSetInvisible() {
+	public void setTextInvisibleDescription() {
 		this.description_visible = false;
 	}
 	
@@ -185,7 +202,6 @@ public class Shape extends DataVizElement{
 		if (visible) {
 			processing_app.smooth();
 			processing_app.noStroke();
-
 			// add text drawing to this method
 			this.displayText();
 		}
@@ -193,11 +209,13 @@ public class Shape extends DataVizElement{
 	
 	public void displayText() {
 		if (this.name_font_loaded && this.name_visible) {
+			processing_app.textAlign(PApplet.LEFT);
 			processing_app.fill(this.name_font_color);
 			processing_app.textFont(this.name_font, this.name_font_size);
 			processing_app.text(this.name, this.name_location.x, this.name_location.y);
 		}
 		if (this.description_font_loaded && this.description_visible) {
+			processing_app.textAlign(PApplet.LEFT);
 			processing_app.fill(this.description_font_color);
 			processing_app.textFont(this.description_font, this.description_font_size);
 			processing_app.text(this.description, this.description_location.x, this.description_location.y);
@@ -225,7 +243,17 @@ public class Shape extends DataVizElement{
 	   ** SCALE SHIFT METHODS 
 	   **/
 	  
-	  public void scaleShift(float shift_scale) {
+
+	
+	  public double getScale() {
+			return scale;
+		}
+
+		public void setScale(double scale) {
+			this.scale = scale;
+		}
+		
+	  public void shiftScale(float scale_shift) {
 	  }
 
 	  public void setScaleShiftMouseOver(float scale_shift) {
@@ -233,8 +261,8 @@ public class Shape extends DataVizElement{
 		  this.scale_shift_mouse_over = scale_shift;
 	  }
 
-	  public void scaleShiftMouseOver() {
-		  scaleShift(this.scale_shift_mouse_over);
+	  public void shiftScaleMouseOver() {
+		  if(mouse_over_active) shiftScale(scale_shift_mouse_over);
 	  }
 
 	  public void setScaleShiftMousePress(float scale_shift) {
@@ -242,22 +270,44 @@ public class Shape extends DataVizElement{
 		  this.scale_shift_mouse_press = scale_shift;
 	  }
 
-	  public void scaleShiftMousePress() {
-		  scaleShift(this.scale_shift_mouse_press);
+	  public void shiftScaleMousePress() {
+		  shiftScale(scale_shift_mouse_press);
 	  }
 
-	  public void scaleShiftReset() {
+	  public void shiftScaleReset() {
 	  }
 
-	  public void scaleShiftResetToBase() {
+	  public void shiftScaleResetToBase() {
 	  }
-	/*********************************************************
+
+	  
+	  /*********************************************************
 	 ** MOUSE OVER METHODS 
 	 **/
 
 	public void mouseOver() {
 	}
 	
+	public void mousePress() {
+	}
+	
+	
+	public boolean isMouse_over_active() {
+		return mouse_over_active;
+	}
+
+	public void setMouse_over_active(boolean mouse_over_active) {
+		this.mouse_over_active = mouse_over_active;
+	}
+
+	public boolean isMouse_press_active() {
+		return mouse_press_active;
+	}
+
+	public void setMouse_press_active(boolean mouse_press_active) {
+		this.mouse_press_active = mouse_press_active;
+	}
+
 	protected boolean contains(float x, float y) {
 		return false;
 	}

@@ -1,8 +1,10 @@
 package com.julioterra.moodyjulio.dataviz.shapes.pie;
 
+import com.julioterra.moodyjulio.dataviz.shapes.ShapeCircle;
+
 import processing.core.PApplet;
 
-public class PieSlice extends PieElement {
+public class PieSlice extends ShapeCircle {
 
 	  protected float width;
 	  protected float width_base;
@@ -58,17 +60,13 @@ public class PieSlice extends PieElement {
 	  public void scale(float percent_scale) {
 		  super.scale(percent_scale);
 		  this.scaleWidth();
-		  PApplet.println(" WIDTH " + this.width + " SCALE " + this.scale);
+//		  PApplet.println(" WIDTH " + this.width + " SCALE " + this.scale);
 	  }
 	  
 	  public void setWidth(float width) {
 	      this.width = width;		  
 		  this.width_base = this.width;
 	  }
-
-//	  public void setWidth(float width) {
-//	      this.width = (float) (width * this.scale);		  
-//	  }
 
 	  public void scaleWidth() {
 		  if (this.scale > 0) this.width = (float) (this.width_base * this.scale);		  

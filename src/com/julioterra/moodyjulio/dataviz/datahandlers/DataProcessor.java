@@ -6,7 +6,6 @@ import com.julioterra.moodyjulio.dataviz.basicelements.DataVizElement;
 import com.julioterra.moodyjulio.dataviz.basicelements.Date;
 import com.julioterra.moodyjulio.dataviz.basicelements.Time;
 import com.julioterra.moodyjulio.dataviz.data.*;
-import com.julioterra.moodyjulio.dataviz.shapes.pie.Pie;
 
 public class DataProcessor extends DataVizElement{
 
@@ -14,13 +13,18 @@ public class DataProcessor extends DataVizElement{
 	public int data_type_raw;
 	ArrayList <Data> data_list_processed;
 	public int data_type_processed;
-    public float radius;
 	
 	public boolean ready_to_start;			// flags master start
 	public boolean reading_data;			// flags part of cycle
 	public boolean processing_data;
 	public boolean loading_data;
 	
+	Date date_range_start; 
+	Time time_range_start; 
+	Date date_range_end; 
+	Time time_range_end;
+	
+
 	/***************************
 	 *** CONSTRUCTORS
 	 ***************************/
@@ -37,13 +41,13 @@ public class DataProcessor extends DataVizElement{
 		this.reading_data = 			false;
 		this.processing_data = 			false;
 		this.loading_data = 			false;
+		this.date_range_start = 		new Date (); 
+		this.time_range_start = 		new Time (); 
+		this.date_range_end =		 	new Date (); 
+		this.time_range_end =		 	new Time ();
+
 	}
 	
-	public void init(int data_type_raw) {
-		this.data_type_raw = data_type_raw;
-		this.init();
-	}
-
 	public boolean add(int data_type, String[] data_entry) {
 		Data new_entry = new Data();
 			switch (data_type) {
@@ -66,11 +70,11 @@ public class DataProcessor extends DataVizElement{
 		return false;
 	}
 
-	public boolean add(int data_type, Data data_entry) {
-		if (data_type == JOURNAL || data_type == MOBILE) {
+	public boolean add(int source_type, Data data_entry) {
+		if (source_type == JOURNAL || source_type == MOBILE) {
 			this.data_list_raw.add(data_entry);
 			return true;
-		} else if (data_type == EMOTION) {
+		} else if (source_type == EMOTION || source_type == HEART_RATE) {
 			this.data_list_processed.add(data_entry);
 			return true;
 		}
@@ -85,17 +89,54 @@ public class DataProcessor extends DataVizElement{
 	
 	// ************************************
 	// CREATE_PROCESSED_DATA_LIST - USING A TIME RANGE
-	// function that creates an array of emotion data objects based on a specified time window 
-	public void createProcessedDataList_usingDateRange(Date start_date, Date date_end, Time start_time, Time time_end, float interval_hours) {		
-	}
+	// function that creates an array of emotion data objects based on a specified time window
+	// **	
+	public void createProcessedDataList_usingDateRange(int datatable_number, Date start_date, Time start_time, Date date_end, Time time_end, float interval_minutes) {
+		this.data_list_processed = new ArrayList<Data>();							// initialize the data_list_processed array
+		this.time_range_start = 	new Time(start_time);
+		this.date_range_start = 	new Date(start_date);
+		this.time_range_end = 		new Time(time_end);
+		this.date_range_end = 		new Date(date_end);
+		this.valid_readings = 0;
+		
+		boolean done_reading = false;
+		int end_of_day = 0;
+		Time temp_time_start = 	new Time(start_time);
+		Date temp_day_start = 	new Date(start_date);
+		Time temp_time_end = 	new Time(temp_time_start);
+		Date temp_day_end = 	new Date(temp_day_start);
+		
+		if (debug_code) PApplet.println("beggining of created processed list " + this.date_range_start.get_date_for_sql() + " " +this.date_range_end.get_date_for_sql());
 
-	// ************************************
-	// UPDATE_PROCESSED_DATA_LIST - USING DATA FROM RAW DATA ARRAY
-	// data from Journal database and re-saving it to the Emotion Pie table
-	// **
-	public void updateProcessedDataList_usingRawDataList() {
-	}
+		while (!done_reading) {
+			// calculate the time of the end of each sequence
+			end_of_day = temp_time_end.update_minutes((int) interval_minutes); 
+			if (end_of_day != 0) temp_day_end.update_day(1);
 
+			// current this methods only supports creating arrays using emotion objects
+			if (datatable_number == EMOTION) {
+				PieEmotionData new_emotion_reading = new PieEmotionData(temp_day_start, temp_time_start, temp_day_end, temp_time_end);
+				this.add(datatable_number, new_emotion_reading);				
+				if (debug_code) PApplet.println("DATA PROCESSOR - ADD new EMOTION object to array [pie-data-processor] " + valid_readings + " " + new_emotion_reading.date_stamp.get_date_in_string() + " " + new_emotion_reading.time_stamp.get_time_in_string() + " -- " +  new_emotion_reading.date_end.get_date_in_string() + " " + new_emotion_reading.time_end.get_time_in_string());
+			}
+			else if (datatable_number == HEART_RATE) {
+				PieHeartData new_heart_reading = new PieHeartData(temp_day_start, temp_time_start, temp_day_end, temp_time_end);
+				this.add(datatable_number, new_heart_reading);				
+//				if (debug_code) PApplet.println("ADD new HEART object to array [pie-data-processor] " + valid_readings + " " + new_heart_reading.date_end.get_date_in_string() + " " + new_heart_reading.time_end.get_time_in_string());			
+			}
+
+			//check if we have reached the end of the time range
+			if (this.date_range_end.equals(temp_day_start)) {
+				if (debug_code) PApplet.println("difference " + this.date_range_end.equals(temp_day_end) + " " + Time.calculate_time_dif_seconds(temp_time_end, this.time_range_end));
+				if (Time.calculate_time_dif_seconds(temp_time_end, this.time_range_start) < (60*interval_minutes)) done_reading = true;						
+			}
+			temp_time_start.set(temp_time_end);
+			temp_day_start.set(temp_day_end);
+
+			valid_readings++;
+			if (debug_code) PApplet.println("valid readings " + valid_readings);
+		}		
+	}
 
 	public void print() {
 		PApplet.println("** RAW DATA ** total rows " + data_list_raw.size()); 
@@ -139,6 +180,10 @@ public class DataProcessor extends DataVizElement{
 		return data_list_processed;
 	}
 
+	
+	
+	
+	
 	/***************************
 	 *** STATIC FUNCTIONS 
 	 *********************
@@ -169,6 +214,7 @@ public class DataProcessor extends DataVizElement{
 		Time most_recent = new Time();
 		if(database.connection != null) {
 			database.query("SELECT MAX(time_stamp) FROM "  + database_name[data_table_number] + " WHERE date_stamp = \'search_date\'");
+
 			if(database.next()) {
 				most_recent.set(database.getString("MAX(time_stamp)"));
 				if (DataVizElement.debug_code) PApplet.println(most_recent.get_time_in_string());
@@ -182,10 +228,12 @@ public class DataProcessor extends DataVizElement{
 	// returns: an array list with data objects - specific class of objects will depend on database that was read		
 	public static ArrayList<Data> load_date_range(int data_table_number, Date date_range_start, Date date_range_end) {
 		ArrayList<Data> new_list = new ArrayList<Data>();
-		if(database.connection != null) {
-			database.query("SELECT * FROM "  + database_name[data_table_number] + 
-							 " WHERE date_stamp >= \"" + date_range_start.get_date_in_string() + 
-							 "\" AND date_stamp <= \"" + date_range_end.get_date_in_string() + "\"");
+		String query_str = "SELECT * FROM "  + database_name[data_table_number] + 
+		 					" WHERE date_stamp >= \"" + date_range_start.get_date_in_string() + 
+		 					"\" AND date_stamp <= \"" + date_range_end.get_date_in_string() + "\"";
+
+		if(DataVizElement.data_read && database.connection != null) {
+			database.query(query_str);
 			new_list = read_query_results(data_table_number);
 		}
 		return new_list;
@@ -196,19 +244,16 @@ public class DataProcessor extends DataVizElement{
 	// returns: an array list with data objects - specific class of objects will depend on database that was read		
 	public static ArrayList<Data> load_date_and_time_range(int data_table_number, Date date_range_start, Time time_range_start, Date date_range_end, Time time_range_end) {
 		ArrayList<Data> new_list = new ArrayList<Data>();
-		if(database.connection != null) {
-			String query_str = "SELECT * FROM "  + database_name[data_table_number] + 
-							   " WHERE ( date_stamp >= \"" + date_range_start.get_date_for_sql() + 
-							   "\" AND date_stamp <= \"" + date_range_end.get_date_for_sql() +
-							   "\" ) AND ( time_stamp >= \"" + time_range_start.get_time_in_string();
-			if (time_range_end.hour > time_range_start.hour) 
-				query_str += "\" AND time_stamp < \"" + time_range_end.get_time_in_string() + "\")";
-				else query_str += "\" OR time_stamp < \"" + time_range_end.get_time_in_string() + "\")";
+		String query_str = "SELECT * FROM "  + database_name[data_table_number] + 
+						   " WHERE ( date_stamp >= \"" + date_range_start.get_date_for_sql() + 
+						   "\" AND date_stamp <= \"" + date_range_end.get_date_for_sql() +
+						   "\" ) AND ( time_stamp >= \"" + time_range_start.get_time_for_sql();
+		if (time_range_end.hour >= time_range_start.hour) query_str += "\" AND time_stamp < \"" + time_range_end.get_time_for_sql() + "\")";
+		else query_str += "\" OR time_stamp < \"" + time_range_end.get_time_for_sql() + "\")";
 
-			database.query(query_str);
-
-			if (debug_code) PApplet.println(query_str);
-			
+		if(DataVizElement.data_read && database.connection != null) {
+			if (debug_code) PApplet.println("load date range " + query_str);
+			database.query(query_str);			
 			new_list = read_query_results(data_table_number);
 		}
 		return new_list;
@@ -219,10 +264,12 @@ public class DataProcessor extends DataVizElement{
 	// returns: an array list with data objects - specific class of objects will depend on database that was read		
 	public static ArrayList<Data> load_date(int data_table_number, Date date_selected) {
 		ArrayList<Data> new_list = new ArrayList<Data>();
-		if(database.connection != null) {
-			database.query("SELECT * FROM "  + database_name[data_table_number] + 
-							 " WHERE date_stamp >= \"" + date_selected.get_date_in_string() + 
-							 "\" AND date_stamp <= \"" + date_selected.get_date_in_string() + "\"");
+		String query_str = "SELECT * FROM "  + database_name[data_table_number] + 
+						   " WHERE date_stamp >= \"" + date_selected.get_date_in_string() + 
+						   "\" AND date_stamp <= \"" + date_selected.get_date_in_string() + "\"";
+
+		if (DataVizElement.data_read && database.connection != null) {
+			database.query(query_str);			
 			new_list = read_query_results(data_table_number);
 		}
 		return new_list;
@@ -249,6 +296,8 @@ public class DataProcessor extends DataVizElement{
 	public static ArrayList<Data> read_query_results(int data_table_name) {
 		ArrayList<Data> new_list = new ArrayList<Data>();
 		int count = 0;
+
+//		PApplet.println("GOT TO READ QUERY - data_table_number " + data_table_name);
 
 		if (data_table_name == JournalData) {
 			while (database.next()) {
@@ -281,9 +330,19 @@ public class DataProcessor extends DataVizElement{
 				PApplet.println("** read from data table method - " + database.getString("date_stamp") + " , "+ database.getString("time_stamp") + " - " +  most_recent.getString());
 				new_list.add(most_recent);
 				count++;
-
 			}
 		}
+		if (data_table_name == PieData_HeartRate) {
+			while (database.next()) {
+				PieHeartData most_recent = new PieHeartData(database.getString("gsr"), database.getString("heart_rate"), 
+						database.getString("emotion"), database.getString("time_stamp"), database.getString("date_stamp"), 
+						database.getString("date_end"), database.getString("time_end"));
+				PApplet.println("GOT TO READ QUERY - pie data heart rate " + most_recent.getString());
+				new_list.add(most_recent);
+				count++;
+			}
+		}
+
 		return new_list;
 	}
 
@@ -353,8 +412,7 @@ public class DataProcessor extends DataVizElement{
 	public static String time_date_part_to_string(long current_time) {
 		String time_date_in_string = String.valueOf(current_time);
 		if (current_time < 10) {
-			time_date_in_string = "0";
-			time_date_in_string += String.valueOf(current_time);
+			time_date_in_string = "0" + String.valueOf(current_time);
 		} 
 		return time_date_in_string;
 	}

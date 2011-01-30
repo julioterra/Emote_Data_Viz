@@ -88,16 +88,32 @@ public class Time {
 	 *************************/	
 
 	// function will return 1 for a new day, and -1 for change to the day before
+	public int update_seconds(int new_seconds) {
+		this.second += new_seconds;
+		int new_day = 0;
+		PApplet.println(" update seconds " + new_seconds);
+		if (this.second < 0) { 
+			new_day = this.update_minutes((int) (-1));
+			this.second = (this.second % 60) + 60;
+		} else if (this.second >= 60) {
+			new_day = this.update_minutes(1);
+			this.second = this.second % 60;
+		}
+		return new_day;
+	}
+	
 	public int update_minutes(int new_minutes) {
 		this.minute += new_minutes;
+		int new_day = 0;
+		PApplet.println(" update seconds " + new_minutes);
 		if (this.minute < 0) { 
-			this.minute += 60;
-			return this.update_hours(-1);
+			new_day = this.update_hours((this.minute-60)/60);
+			this.minute = (this.minute - 60) % 60;
 		} else if (this.minute >= 60) {
-			this.minute -= 60;
-			return this.update_hours(1);
+			new_day = this.update_hours(this.minute/60);
+			this.minute = (this.minute % 60);
 		}
-		return 0;
+		return new_day;
 	}
 
 	public int update_hours(int new_hours) {
@@ -151,9 +167,6 @@ public class Time {
 	
 	
 	public long get_time_in_seconds() {
-//		long hours_sec = this.hour * 60 * 60;
-//		long minutes_sec = this.minute * 60;
-//		return (hours_sec + minutes_sec + this.second);	
 		return get_time_in_seconds(this);
 	}
 

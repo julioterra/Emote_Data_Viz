@@ -46,8 +46,9 @@ public class Date {
 	 *************************/	
 
 	public void setYMD(String new_date){
-		if (new_date.length() == 6) this.set(PApplet.trim(new_date.substring(0,4)), PApplet.trim(new_date.substring(4,6)), PApplet.trim(new_date.substring(6)));
-		else if (new_date.length() > 6) this.set(PApplet.trim(new_date.substring(0,4)), PApplet.trim(new_date.substring(5,7)), PApplet.trim(new_date.substring(8)));
+		if (new_date.length() == 6) this.set(PApplet.trim(new_date.substring(0,2)), PApplet.trim(new_date.substring(2,4)), PApplet.trim(new_date.substring(4)));
+		else if (new_date.length() == 8) this.set(PApplet.trim(new_date.substring(0,4)), PApplet.trim(new_date.substring(4,6)), PApplet.trim(new_date.substring(6)));
+		else if (new_date.length() > 8) this.set(PApplet.trim(new_date.substring(0,4)), PApplet.trim(new_date.substring(5,7)), PApplet.trim(new_date.substring(8)));
 	}
 
 	public void set(String new_year, String new_month, String new_day){
@@ -135,6 +136,7 @@ public class Date {
 	}
 	
 	public boolean equals(Date compare_date) {
+//		if (DataVizElement.debug_code) PApplet.println("new " + compare_date.get_date_for_sql() + " orig " + this.get_date_for_sql());
 		if (compare_date.year == this.year && compare_date.month == this.month && compare_date.day == this.day) return true;
 		return false;
 	}

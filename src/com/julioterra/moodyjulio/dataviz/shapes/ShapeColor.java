@@ -4,8 +4,8 @@ import java.awt.Color;
 
 public class ShapeColor extends Shape {
 
-	protected int color;
-	protected int color_base;
+	protected int color_base = colorARGB(0, 255, 255, 255);
+	protected int color = color_base;
 
 	protected float 	hue_shift_mouse_over;
 	protected float 	sat_shift_mouse_over;
@@ -52,11 +52,11 @@ public class ShapeColor extends Shape {
 
 	/** Shift Methods **/
 
-	public void setShiftMouseOverAll(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
+	public void setShiftMouseOverAll(float hue_shift, float saturation_shift, float brightness_shift, float scale_shift, boolean text_shift_mouse_over) {
 		this.hue_shift_mouse_over = hue_shift;
 		this.sat_shift_mouse_over = saturation_shift;
 		this.bright_shift_mouse_over = brightness_shift;
-		this.scale_shift_mouse_over = radius_shift;
+		this.scale_shift_mouse_over = scale_shift;
 		this.text_shift_mouse_over = text_shift_mouse_over;
 	}
 	
@@ -68,15 +68,15 @@ public class ShapeColor extends Shape {
 	}
 
 	public void shiftHueMouseOver() {
-		shiftHue(this.hue_shift_mouse_over);
+		if(mouse_over_active) shiftHue(this.hue_shift_mouse_over);
 	}
 
 	public void shiftSatMouseOver() {
-		this.shiftSat(this.sat_shift_mouse_over);
+		if(mouse_over_active) this.shiftSat(this.sat_shift_mouse_over);
 	}
 
 	public void shiftBrightMouseOver() {
-		shiftBright(this.bright_shift_mouse_over);
+		if(mouse_over_active) shiftBright(this.bright_shift_mouse_over);
 	}
 
 	public void shiftHue(float shift_hue) {
@@ -116,7 +116,7 @@ public class ShapeColor extends Shape {
 
 	/** RESET COLOR METHOD **/
 
-	public void colorReset() {
+	public void shiftColorReset() {
 		this.color = this.color_base;
 	}
 

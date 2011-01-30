@@ -1,12 +1,13 @@
 package com.julioterra.moodyjulio.dataviz.data;
 
-import processing.core.PApplet;
+import com.julioterra.moodyjulio.dataviz.basicelements.Date;
+import com.julioterra.moodyjulio.dataviz.basicelements.Time;
 
 public class MobileData extends Data{
 
 	// core database values attributes
 	public int gsr;
-	public int gsr_high_pass;
+	public int gsr_filtered;
 	public int heart_rate;
 	public String emotion; 
 	public String gps_status;
@@ -14,29 +15,38 @@ public class MobileData extends Data{
 	public String long_orient; 
 	public float latitude;
 	public String lat_orient;
-//	public long time_from_start;
 
 	
-	public MobileData(String gsr, String heartRate, String emotion,
-			String timeStamp, String dateStamp, String gpsStatus, String longitude,
-			String longOrient, String latitude, String latOrient) {
+	public MobileData(String gsr, String heartRate, String emotion, String timeStamp, String dateStamp, String gpsStatus, String longitude, 
+					  String longOrient, String latitude, String latOrient) {
 		super();
 		this.setAll(gsr, heartRate, emotion, timeStamp, dateStamp, gpsStatus,
 					longitude, longOrient, latitude, latOrient);
-
 	}
 
 	public MobileData(String[] new_data) {
 		super();
 		this.setAll(new_data[0], new_data[1], new_data[2], new_data[3], new_data[4], new_data[5],
 				new_data[6], new_data[7], new_data[8], new_data[9]);
-
 	}
 
+	public MobileData(MobileData new_data) {
+		super();
+		this.gsr = new_data.gsr;
+		this.gsr_filtered = new_data.gsr_filtered;
+		this.heart_rate = new_data.heart_rate;
+		this.emotion = new_data.emotion;
+		this.gps_status = new_data.gps_status;
+		this.longitude = new_data.longitude;
+		this.long_orient = new_data.long_orient;
+		this.latitude = new_data.latitude;
+		this.lat_orient = new_data.lat_orient;
+	}
+	
 	public MobileData() {
 		super();
 		this.gsr = 0;
-		this.gsr_high_pass = 0;
+		this.gsr_filtered = 0;
 		this.heart_rate = 0;
 		this.emotion = "0";
 		this.gps_status = "0";
@@ -58,8 +68,8 @@ public class MobileData extends Data{
 			this.gsr = Integer.parseInt(gsr);
 			this.heart_rate = Integer.parseInt(heartRate);
 			this.emotion = emotion;
-			if (dateStamp.length() >= 6) this.date_stamp.set(PApplet.trim(dateStamp.substring(4)), PApplet.trim(dateStamp.substring(2, 4)), PApplet.trim(dateStamp.substring(0, 2)) );
-			this.time_stamp.set(timeStamp);
+			this.date_stamp = new Date(dateStamp);
+			this.time_stamp = new Time(timeStamp);
 
 			this.gps_status = gpsStatus;
 			this.longitude = Float.parseFloat(longitude);
@@ -78,11 +88,11 @@ public class MobileData extends Data{
 	}
 
 	public int setGsrHighPass() {
-		return this.gsr_high_pass;
+		return this.gsr_filtered;
 	}
 
 	public void setGsrHighPass(int gsr) {
-		this.gsr_high_pass = gsr;
+		this.gsr_filtered = gsr;
 	}
 
 	public int getHeartRate() {
@@ -142,7 +152,7 @@ public class MobileData extends Data{
 	}	
 
 	public String getString() {
-		return "start date " + this.date_stamp.get_date_in_string() + " start time " + this.time_stamp.get_time_in_string() + " gsr " + this.gsr + " gsr high pass " + this.gsr_high_pass +
+		return "start date " + this.date_stamp.get_date_in_string() + " start time " + this.time_stamp.get_time_in_string() + " gsr " + this.gsr + " gsr high pass " + this.gsr_filtered +
 				" heart rate " + this.heart_rate + " emotion " + this.emotion;
 	}
 
