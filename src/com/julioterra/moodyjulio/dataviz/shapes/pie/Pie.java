@@ -164,14 +164,14 @@ public class Pie extends ShapeCircle {
 			this.value_one += value;
 			PieSlice slice = slices.get(slices.size()-1);
 			slice.setValue(value);
-			if (name_font_loaded) slice.loadFontDescription(this.name_font_number, this.name_font_size);
+			if (font_loaded_title) slice.loadFontDescription(this.font_number_title, this.font_size_title);
 		}
 		else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) {
 			this.slices.add(new PieSliceLine((int)this.location.x, (int)this.location.y, 0, 0, 0, this.color));
 			if (value > this.value_one) this.value_one = value; 
 			PieSlice slice = slices.get(slices.size()-1);
 			slice.setValue(value);
-			if (name_font_loaded) slice.loadFontDescription(this.name_font_number, this.name_font_size);
+			if (font_loaded_title) slice.loadFontDescription(this.font_number_title, this.font_size_title);
 		}
 		this.applyValuesToSliceDisplay();
 		this.setShiftMouseOverAll();
@@ -320,21 +320,34 @@ public class Pie extends ShapeCircle {
 		super.loadFontAll(new_font_number, size, font_scale);
 	}
 
-	public void loadFontSlices(int new_font_number, int size,  float font_scale) {
+	public void loadFontSlices(int new_font_number, int size, float font_scale) {
 		for (int i = 0; i < slices.size(); i++) {
 			PieSlice slice = slices.get(i);
 			slice.loadFontAll(new_font_number, size, font_scale);
 		}
 	}
+	public void loadFontTitleSlices(int new_font_number, int size) {
+		for (int i = 0; i < slices.size(); i++) {
+			PieSlice slice = slices.get(i);
+			slice.loadFontTitle(new_font_number, size);
+		}
+	}
 
-	public void textLocationNameDescription(float x, float y, float offset_x, float offset_y) {
-		super.textLocationNameDescription(x, y, offset_x, offset_y);
+	public void loadFontDescriptionSlices(int new_font_number, int size) {
+		for (int i = 0; i < slices.size(); i++) {
+			PieSlice slice = slices.get(i);
+			slice.loadFontDescription(new_font_number, size);
+		}
+	}
+	
+	public void setTextLocationNameDescription(float x, float y, float offset_x, float offset_y) {
+		super.setTextLocationNameDescription(x, y, offset_x, offset_y);
 	}
 
 	public void textLocationNameDescriptionSlices(float x, float y, float offset_x, float offset_y) {
 		for (int i = 0; i < slices.size(); i++) {
 			PieSlice slice = slices.get(i);
-			slice.textLocationNameDescription(x, y, offset_x, offset_y);
+			slice.setTextLocationNameDescription(x, y, offset_x, offset_y);
 		}
 	}
 
@@ -363,14 +376,14 @@ public class Pie extends ShapeCircle {
 	public void textVisibleSlice(int index) {
 		if (slices.size() > index) {
 			PieSlice slice = slices.get(index);
-			slice.setTextVisibleNameLocation();
+			slice.setTextVisibleNameDescription();
 		}		
 	}
 
 	public void textInvisibleSlice(int index) {
 		if (slices.size() > index) {
 			PieSlice slice = slices.get(index);
-			slice.setTextInvisibleNameLocation();
+			slice.setTextInvisibleNameDescription();
 		}		
 	}
 
@@ -435,7 +448,14 @@ public class Pie extends ShapeCircle {
 			  this.value_one = 0;
 			  for (int i = 0; i < slices.size(); i++) {
 					PieSlice slice = slices.get(i);
-					slice.setBaseRadius((float) (slice.getValue()) );
+					slice.getValue();
+					if (this.value_one < slice.getValue()) this.value_one = slice.getValue();
+//					PApplet.println(" current value " + slice.getValue() + " radius " + slice.getRadius());
+			  }
+
+			  for (int i = 0; i < slices.size(); i++) {
+					PieSlice slice = slices.get(i);
+					slice.setBaseRadius((float) (slice.getValue()/this.value_one*this.radius) );
 					if (this.value_one < slice.getValue()) this.value_one = slice.getValue();
 //					PApplet.println(" current value " + slice.getValue() + " radius " + slice.getRadius());
 			  }

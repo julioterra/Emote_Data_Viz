@@ -5,8 +5,6 @@ import com.julioterra.moodyjulio.dataviz.basicelements.Time;
 
 public class PieHeartData extends MobileData {
 
-	public Time time_end;
-	public Date date_end;
 	public String name;
 	public String description;
 

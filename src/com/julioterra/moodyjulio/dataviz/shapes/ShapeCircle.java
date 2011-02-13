@@ -122,7 +122,7 @@ public class ShapeCircle extends ShapeColor{
 	            	this.shiftBrightMouseOver();
 	            	this.shiftSatMouseOver();
 	            	this.shiftScaleMouseOver();
-	            	this.shiftTextNameLocation();
+	            	this.shiftTextNameDescription();
 	            } else {
 	            	this.shiftColorReset();
 	            	this.shiftScaleReset();

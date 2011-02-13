@@ -61,7 +61,7 @@ public class EmotionDataProcessor extends DataProcessor {
 					current_minute = current_journal_entry.time_stamp.minute;
 				}
 				// if the most recent journal entry prior to the emotion entry is less than 3 hours old then extract data as appropriate
-				if (last_journal_entry_age < DataVizElement.EmotionAgeThreshold) {
+				if (last_journal_entry_age < DataVizElement.EmotionAgeThresholdHours) {
 					emotion_weighted_ave_total += (float) (convertEmotionToFloat(last_journal_entry.emotion_L1) * (current_minute/60.0) );
 					emotion_intensity_weighted_ave_total += (float) (convertEmotionIntensityToFloat(last_journal_entry.emotion_L2) * ((current_minute - last_journal_entry.time_stamp.minute)/60.0) );
 					emotion_text = joinLists(emotion_text, (last_journal_entry.emotion_L2 + ", " + last_journal_entry.emotion_L3));
@@ -87,7 +87,7 @@ public class EmotionDataProcessor extends DataProcessor {
 				last_journal_entry = (JournalData) current_journal_entries.get(current_journal_entries.size()-1);			
 				
 			} else {
-				if (last_journal_entry_age < EmotionAgeThreshold) {
+				if (last_journal_entry_age < EmotionAgeThresholdHours) {
 					emotion_text = joinLists(emotion_text, (last_journal_entry.emotion_L2 + ", " + last_journal_entry.emotion_L3));
 					activity_text = joinLists(activity_text, last_journal_entry.activity);
 					people_text = joinLists_People(people_text, last_journal_entry.people, people_text_remove, people_text_replace);
@@ -174,7 +174,7 @@ public class EmotionDataProcessor extends DataProcessor {
 	// input: emotion number (emotion_number from the EmotionPieData)
 	// output: string that notes either positive or negative
 	public static String convertEmotionToString(float emotion_number) {
-		if(emotion_number > 0) return "positive";
+		if(emotion_number >= 0) return "positive";
 		else if (emotion_number < 0) return "negative";			
 		return "";
 	}
@@ -184,10 +184,10 @@ public class EmotionDataProcessor extends DataProcessor {
 	// output: string denotes intensity of emotion
 	public static String convertEmotionIntensityToString(float emotion_intensity) {
 		if (emotion_intensity < 1.0) return "low";
-		if (emotion_intensity < 2.0) return "medium";
-		if (emotion_intensity < 3.0) return "elevated";
-		if (emotion_intensity <= 4.0) return "high";	
-		return "";
+		else if (emotion_intensity < 2.0) return "medium";
+		else if (emotion_intensity < 3.0) return "elevated";
+		else if (emotion_intensity <= 4.0) return "high";	
+		return "medium";
 	}
 	
 	// CONVERT EMOTIONS FROM STRING TO FLOAT

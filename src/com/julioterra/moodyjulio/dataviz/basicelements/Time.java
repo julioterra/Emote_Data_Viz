@@ -91,12 +91,12 @@ public class Time {
 	public int update_seconds(int new_seconds) {
 		this.second += new_seconds;
 		int new_day = 0;
-		PApplet.println(" update seconds " + new_seconds);
+//		PApplet.println(" update seconds " + new_seconds);
 		if (this.second < 0) { 
-			new_day = this.update_minutes((int) (-1));
+			new_day = this.update_minutes((int) (this.second/60-1));
 			this.second = (this.second % 60) + 60;
 		} else if (this.second >= 60) {
-			new_day = this.update_minutes(1);
+			new_day = this.update_minutes(this.second/60);
 			this.second = this.second % 60;
 		}
 		return new_day;
@@ -105,10 +105,9 @@ public class Time {
 	public int update_minutes(int new_minutes) {
 		this.minute += new_minutes;
 		int new_day = 0;
-		PApplet.println(" update seconds " + new_minutes);
 		if (this.minute < 0) { 
 			new_day = this.update_hours((this.minute-60)/60);
-			this.minute = (this.minute - 60) % 60;
+			this.minute = (this.minute % 60) + 60;
 		} else if (this.minute >= 60) {
 			new_day = this.update_hours(this.minute/60);
 			this.minute = (this.minute % 60);
@@ -116,16 +115,19 @@ public class Time {
 		return new_day;
 	}
 
-	public int update_hours(int new_hours) {
+	public int update_hours(float new_hours) {
 		this.hour += new_hours;
+		float new_days = 0;
 		if (this.hour < 0) { 
-			this.hour += 24;
+			new_days = this.hour / 24;
+			this.hour = PApplet.abs(this.hour % 24);
 			return -1;
 		} else if (this.hour >= 24) {
-			this.hour -= 24;
+			new_days = this.hour / 24;
+			this.hour = PApplet.abs(this.hour % 24);
 			return 1;
 		}
-		return 0;
+		return (int)new_days;
 	}
 
 	public boolean new_day(Time start_time, double millis_delta_per_step, int step_index) {
@@ -226,7 +228,13 @@ public class Time {
 	public static long calculate_time_dif_seconds(Time start_time, Time end_time) {		
 		long time_dif = end_time.get_time_in_seconds() - start_time.get_time_in_seconds();		
 		if (end_time.get_time_in_seconds() < start_time.get_time_in_seconds())
-			time_dif = (end_time.get_time_in_seconds() + (24*60*60))- start_time.get_time_in_seconds();		
+			time_dif = (end_time.get_time_in_seconds() + (24*60*60)) - start_time.get_time_in_seconds();		
+		return time_dif; 	
+	}
+
+	public static long calculate_time_dif_seconds_maxout(Time start_time, Time end_time) {		
+		if (end_time.get_time_in_seconds() < start_time.get_time_in_seconds()) end_time = new Time("23:59:59");		
+		long time_dif = end_time.get_time_in_seconds() - start_time.get_time_in_seconds();		
 		return time_dif; 	
 	}
 

@@ -2,6 +2,8 @@ package com.julioterra.moodyjulio.dataviz.shapes;
 
 import java.awt.Color;
 
+import processing.core.PApplet;
+
 public class ShapeColor extends Shape {
 
 	protected int color_base = colorARGB(0, 255, 255, 255);
@@ -21,10 +23,12 @@ public class ShapeColor extends Shape {
 
 	public ShapeColor() {
 		super();
+		this.color = Transparent_Color;
 	}
 	
 	public ShapeColor (int x, int y) {
 		super(x, y);
+		this.color = Transparent_Color;
 	}
 
 	public ShapeColor (int x, int y, int color) {
@@ -69,31 +73,37 @@ public class ShapeColor extends Shape {
 
 	public void shiftHueMouseOver() {
 		if(mouse_over_active) shiftHue(this.hue_shift_mouse_over);
+//		PApplet.println("SHIFT HUE METHOD - base color " + this.color_base + " color " + this.color);
 	}
 
 	public void shiftSatMouseOver() {
-		if(mouse_over_active) this.shiftSat(this.sat_shift_mouse_over);
+		if(mouse_over_active) shiftSat(this.sat_shift_mouse_over);
+//		PApplet.println("SHIFT SAT METHOD - base color " + this.color_base + " color " + this.color);
 	}
 
 	public void shiftBrightMouseOver() {
 		if(mouse_over_active) shiftBright(this.bright_shift_mouse_over);
+//		PApplet.println("SHIFT BRIGHT METHOD - base color " + this.color_base + " color " + this.color);
 	}
 
 	public void shiftHue(float shift_hue) {
 		float hue = processing_app.hue(this.color_base);
-		float hue_offshift = (float) (hue*shift_hue);
+		float hue_offshift = (float) (255f*shift_hue);
+//		float hue_offshift = (float) (hue*shift_hue);
 		this.color = adjustHue(this.color, (hue + hue_offshift));
 	}
 	
 	public void shiftSat(float shift_sat) {
 		float saturation = processing_app.saturation(this.color_base);
-		float sat_offshift = (float) (saturation*shift_sat);
+		float sat_offshift = (float) (255f*shift_sat);
+//		float sat_offshift = (float) (saturation*shift_sat);
 		this.color = adjustSat(this.color, (saturation + sat_offshift));
 	}
 	
 	public void shiftBright(float shift_bright) {
 		float brightness = processing_app.brightness(this.color_base);
-		float bright_shift = (float) (brightness*shift_bright);
+		float bright_shift = (float) (255f*shift_bright);
+//		float bright_shift = (float) (brightness*shift_bright);
 		this.color = adjustBright(this.color, (brightness + bright_shift));
 	}
 
@@ -118,6 +128,8 @@ public class ShapeColor extends Shape {
 
 	public void shiftColorReset() {
 		this.color = this.color_base;
+//		  PApplet.println("SHIFT SCALE METHOD - SHAPE RECT - scale " + this.scale + " base color " + this.color_base);
+
 	}
 
 	/** SET ACTIVE RGB COLOR METHODS **/
@@ -192,6 +204,12 @@ public class ShapeColor extends Shape {
 		return Color.HSBtoRGB(hue, saturation, brightness);
 	}
 
+	public static int colorHSBAdobe(float hue, float saturation, float brightness) {
+		hue = (float) (hue/360.0);
+		saturation = (float) (saturation/100.0);
+		brightness = (float) (brightness/100.0);
+		return Color.HSBtoRGB(hue, saturation, brightness);
+	}
 
 	public static int colorARGB(int a, int r, int g, int b) {
 		a = a << 24;  // bit shift a value by 24 bits

@@ -1,5 +1,8 @@
 package com.julioterra.moodyjulio.dataviz.data;
 
+import com.julioterra.moodyjulio.dataviz.basicelements.Date;
+import com.julioterra.moodyjulio.dataviz.basicelements.Time;
+
 public class JournalData extends Data {
 
 	public String emotion_L1; 
@@ -8,8 +11,7 @@ public class JournalData extends Data {
 	public String activity; 
 	public String location;
 	public String people;
-	public String description;
-	
+	public String description;	
 
 	/*******************************
 	 ** CONSTRUCTOR FUNCTIONS
@@ -23,6 +25,13 @@ public class JournalData extends Data {
 
 	}
 
+	public JournalData(String timeStamp, String dateStamp, String timeEnd, String dateEnd, String emotion_L1, String emotion_L2, String emotion_L3,
+			String activity, String location, String people, String description) {
+		super();
+		this.setAll(timeStamp, dateStamp, timeEnd, dateEnd, emotion_L1, emotion_L2, emotion_L3,
+					activity, location, people, description);
+
+	}
 	public JournalData(String[] data_entry) {
 		super();
 		if (data_entry.length >= 9) {
@@ -30,6 +39,21 @@ public class JournalData extends Data {
 						data_entry[6],data_entry[7], data_entry[8]);
 		}
 
+	}
+
+	public JournalData(JournalData new_record) {
+		super();
+		this.time_stamp = new Time (new_record.time_stamp);
+		this.date_stamp = new Date (new_record.date_stamp);
+		this.time_end = new Time (new_record.time_end);
+		this.date_end = new Date (new_record.date_end);
+		this.emotion_L1 = new_record.emotion_L1;
+		this.emotion_L2 = new_record.emotion_L2;
+		this.emotion_L3 = new_record.emotion_L3;
+		this.activity =	new_record.activity; 
+		this.location = new_record.location; 
+		this.people = new_record.people;
+		this.description = new_record.description;
 	}
 
 	public JournalData() {
@@ -48,13 +72,27 @@ public class JournalData extends Data {
 	 ** GETTER AND SETTER FUNCTIONS FOR ALL MAIN CLASS ATTRIBUTES
 	 **/
 	
+	public void setAll(String timeStamp, String dateStamp, String timeEnd, String dateEnd, String emotion_L1, String emotion_L2, String emotion_L3,
+			String activity, String location, String people, String description) {
+			this.time_stamp = new Time (timeStamp);
+			this.date_stamp = new Date (dateStamp);
+			this.time_end = new Time (timeEnd);
+			this.date_end = new Date (dateEnd);
+			this.emotion_L1 = 	emotion_L1;
+			this.emotion_L2 = 	emotion_L2;
+			this.emotion_L3 = 	emotion_L3;
+			this.activity = 	activity;
+			this.location = 	location;
+			this.people = 		people;
+			this.description = 	description;
+	}
+
 	public void setAll(String timeStamp, String dateStamp, String emotion_L1, String emotion_L2, String emotion_L3,
 			String activity, String location, String people, String description) {
-
-			if (dateStamp.length() == 6) this.date_stamp.set(dateStamp.substring(0, 4), dateStamp.substring(4, 6), dateStamp.substring(6));
-			if (dateStamp.length() >= 8) this.date_stamp.set(dateStamp.substring(0, 4), dateStamp.substring(5, 7), dateStamp.substring(8));
-			if (timeStamp.length() >= 6) this.time_stamp.set(timeStamp.substring(0, 2), timeStamp.substring(3, 5), timeStamp.substring(6));
-
+			this.time_stamp = new Time (timeStamp);
+			this.date_stamp = new Date (dateStamp);
+			this.time_end = new Time ("00:00:00");
+			this.date_end = new Date ("0000-00-00");
 			this.emotion_L1 = 	emotion_L1;
 			this.emotion_L2 = 	emotion_L2;
 			this.emotion_L3 = 	emotion_L3;

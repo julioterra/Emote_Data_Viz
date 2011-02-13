@@ -1,26 +1,27 @@
 package com.julioterra.moodyjulio.dataviz.shapes.panel;
 
 import java.util.ArrayList;
-
-import com.julioterra.moodyjulio.dataviz.shapes.ShapeText;
+import processing.core.PApplet;
 import com.julioterra.moodyjulio.dataviz.shapes.pie.PieSlice;
 
-public class ButtonDropDown extends ShapeText {
+public class ButtonDropDown extends ButtonText {
 
-	public ArrayList<ShapeText> buttons;
+	public ArrayList<ButtonText> buttons;
 	public int dropdown_color;
 	public boolean drop_down_active;
+	protected long last_mouse_over;
+	protected long drop_down_pause = 300;
 	
 	public ButtonDropDown(int x, int y, String text, int color, int font_number, int text_align, boolean activate_mouse_over, boolean activate_mouse_press) {
 		super(x, y, text, color, font_number, text_align, activate_mouse_over, activate_mouse_press);
-		buttons = new ArrayList<ShapeText>();
-		this.dropdown_color = this.name_font_color;
+		buttons = new ArrayList<ButtonText>();
+		this.dropdown_color = this.font_color_title;
 	}
 
 	public ButtonDropDown(int x, int y, String text, int color, int font_number, int text_align) {
 		super(x, y, text, color, font_number, text_align, true, true);
-		buttons = new ArrayList<ShapeText>();
-		this.dropdown_color = this.name_font_color;
+		buttons = new ArrayList<ButtonText>();
+		this.dropdown_color = this.font_color_title;
 	}
 	
 	
@@ -30,13 +31,13 @@ public class ButtonDropDown extends ShapeText {
 	
 	public void addSubButton(String text, int action, int color){
 		float location_y = this.location.y + (this.size.y * (buttons.size()+1));
-		ShapeText new_button = new ShapeText((int)location.x, (int)location_y, text, color, this.name_font_number, this.alignment, false, false);
+		ButtonText new_button = new ButtonText((int)location.x, (int)location_y, text, color, this.font_number_title, this.alignment_text, true, false);
 		buttons.add(new_button);
 	}
 
 	public void addSubButton(String text, int action){
 		float location_y = this.location.y + (this.size.y * (buttons.size()+1));
-		ShapeText new_button = new ShapeText((int)location.x, (int)location_y, text, this.dropdown_color, this.name_font_number, this.alignment, false, false);
+		ButtonText new_button = new ButtonText((int)location.x, (int)location_y, text, this.dropdown_color, this.font_number_title, this.alignment_text, true, false);
 		buttons.add(new_button);
 	}
 
@@ -46,9 +47,9 @@ public class ButtonDropDown extends ShapeText {
 
 	 public void display() {
 		  super.display();
-		  if(mouse_over) {
+		  if(drop_down_active) {
 			  for (int i = 0; i < buttons.size(); i++) {
-				  ShapeText button = buttons.get(i);
+				  ButtonText button = buttons.get(i);
 				  button.display();
 			  }
 		  }
@@ -56,15 +57,19 @@ public class ButtonDropDown extends ShapeText {
 
 	  public void mouseOver() {
 		  super.mouseOver();
-		  if(mouse_over) drop_down_active = true; 
+		  if(this.mouse_over) {
+			  drop_down_active = true; 
+			  last_mouse_over = processing_app.millis();
+		  }
 		  if(drop_down_active) {
-			  int mouse_over_sub_count = 0;
 			  for (int i = 0; i < buttons.size(); i++) {
-				  ShapeText button = buttons.get(i);
+				  ButtonText button = buttons.get(i);
 				  button.mouseOver();
-				  if (button.mouse_over) mouse_over_sub_count++;
+				  if (button.mouse_over) { last_mouse_over = processing_app.millis(); }
 			  }
-			  if (mouse_over_sub_count == 0) drop_down_active = false;
+			  if (!this.mouse_over && (processing_app.millis() - last_mouse_over > drop_down_pause)) {
+				  drop_down_active = false;
+			  }
 		  }
 	  }
 	

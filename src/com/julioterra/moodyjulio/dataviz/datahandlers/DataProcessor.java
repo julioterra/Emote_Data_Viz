@@ -2,6 +2,7 @@ package com.julioterra.moodyjulio.dataviz.datahandlers;
 
 import java.util.ArrayList;
 import processing.core.PApplet;
+
 import com.julioterra.moodyjulio.dataviz.basicelements.DataVizElement;
 import com.julioterra.moodyjulio.dataviz.basicelements.Date;
 import com.julioterra.moodyjulio.dataviz.basicelements.Time;
@@ -59,10 +60,6 @@ public class DataProcessor extends DataVizElement{
 					break;
 				case EMOTION:
 					new_entry = new PieEmotionData(data_entry);				
-					break;
-				case ACTIVITY:
-					break;
-				case PEOPLE:
 					break;
 				default: break;
 			}
@@ -239,6 +236,45 @@ public class DataProcessor extends DataVizElement{
 		return new_list;
 	}
 
+	
+	public void create_end_date_time() {
+		this.data_list_raw = load_date_and_time_range(JournalData, new Date("2010-11-17"), new Time("00:00:00"), new Date("2010-12-09"), new Time("23:59:59"));
+
+		for (int i = 0; i < data_list_raw.size(); i++) {
+			JournalData current_record = (JournalData) data_list_raw.get(i);
+			// if this is not the last element in the array check the next entry to see if is within the expected timeframe
+			if (i < data_list_raw.size()-1) {
+				JournalData bar_end_record = new JournalData((JournalData) data_list_raw.get(i+1));
+				if (Time.calculate_time_dif_seconds(current_record.time_stamp, bar_end_record.time_stamp) < DataVizElement.EmotionAgeThresholdSeconds) {
+					bar_end_record.time_stamp.update_seconds(-1);
+					current_record.date_end = new Date (bar_end_record.date_stamp);
+					current_record.time_end = new Time (bar_end_record.time_stamp);
+				} else {
+					current_record.date_end = new Date (current_record.date_stamp);
+					current_record.time_end = new Time (current_record.time_stamp);
+					current_record.date_end.update_day(current_record.time_end.update_seconds((int)DataVizElement.EmotionAgeThresholdSeconds));					
+				}
+			} 
+			// if this is the last element on the list, or if the next element on the list is more than 2 hours away then set the time appropriately
+			else {
+				current_record.date_end = new Date (current_record.date_stamp);
+				current_record.time_end = new Time (current_record.time_stamp);
+				current_record.date_end.update_day(current_record.time_end.update_hours(DataVizElement.EmotionAgeThresholdSeconds));
+			}
+		}
+
+		// upload new data into database
+		String insert_format = "UPDATE JournalData\n";
+		for (int j =  0; j < data_list_raw.size(); j++) {
+			JournalData load_reading = (JournalData) data_list_raw.get(j);
+			String insert_data = "SET date_end = \'"  + load_reading.date_end.get_date_for_sql() + "\', time_end = \'"  + load_reading.time_end.get_time_for_sql() + "\'\n" +
+				"WHERE date_stamp = \'" + load_reading.date_stamp.get_date_for_sql() + "\' AND time_stamp = \'" + load_reading.time_stamp.get_time_for_sql() + "\'"; 
+			if (DataVizElement.debug_code) PApplet.println(insert_format + insert_data);					
+			if(database.connection != null && DataVizElement.data_load) database.execute(insert_format + insert_data);
+		}
+
+	}
+	
 	// LOAD_DATE_TIME_RANGE - loads data from database into an array list of data objects.  
 	// input: the number of the source data table, the start date and time, and the end date and time of the range to laod 
 	// returns: an array list with data objects - specific class of objects will depend on database that was read		
@@ -247,7 +283,7 @@ public class DataProcessor extends DataVizElement{
 		String query_str = "SELECT * FROM "  + database_name[data_table_number] + 
 						   " WHERE ( date_stamp >= \"" + date_range_start.get_date_for_sql() + 
 						   "\" AND date_stamp <= \"" + date_range_end.get_date_for_sql() +
-						   "\" ) AND ( time_stamp >= \"" + time_range_start.get_time_for_sql();
+						   "\") AND ( time_stamp >= \"" + time_range_start.get_time_for_sql();
 		if (time_range_end.hour >= time_range_start.hour) query_str += "\" AND time_stamp < \"" + time_range_end.get_time_for_sql() + "\")";
 		else query_str += "\" OR time_stamp < \"" + time_range_end.get_time_for_sql() + "\")";
 
@@ -258,6 +294,52 @@ public class DataProcessor extends DataVizElement{
 		}
 		return new_list;
 	}
+
+	// LOAD_DATE_TIME_RANGE - loads data from database into an array list of data objects.  
+	// input: the number of the source data table, the start date and time, and the end date and time of the range to laod 
+	// returns: an array list with data objects - specific class of objects will depend on database that was read		
+	public static ArrayList<Data> load_date_and_time_range_end(int data_table_number, Date date_range_start, Time time_range_start, Date date_range_end, Time time_range_end) {
+		ArrayList<Data> new_list = new ArrayList<Data>();
+		String query_str = "SELECT * FROM "  + database_name[data_table_number] + 
+						   " WHERE ((date_stamp >= \"" + date_range_start.get_date_for_sql() + 
+						   "\" AND date_stamp <= \"" + date_range_end.get_date_for_sql() +
+						   "\" ) OR ( date_end >= \"" + date_range_start.get_date_for_sql() + 
+						   "\" AND date_end <= \"" + date_range_end.get_date_for_sql() +
+						   "\")) AND ( time_stamp >= \"" + time_range_start.get_time_for_sql();
+		if (time_range_end.hour >= time_range_start.hour) query_str += "\" AND time_stamp < \"" + time_range_end.get_time_for_sql() + "\")";
+		else query_str += "\" OR time_stamp < \"" + time_range_end.get_time_for_sql() + "\")";
+
+		if(DataVizElement.data_read && database.connection != null) {
+			if (debug_code) PApplet.println("load date range " + query_str);
+			database.query(query_str);			
+			new_list = read_query_results(data_table_number);
+		}
+		return new_list;
+	}
+
+	// LOAD_DATE_TIME_RANGE - loads data from database into an array list of data objects.  
+	// input: the number of the source data table, the start date and time, and the end date and time of the range to laod 
+	// returns: an array list with data objects - specific class of objects will depend on database that was read		
+	public static ArrayList<Data> load_multiple_date_time_range(int data_table_number, String[] date_array, Time time_range_start, Time time_range_end) {
+		ArrayList<Data> new_list = new ArrayList<Data>();
+		String query_str = "SELECT * FROM "  + database_name[data_table_number] + " WHERE ( "; 
+		for (int i = 0; i < date_array.length; i++) {
+			if(i != 0) query_str += "\" OR "; 
+			query_str += "date_stamp = \"" + date_array[i];
+		}
+		query_str += "\" ) AND ( time_stamp >= \"" + time_range_start.get_time_for_sql();
+		if (time_range_end.hour >= time_range_start.hour) query_str += "\" AND time_stamp < \"" + time_range_end.get_time_for_sql() + "\")";
+		else query_str += "\" OR time_stamp < \"" + time_range_end.get_time_for_sql() + "\")";
+
+		if(DataVizElement.data_read && database.connection != null) {
+//			if (debug_code) PApplet.println("load date range " + query_str);
+			database.query(query_str);			
+			new_list = read_query_results(data_table_number);
+		}
+		return new_list;
+		
+	}
+
 	
 	// LOAD_DATE - loads data from database into an array list of data objects.  
 	// input: the number of the source data table, the date for the query 
@@ -301,7 +383,8 @@ public class DataProcessor extends DataVizElement{
 
 		if (data_table_name == JournalData) {
 			while (database.next()) {
-				JournalData most_recent = new JournalData(database.getString("time_stamp"), database.getString("date_stamp"), 
+				JournalData most_recent = new JournalData(database.getString("time_stamp"), database.getString("date_stamp"),
+								database.getString("time_end"), database.getString("date_end"),
 								database.getString("emotion_L1"), database.getString("emotion_L2"),
 								database.getString("emotion_L3"), database.getString("activity"), 
 								database.getString("location"), database.getString("people"), 
@@ -327,7 +410,6 @@ public class DataProcessor extends DataVizElement{
 						database.getString("emotion_intensity"), database.getString("name"), database.getString("description"), 
 						database.getString("emotion"), database.getString("activity"),
 						database.getString("people"), database.getString("place"));
-				PApplet.println("** read from data table method - " + database.getString("date_stamp") + " , "+ database.getString("time_stamp") + " - " +  most_recent.getString());
 				new_list.add(most_recent);
 				count++;
 			}
@@ -337,7 +419,6 @@ public class DataProcessor extends DataVizElement{
 				PieHeartData most_recent = new PieHeartData(database.getString("gsr"), database.getString("heart_rate"), 
 						database.getString("emotion"), database.getString("time_stamp"), database.getString("date_stamp"), 
 						database.getString("date_end"), database.getString("time_end"));
-				PApplet.println("GOT TO READ QUERY - pie data heart rate " + most_recent.getString());
 				new_list.add(most_recent);
 				count++;
 			}
@@ -417,6 +498,23 @@ public class DataProcessor extends DataVizElement{
 		return time_date_in_string;
 	}
 	
-
+	// ************************************
+	// ** APPLY LINE BREAKS
+	// ** applies line breaks to text creating lines of a specific length
+	// **
+	public static String applyLineBreaks(String input_string, int chars_per_line) {
+		String output_string = "";
+		while (input_string.length() > chars_per_line) {
+			int index = input_string.indexOf(" ", chars_per_line);
+			if (index < 0) break;
+			String temp_size = input_string.substring(index);
+			if (temp_size.length() < 10) break;
+			output_string += input_string.substring(0, index) + "\n";
+			input_string = input_string.substring(index);
+		}
+		if (PApplet.trim(input_string).length() > 1) output_string += input_string + "\n";
+		output_string = output_string.replace("\\", "");
+		return output_string;
+	}
 	
 }

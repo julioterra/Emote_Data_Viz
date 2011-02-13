@@ -16,9 +16,6 @@ public class PieEmotionData extends Data {
 	public String place;
 	public String people;
 
-	public Time time_end;
-	public Date date_end;
-
 	public boolean data_exists = false;
 	
 

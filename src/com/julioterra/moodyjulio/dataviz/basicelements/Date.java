@@ -77,8 +77,12 @@ public class Date {
 
 	// WIP WIP WIP
 	// function currently working for single day updates. Need to create version that works for multiple day updates
-	public void update_day(int day_delta) {
+	public void update_day(int day_delta) {		
 		this.day += day_delta;
+		int lastMonth = this.month - 1;
+		if (lastMonth < 0) lastMonth = 11;
+
+		PApplet.print("LAST MONTH " + lastMonth);
 
 		if (this.day <= 0) {			
 			if (this.month > 1) { this.month -= 1; } 
@@ -87,10 +91,10 @@ public class Date {
 				this.year -= 1;
 				this.is_leap_year();
 			}
-			this.day = Date.days_in_month[month-1];
+			this.day = Date.days_in_month[lastMonth];
 		} 
 		
-		else if ((this.day > Date.days_in_month[month-1])) {
+		else if ((this.day > Date.days_in_month[lastMonth])) {
 			if (this.month < 12) { this.month += 1; } 
 			else { 
 				this.month = 1; 
@@ -128,6 +132,16 @@ public class Date {
 		else days_in_month[1] = 28;
 	}
 	
+	public boolean equals(Date compare_date) {
+//		if (DataVizElement.debug_code) PApplet.println("new " + compare_date.get_date_for_sql() + " orig " + this.get_date_for_sql());
+		if (compare_date.year == this.year && compare_date.month == this.month && compare_date.day == this.day) return true;
+		return false;
+	}
+	
+	/*************************
+	 ** STATIC FUNCTIONS
+	 *************************/	
+
 	public static boolean is_leap_year(Date temp_date) {
 		if (temp_date.year % 400 == 0) return true;
 		else if (temp_date.year % 100 == 0) return false;
@@ -135,24 +149,26 @@ public class Date {
 		return false;
 	}
 	
-	public boolean equals(Date compare_date) {
-//		if (DataVizElement.debug_code) PApplet.println("new " + compare_date.get_date_for_sql() + " orig " + this.get_date_for_sql());
-		if (compare_date.year == this.year && compare_date.month == this.month && compare_date.day == this.day) return true;
-		return false;
-	}
-	
 	// WIP WIP WIP
 	public static int calculate_date_dif_days(Date start_date, Date end_date) {		
 		return 0;
 	}
-	
-	public void calculate_dates(Date start_date, Time start_time, double millis_delta_per_step, int step_index) {
-		this.year = start_date.year;
-		this.month = start_date.month;
-		this.day = start_date.day;
 
-		if (start_time.new_day(start_time, millis_delta_per_step, step_index)) { this.update_day (1); }
+	public static String getMonthInString(Date date) {		
+		return DataVizElement.NamesOfMonthsShort[date.month-1];
 	}
+
+	public static String getDateInString(Date date) {		
+		if (date.month > 0 && date.month <= 12) return DataVizElement.NamesOfMonths[date.month-1] + " " + date.day + ", " + date.year;
+		return "";
+	}
+
+//	public void calculate_dates(Date start_date, Time start_time, double millis_delta_per_step, int step_index) {
+//		this.year = start_date.year;
+//		this.month = start_date.month;
+//		this.day = start_date.day;
+//		if (start_time.new_day(start_time, millis_delta_per_step, step_index)) { this.update_day (1); }
+//	}
 
 	
 }
