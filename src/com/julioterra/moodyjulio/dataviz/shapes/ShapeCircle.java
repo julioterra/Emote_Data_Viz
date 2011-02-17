@@ -82,12 +82,12 @@ public class ShapeCircle extends ShapeColor{
 	  }
 
 	  public void move(float x, float y) {
-	      this.location = new PVector(x, y);
+		  super.move(x, y);
 	      this.mouse_over_shape.setArcByCenter((double)x, (double)y, mouse_over_shape.getWidth()/2, mouse_over_shape.getAngleStart(), mouse_over_shape.getAngleExtent(), java.awt.geom.Arc2D.PIE);
 	  }
 
-	  public void scale(float percent_scale) {
-		  super.scale(percent_scale);
+	  public void setScale(float percent_scale) {
+		  super.setScale(percent_scale);
 		  setRadius((float) (this.radius_base * this.scale));
 		  this.resetMouseOverShape();
 	  }
@@ -97,7 +97,7 @@ public class ShapeCircle extends ShapeColor{
 	   ** SCALE SHIFT METHODS 
 	   **/
 	  
-	  public void shiftScale(float shift_scale) {		  
+	  public void shiftSize(float shift_scale) {		  
 		  this.setRadius((float) (this.radius * (this.scale+shift_scale)));
 	  }
 
@@ -115,26 +115,13 @@ public class ShapeCircle extends ShapeColor{
 	   **/
 
 	  public void mouseOver() {
-		  boolean is_mouse_over = this.contains(processing_app.mouseX, processing_app.mouseY);
-	      if ((this.mouse_over != is_mouse_over) && this.mouse_over_active) {
-	            if (is_mouse_over) {
-	            	this.shiftHueMouseOver();
-	            	this.shiftBrightMouseOver();
-	            	this.shiftSatMouseOver();
-	            	this.shiftScaleMouseOver();
-	            	this.shiftTextNameDescription();
-	            } else {
-	            	this.shiftColorReset();
-	            	this.shiftScaleReset();
-	            	this.shiftTextNameLocationReset();
-	            }
-	            mouse_over = is_mouse_over;
+		  boolean is_mouse_over = this.mouse_over_shape.contains(processing_app.mouseX, processing_app.mouseY);
+	      if ((this.mouse_over != is_mouse_over)) {
+	            if (is_mouse_over) { mouseOverActions(); } 
+	            else { mouseOffActions(); }
 	      }        
 	  }
-	  protected boolean contains(float x, float y) {
-	      return mouse_over_shape.contains(x, y);
-	  }
-
+	  
 	  /*********************************************************
 	   ** SIZE SETTING METHODS 
 	   **/

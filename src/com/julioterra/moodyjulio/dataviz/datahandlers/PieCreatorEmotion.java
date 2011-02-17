@@ -21,7 +21,7 @@ public class PieCreatorEmotion extends PieCreator {
 
 	public PieCreatorEmotion(float x, float y, int diameter, String name) {
 		super(x, y, diameter);
-		this.pie_name = name;
+		this.title = name;
 		this.pie_mode = 0;
 		this.time_per_emotion = new float[Emotion_Names.length];
 		this.time_emotion_total = 0;
@@ -40,8 +40,8 @@ public class PieCreatorEmotion extends PieCreator {
 		}
 		this.pie_mode = 1;
 		loadPie();
-		this.pie_description = NamesOfDays[day_of_week] + " average";
-		pie.setDescription(this.pie_description);
+		this.description = NamesOfDays[day_of_week] + " average";
+		pie.setDescription(this.description);
 	}
 	
 	private PieEmotionData loadTimeRangeFromDate(int day_of_week, Time time_range_start, Time time_range_end) {
@@ -102,13 +102,13 @@ public class PieCreatorEmotion extends PieCreator {
 		this.time_per_emotion = new float[Emotion_Names.length];
 		this.time_emotion_total = 0;
 		this.pie_slices = pie_data.size();
-		this.pie_description = Date.getDateInString(date_range_start);
+		this.description = Date.getDateInString(date_range_start);
 		
 		pie = new Pie_Arc((int) location.x, (int) location.y, (float) diameter, ShapeCircle.PIE_ARC_SET_RADIUS);
-		pie.setName(this.pie_name);
-		pie.setDescription(this.pie_description);
+		pie.setName(this.title);
+		pie.setDescription(this.description);
 		pie.setColorARGB(Cur_Background_Color);
-		pie.setShiftMouseOverPie((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false);
+		pie.setShiftAllMouseOver((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false);
 		pie.setTextLocationNameDescription(this.location_name.x, this.location_name.y, (this.location_description.x-this.location_name.x), (this.location_description.y-this.location_name.y));
 		pie.loadFontPie(font_main_bar_legend, 18, 1.4f);
 		pie.setTextVisibleNameDescription();
@@ -146,7 +146,7 @@ public class PieCreatorEmotion extends PieCreator {
 			}
 			pie.addSlice(name, description, slice_time, cur_color);
 		}
-		pie.setShiftMouseOverSlices((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.1, true);
+		pie.setShiftAllMouseOverSlices((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.1, true);
 		pie.textLocationNameDescriptionSlices(this.location_name_slice.x, this.location_name_slice.y, (this.location_description_slice.x-this.location_name_slice.x), (this.location_description_slice.y-this.location_name_slice.y));
 		pie.loadFontTitleSlices(font_main_bar_legend, 16);
 		pie.loadFontDescriptionSlices(font_main_text, 20);

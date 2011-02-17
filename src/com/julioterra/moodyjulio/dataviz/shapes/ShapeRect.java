@@ -7,7 +7,6 @@ public class ShapeRect extends ShapeColor {
 
 	public PVector size;
 	public PVector size_base;
-	public float rotation;
 	
 	/******************************
 	 **	CONSTRUCTOR - RECT SHAPE
@@ -43,53 +42,33 @@ public class ShapeRect extends ShapeColor {
 	 ******************************/
 
 	public void mouseOver() {
-		if (mouse_over_active) { this.checkMouseOver(location.x, location.y, size.x, size.y); }
+		if(visible) this.isMouseOverRect(location.x, location.y, size.x, size.y);
 	}
 
-	public void checkMouseOver(float x, float y, float width, float height) {
-		if(	this.mouse_over == false && (processing_app.mouseX > x && processing_app.mouseX < x+width) && 
-						   (processing_app.mouseY > y && processing_app.mouseY < y+height)	) {
-				mouseOverShiftOn();
-				this.mouse_over = true;
-		} else if ( this.mouse_over == true && (!(processing_app.mouseX > x && processing_app.mouseX < x+width) || 
-									!(processing_app.mouseY > y && processing_app.mouseY < y+height))  ) {
-				mouseOverShiftOff();
+	public void isMouseOverRect(float x, float y, float width, float height) {
+		if ((processing_app.mouseX > x && processing_app.mouseX < x+width) && 
+		   (processing_app.mouseY > y && processing_app.mouseY < y+height)	) {
+				mouseOverActions();
+		} else if ((!(processing_app.mouseX > x && processing_app.mouseX < x+width) || 
+				  !(processing_app.mouseY > y && processing_app.mouseY < y+height))  ) {
+				mouseOffActions();
 		}
 	}
-	
-	public void mouseOverShiftOn() {
-		this.shiftHueMouseOver();
-		this.shiftSatMouseOver();
-		this.shiftBrightMouseOver();
-		this.shiftTextNameDescription();
-		this.shiftScaleMouseOver();
-		this.mouse_over = true;
-//		PApplet.println("Mouse Over");
-	}
 
-	public void mouseOverShiftOff() {
-		this.shiftColorReset();
-		this.shiftTextNameLocationReset();
-		this.shiftScaleReset();
-		this.mouse_over = false;
-//		PApplet.println("Mouse Gone");
-	}
-
-	
 	/******************************
 	 **	DISPLAY METHOD 
 	 ******************************/
 
 	public void display() {
 		super.display();
-		processing_app.pushMatrix();
-		processing_app.translate((float)(location.x*scale), (float)(location.y*scale));
-		processing_app.rotate(PApplet.radians(this.rotation));
 		if (visible) {
+			processing_app.pushMatrix();
+			processing_app.translate((float)(location.x*scale), (float)(location.y*scale));
+			processing_app.rotate(PApplet.radians(this.rotation));
 			processing_app.fill(this.color);
 			processing_app.rect(0,0, (float)(size.x*scale), (float)(size.y*scale));
+			processing_app.popMatrix();
 		}
-		processing_app.popMatrix();
 	}
 	
 	/******************************
@@ -111,8 +90,8 @@ public class ShapeRect extends ShapeColor {
 		this.scale = (float)((float)x/size.x);
 	}
 	
-	  public void shiftScale(float shift_scale) {	
-		  super.shiftScale(shift_scale);
+	  public void shiftSize(float shift_scale) {	
+		  super.shiftSize(shift_scale);
 		  size = new PVector ((float)(this.size.x * (this.scale + shift_scale)), (float)(this.size.y * (this.scale + shift_scale)));
 //		  PApplet.println("SHIFT SCALE METHOD - SHAPE RECT - scale " + this.scale + " base size " + this.size_base.x + " size " + this.size.x + " base color " + this.color_base);
 	  }

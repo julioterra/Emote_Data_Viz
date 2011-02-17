@@ -16,24 +16,24 @@ public class ButtonText extends ShapeText {
 	public ButtonText(int x, int y, String text, int text_color, int font_number, int text_align) {
 		super();
 		this.loadFontAll(font_number, fonts_size[font_number], 1);
-		this.font_size_title = fonts_size[font_number];
+		this.font_size_title_active = fonts_size[font_number];
 		this.alignment_text = text_align;
 		this.setLocation(x, y);
 		this.setBaseSize(processing_app.textWidth(text), processing_app.textAscent()+processing_app.textDescent());
 		this.title = text;
 		this.font_number_title = font_number;
-		this.font_size_title = fonts_size[font_number];
-		this.font_color_title = text_color;
+		this.font_size_title_active = fonts_size[font_number];
+		this.font_color_title_active = text_color;
 		this.setTextVisibleName();
 		this.visible = true;
 		this.mouse_over_active = true;
-		this.mouse_press_active = true;
+		this.mouse_clicked_active = true;
 	}
 
 	public ButtonText(int x, int y, String text, int text_color, int font_number, int text_align, boolean activate_mouse_over, boolean activate_mouse_press) {
 		this(x, y, text, text_color, font_number, text_align);
 		this.mouse_over_active = activate_mouse_over;
-		this.mouse_press_active = activate_mouse_press;
+		this.mouse_clicked_active = activate_mouse_press;
 	}
 
 	public ButtonText(int x, int y) {
@@ -52,7 +52,7 @@ public class ButtonText extends ShapeText {
 	public void setLocation(int x, int y) {
 		super.setLocation(x, y);
 		processing_app.textFont(this.font_title);
-		processing_app.textSize(this.font_size_title);
+		processing_app.textSize(this.font_size_title_active);
 		this.location_title = new PVector(location.x, (location.y+processing_app.textAscent()) );	
 	}
 	
@@ -63,9 +63,9 @@ public class ButtonText extends ShapeText {
 
 	public void display() {
 		if (visible) {
-			processing_app.fill(this.font_color_title);
+			processing_app.fill(this.font_color_title_active);
 			processing_app.textFont(this.font_title);
-			processing_app.textSize((float) (this.font_size_title*scale));
+			processing_app.textSize((float) (this.font_size_title_active*scale));
 			processing_app.textAlign(this.alignment_text);
 			processing_app.text(this.title, this.location_title.x, this.location_title.y);
 			// DEBUG MOUSE OVER
@@ -75,9 +75,9 @@ public class ButtonText extends ShapeText {
 
 	public void mouseOver() {
 		if (visible && mouse_over_active) {
-			if (alignment_text == PApplet.LEFT) { this.checkMouseOver(location.x, location.y, size.x, size.y); }
-			else if (alignment_text == PApplet.RIGHT) { this.checkMouseOver(location.x-size.x, location.y, size.x, size.y); }
-			else if (alignment_text == PApplet.CENTER) { this.checkMouseOver(location.x-(size.x/2), location.y, size.x, size.y); }
+			if (alignment_text == PApplet.LEFT) { this.isMouseOverRect(location.x, location.y, size.x, size.y); }
+			else if (alignment_text == PApplet.RIGHT) { this.isMouseOverRect(location.x-size.x, location.y, size.x, size.y); }
+			else if (alignment_text == PApplet.CENTER) { this.isMouseOverRect(location.x-(size.x/2), location.y, size.x, size.y); }
 		}
 	}
 
@@ -94,19 +94,19 @@ public class ButtonText extends ShapeText {
 	 ** 
 	 ************************************/	
 
-	  public void shiftScale(float shift_scale) {		
+	  public void shiftSize(float shift_scale) {		
 //		  super.shiftScale(shift_scale);
-		  this.font_size_title = (int) (font_size_title_base * (this.scale + shift_scale));
+		  this.font_size_title_active = (int) (font_size_title_base * (this.scale + shift_scale));
 	  }
 
 	  public void shiftScaleReset() {
-		  this.font_size_title = (int) (font_size_title_base * (this.scale));
+		  this.font_size_title_active = (int) (font_size_title_base * (this.scale));
 	  }
 
 	  public void shiftScaleResetToBase() {
 		  this.scale = 1;
 		  size = new PVector (this.size_base.x, this.size_base.y);
-		  this.font_size_title = (int) this.font_size_title_base;
+		  this.font_size_title_active = (int) this.font_size_title_base;
 	  }
 
 	

@@ -185,120 +185,7 @@ public class BarCreator extends DataProcessor {
 		return this.time_total;
 	}
 
-//	/***************************************
-//	 * TEXT_ITEMS ARRAY FUNCTIONS - GETTER & SETTER METHODS
-//	 ***************************************/	
-//	
-//	public void addTextRect(int x, int y, int width, int height, String text, int color, int text_color, int font_number, int align_mode){
-//		ShapeText new_button = new ShapeText(x, y, width, height, text, color, text_color, font_number, align_mode, false, false);
-//		text_items.add(new_button);
-//	}
-//	
-//	public void addTextRect(int x, int y, int width, int height, String text, int color, int text_color, int font_number, int align_mode, float rotation){
-//		ShapeText new_button = new ShapeText(x, y, width, height, text, color, text_color, font_number, align_mode, rotation, false, false);
-//		text_items.add(new_button);
-//	}
-//	
-//	public void addTextRect(int x, int y, int width, int height, String text, int color, int text_color, int font_number, int font_size, int align_mode, float rotation){
-//		ShapeText new_button = new ShapeText(x, y, width, height, text, color, text_color, font_number, align_mode, rotation, false, false);
-//		new_button.setFontSizeAll(font_size);
-//		text_items.add(new_button);
-//	}
-//
-//	public void addTextRectButton(int x, int y, int width, int height, String text, int description_x, int description_y, String description, int color, int text_color, int font_number, int align_mode, float rotation){
-//		ShapeText new_button = new ShapeText(x, y, width, height, text, description, color, text_color, font_number, align_mode, rotation, true, true);
-//		new_button.setTextLocationDescription(description_x, description_y);
-//		text_items.add(new_button);
-//	}
-//
-//	public void addTextRectButton(int x, int y, int width, int height, String text, int description_x, int description_y, String description, int color, int text_color, int font_number, int font_size, int align_mode, float rotation){
-//		ShapeText new_button = new ShapeText(x, y, width, height, text, description, color, text_color, font_number, align_mode, rotation, true, true);
-//		new_button.setTextLocationDescription(description_x, description_y);
-//		new_button.setFontSizeAll(font_size);
-//		text_items.add(new_button);
-//	}
-//
-//	public void addText(int x, int y, String text, int color, int font_number, int align_mode){
-//		ButtonText new_button = new ButtonText(x, y, text, color, font_number, align_mode);
-//		text_items.add(new_button);
-//	}
-//
-//	public void addTextButton(int x, int y, String text, int color, int font_number, int align_mode){
-//		ButtonText new_button = new ButtonText(x, y, text, color, font_number, align_mode, true, true);
-//		text_items.add(new_button);
-//	}
-//
-//	public void addTextButton(int x, int y, String text, int color, int font_number, int font_size, int align_mode){
-//		ButtonText new_button = new ButtonText(x, y, text, color, font_number, align_mode, true, true);
-//		new_button.setFontSizeAll(font_size);
-//		text_items.add(new_button);
-//	}
-//
-//	public void removeTextItem(int index) {
-//		if (index < text_items.size()) {
-//			text_items.remove(index);
-//		}		
-//	}
-//
-//	public void setShiftMouseOverTextSlice(int index, float hue_shift, float saturation_shift, float brightness_shift, float scale_shift, boolean text_shift_mouse_over) {
-//		if (index < text_items.size()) {
-//			ShapeText updated_button = (ShapeText) text_items.get(index);
-//			updated_button.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, scale_shift, text_shift_mouse_over);
-//		}		
-//	}
-//	
-//	public void resizeFontTextItem (int index, float resize_scale) {
-//		if (index < text_items.size()) {
-//			ShapeText updated_button = (ShapeText) text_items.get(index);
-//			updated_button.loadFontAll(updated_button.font_number_title, (int)(updated_button.font_size_title*resize_scale), 1);
-//		}				
-//	}
-//
-//	public int getSizeTextItems() {
-//		return this.text_items.size();
-//	}
-//
-//	public void setTextVisible(int index) {
-//		if (index < text_items.size()) {
-//			ButtonText updated_button = (ButtonText) text_items.get(index);
-//			updated_button.visible();
-//		}		
-//	}
-//
-//	public void setTextInvisible(int index) {
-//		if (index < text_items.size()) {
-//			ButtonText updated_button = (ButtonText) text_items.get(index);
-//			updated_button.invisible();
-//		}		
-//	}
-//
-//	public void updateTextLocation(int index, int x, int y){
-//		if (index < text_items.size()) {
-//			ButtonText updated_button = (ButtonText) text_items.get(index);
-//			updated_button.setLocation(x, y);
-//		}
-//	}
-//
-//	public void updateText(int index, String text){
-//		if (index < text_items.size()) {
-//			ButtonText updated_button = (ButtonText) text_items.get(index);
-//			updated_button.setName(text);
-//		}
-//	}
-//
-//	public void updateTextColor(int index, int color){
-//		if (index < text_items.size()) {
-//			ButtonText updated_button = (ButtonText) text_items.get(index);
-//			updated_button.setColorBaseARGB(color);
-//		}
-//	}
-//
-//	public void updateTextFont(int index, int font_number){
-//		if (index < text_items.size()) {
-//			ButtonText updated_button = (ButtonText) text_items.get(index);
-//			updated_button.loadFontTitle(font_number, DataVizElement.fonts_size[font_number]);
-//		}
-//	}
+
 	
 	/***************************************
 	 * GETTER & SETTER METHODS
@@ -468,22 +355,22 @@ public class BarCreator extends DataProcessor {
 		text_items_names.put(id, text_items.size()-1);
 	}
 
-	public void addDropDownSubButton(String button_id, String text, int action, int color){
+	public void addDropDownSubButton(String button_id, String text, int color, Object object, String method){
 		if (text_items_names.get(button_id) != null) {
 			int index = Integer.parseInt(""+text_items_names.get(button_id));
 			if(index < text_items.size()) { 
 				ButtonDropDown current_button = (ButtonDropDown) text_items.get(index);
-				current_button.addSubButton(text, action, color);				
+				current_button.addSubButton(text, color, object, method);				
 			}
 		}
 	}
 
-	public void addDropDownSubButton(String button_id, String text, int action){
+	public void addDropDownSubButton(String button_id, String text, Object object, String method){
 		if (text_items_names.get(button_id) != null) {
 			int index = Integer.parseInt(""+text_items_names.get(button_id));
 			if(index < text_items.size()) { 
 				ButtonDropDown current_button = (ButtonDropDown) text_items.get(index);
-				current_button.addSubButton(text, action);				
+				current_button.addSubButton(text, object, method);				
 			}
 		}
 	}
@@ -508,7 +395,7 @@ public class BarCreator extends DataProcessor {
 	public void setShiftMouseOverTextSlice(int index, float hue_shift, float saturation_shift, float brightness_shift, float scale_shift, boolean text_shift_mouse_over){
 		if (index < text_items.size()) {
 			ShapeText updated_button = (ShapeText) text_items.get(index);
-			updated_button.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, scale_shift, text_shift_mouse_over);
+			updated_button.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, scale_shift, text_shift_mouse_over);
 		}		
 	}
 

@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import com.julioterra.moodyjulio.dataviz.application.DataVizLib;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
 import de.bezier.data.sql.MySQL;
-import processing.core.PApplet;
-import processing.core.PFont;
-import sun.tools.tree.CaseStatement;
+import processing.core.*;
 
 public class DataVizElement {
 
-	public static PApplet 			processing_app;
+	public static DataVizLib processing_app;
+	public static PGraphics			processing_app_buffer;
 	public static boolean 			processing_app_linked = false;	
 
 	/*******************************************
@@ -149,9 +150,20 @@ public class DataVizElement {
 		if (activity.contains("smoking")) return Activity_Colors[color_smoking];
 		return ShapeColor.colorARGB(255, (int)processing_app.random(255), (int)processing_app.random(255), (int)processing_app.random(255));
 	}
+
 	
 	/*******************************************
-	 ** FILE READING RELATED GLOBAL VARIABLES USED BY CHILD CLASSES
+	 ** MOUSE EVENT RELATED STATIC GLOBAL VARIABLS AND CONSTANTS
+	 *******************************************/
+
+	public static int				id_counter = 0;
+	public static int getIDColorNumber() {
+		id_counter--;
+		return id_counter;
+	}
+	
+	/*******************************************
+	 ** FILE READING RELATED STATIC GLOBAL VARIABLES USED BY CHILD CLASSES
 	 *******************************************/
 	public static boolean 			file_active;
 	public static boolean 			file_read;
@@ -189,8 +201,9 @@ public class DataVizElement {
 	 ** APPLICATION INIT METHODS
 	 *******************************************/
 	
-	public static void application_init (PApplet processing_app) {
-		DataVizElement.processing_app = processing_app; 
+	public static void application_init (PApplet processing_app, PGraphics buffer) {
+		DataVizElement.processing_app = (DataVizLib) processing_app;
+		DataVizElement.processing_app_buffer = buffer;
 		DataVizElement.processing_app_linked = true;
 		DataVizElement.database_connect();
 		DataVizElement.loadFonts(font_prefix);
@@ -239,25 +252,4 @@ public class DataVizElement {
 		return new_map;
 	}
 
-	  public static void test_hashmap() {	
-	    Map map = new HashMap();
-	
-	    // The hash maps from company name to address.
-	    // In real life this might map to an Address object...
-	    map.put("Adobe", "Mountain View, CA");
-	    map.put("IBM", "White Plains, NY");
-	    map.put("Learning Tree", "Los Angeles, CA");
-	    map.put("Microsoft", "Redmond, WA");
-	    map.put("Netscape", "Mountain View, CA");
-	    map.put("O'Reilly", "Sebastopol, CA");
-	    map.put("Sun", "Mountain View, CA");
-	
-	    // List the entries using entrySet()
-	    Set entries = map.entrySet();
-	    Iterator it = entries.iterator();
-	    while (it.hasNext()) {
-	      Map.Entry entry = (Map.Entry) it.next();
-	      System.out.println(entry.getKey() + "-->" + entry.getValue());
-	    }
-	  }
 }

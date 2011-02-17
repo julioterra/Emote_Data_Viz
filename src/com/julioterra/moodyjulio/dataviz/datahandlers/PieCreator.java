@@ -2,7 +2,9 @@ package com.julioterra.moodyjulio.dataviz.datahandlers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import processing.core.PApplet;
 import processing.core.PVector;
 import com.julioterra.moodyjulio.dataviz.basicelements.Date;
@@ -12,6 +14,7 @@ import com.julioterra.moodyjulio.dataviz.shapes.ShapeCircle;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeText;
 import com.julioterra.moodyjulio.dataviz.shapes.panel.ButtonDropDown;
 import com.julioterra.moodyjulio.dataviz.shapes.panel.ButtonText;
+import com.julioterra.moodyjulio.dataviz.shapes.panel.Panel;
 import com.julioterra.moodyjulio.dataviz.shapes.pie.Pie;
 import com.julioterra.moodyjulio.dataviz.shapes.pie.Pie_Arc;
 
@@ -19,31 +22,30 @@ public class PieCreator extends DataProcessor {
 
 	ArrayList<Data> pie_data;
 	public Pie pie;
-	public String pie_name;
-	public String pie_description;
+    public float radius;
+    public float diameter;
+    public float pie_slices;
+
+	public String title;
+	public String description;
 	public PVector location;
 	public PVector location_name;
 	public PVector location_description;
 	public PVector location_name_slice;
 	public PVector location_description_slice;
-    public float radius;
-    public float diameter;
-    public float pie_slices;
-    public ArrayList<ShapeText> text_items;
-	HashMap<String, Integer> text_items_names;
-    
+    HashMap<String, ShapeText> text_items_map; 
+	
 	public PieCreator(float x, float y, int diameter){
 		super();
-		this.text_items = new ArrayList<ShapeText>();
 
+		this.title = "";
+		this.description = "";
 		this.data_type_raw = JOURNAL;
 		this.location = 					new PVector(x, y);
 		this.location_name = 				new PVector(-1000, -1000);
 		this.location_description = 		new PVector(-1000, -1000);
 		this.location_name_slice = 			new PVector(-1000, -1000);
 		this.location_description_slice = 	new PVector(-1000, -1000);
-		this.pie_name = "";
-		this.pie_description = "";
 
 		this.diameter = diameter;
 		this.radius = (float) (diameter/2.0);
@@ -51,7 +53,7 @@ public class PieCreator extends DataProcessor {
 		this.pie_data = new ArrayList<Data>();
 		this.pie_slices = 0;
 		
-		text_items_names = new HashMap<String, Integer>();
+		text_items_map = new HashMap<String, ShapeText>();
 
 		date_range_start = new Date (); 
 		time_range_start = new Time (); 
@@ -70,18 +72,35 @@ public class PieCreator extends DataProcessor {
 	}
 	
 	public void display() {
-	    for (int i = 0; i < text_items.size(); i++) {
-	    	ShapeText display_button = text_items.get(i);	 
-			display_button.display();
-	    }
-	    pie.display();
+		Iterator<Map.Entry<String, ShapeText>> 	text_item_entries = text_items_map.entrySet().iterator();
+		while (text_item_entries.hasNext()) {
+			Map.Entry<String, ShapeText> entry = (Map.Entry<String, ShapeText>) text_item_entries.next();
+			if (entry.getKey().contains("background")) {
+				ShapeText display_button = entry.getValue();	 
+				display_button.display();
+			}
+		}
+
+		text_item_entries = text_items_map.entrySet().iterator();
+		while (text_item_entries.hasNext()) {
+			Map.Entry<String, ShapeText> entry = (Map.Entry<String, ShapeText>) text_item_entries.next();
+			if (!entry.getKey().contains("background")) {
+				ShapeText display_button = entry.getValue();	 
+				display_button.display();
+			}
+		}
+
+		pie.display();
 	}
 	
 	public void mouseOver() {
-	    for (int i = 0; i < text_items.size(); i++) {
-	    	ShapeText display_button = text_items.get(i);	 
-			display_button.mouseOver();
-	    }
+		Iterator<Map.Entry<String, ShapeText>> 	text_item_entries = text_items_map.entrySet().iterator();
+		while (text_item_entries.hasNext()) {
+			Map.Entry<String, ShapeText> entry = (Map.Entry<String, ShapeText>) text_item_entries.next();
+	    	ShapeText display_button = entry.getValue();	 
+	    	display_button.mouseOver();
+		}
+
 	    pie.mouseOver();		
 	}
 
@@ -182,19 +201,19 @@ public class PieCreator extends DataProcessor {
 	}
 
 	public String getPie_name() {
-		return pie_name;
+		return title;
 	}
 
 	public void setPie_name(String pie_name) {
-		this.pie_name = pie_name;
+		this.title = pie_name;
 	}
 
 	public String getPie_description() {
-		return pie_description;
+		return description;
 	}
 
 	public void setPie_description(String pie_description) {
-		this.pie_description = pie_description;
+		this.description = pie_description;
 	}
 
 	
@@ -224,244 +243,145 @@ public class PieCreator extends DataProcessor {
 	 ************/	
 	
 	public int getSizeTextItems() {
-		return text_items.size();
+		return text_items_map.size();
 	}
 
 	public void addTextRect(String id, int x, int y, int width, int height, String text, int color, int text_color, int font_number, int align_mode){
 		ShapeText new_button = new ShapeText((int)(location.x+x), (int)(location.y+y), width, height, text, color, text_color, font_number, align_mode, false, false);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
+		text_items_map.put(id, new_button);
 	}
 
 	public void addTextRect(String id, int x, int y, int width, int height, String text, int color, int text_color, int font_number, int align_mode, float rotation){
 		ShapeText new_button = new ShapeText(x, y, width, height, text, color, text_color, font_number, align_mode, rotation, false, false);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
+		text_items_map.put(id, new_button);
 	}
 
 	public void addTextRect(String id, int x, int y, int width, int height, String text, int color, int text_color, int font_number, int font_size, int align_mode, float rotation){
 		ShapeText new_button = new ShapeText(x, y, width, height, text, color, text_color, font_number, align_mode, rotation, false, false);
 		new_button.setFontSizeAll(font_size);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
+		text_items_map.put(id, new_button);
 	}
 
 	public void addTextRectButton(String id, int x, int y, int width, int height, String text, int description_x, int description_y, String description, int color, int text_color, int font_number, int align_mode, float rotation){
 		ShapeText new_button = new ShapeText(x, y, width, height, text, description, color, text_color, font_number, align_mode, rotation, true, true);
 		new_button.setTextLocationDescription(description_x, description_y);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
+		text_items_map.put(id, new_button);
 	}
 
 	public void addTextRectButton(String id, int x, int y, int width, int height, String text, int description_x, int description_y, String description, int color, int text_color, int font_number, int font_size, int align_mode, float rotation){
 		ShapeText new_button = new ShapeText(x, y, width, height, text, description, color, text_color, font_number, align_mode, rotation, true, true);
 		new_button.setTextLocationDescription(description_x, description_y);
 		new_button.setFontSizeAll(font_size);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
+		text_items_map.put(id, new_button);
 	}
 
 	public void addText(String id, int x, int y, String text, int color, int font_number, int align_mode){
 		ButtonText new_button = new ButtonText((int)(location.x+x), (int)(location.y+y), text, color, font_number, align_mode, false, false);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
+		text_items_map.put(id, new_button);
 	}
 
 	public void addTextButton(String id, int x, int y, String text, int color, int font_number, int align_mode, boolean mouse_over_active, boolean mouse_press_active){
 		ButtonText new_button = new ButtonText((int)(location.x+x), (int)(location.y+y), text, color, font_number, align_mode, mouse_over_active, mouse_press_active);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
+		text_items_map.put(id, new_button);
 	}
 	
 	public void addTextButton(String id, int x, int y, String text, int color, int font_number, int font_size, int align_mode){
 		ButtonText new_button = new ButtonText(x, y, text, color, font_number, align_mode, true, true);
 		new_button.setFontSizeAll(font_size);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
+		text_items_map.put(id, new_button);
 	}
 
 	public void addDropDownButton(String id, int x, int y, String text, int color, int font_number, int align_mode, boolean mouse_over_active, boolean mouse_press_active){
 		ButtonDropDown new_button = new ButtonDropDown((int)(location.x+x), (int)(location.y+y), text, color, font_number, align_mode, mouse_over_active, mouse_press_active);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
+		text_items_map.put(id, new_button);
 	}
 
-	public void addDropDownSubButton(String button_id, String text, int action, int color){
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			if(index < text_items.size()) { 
-				ButtonDropDown current_button = (ButtonDropDown) text_items.get(index);
-				current_button.addSubButton(text, action, color);				
-			}
+	public void addDropDownSubButton(String button_id, String text, int color, Object object, String method){
+		if (text_items_map.get(button_id) != null) {
+			ButtonDropDown current_button = (ButtonDropDown) text_items_map.get(button_id);
+			current_button.addSubButton(text, color, object, method);							
 		}
 	}
 
-	public void addDropDownSubButton(String button_id, String text, int action){
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			if(index < text_items.size()) { 
-				ButtonDropDown current_button = (ButtonDropDown) text_items.get(index);
-				current_button.addSubButton(text, action);				
-			}
+	public void addDropDownSubButton(String button_id, String text, Object object, String method){
+		if (text_items_map.get(button_id) != null) {
+			ButtonDropDown current_button = (ButtonDropDown) text_items_map.get(button_id);
+			current_button.addSubButton(text, object, method);				
 		}
 	}
 
 	public void removeText(String button_id) {
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			if (index < text_items.size()) {
-				text_items.remove(index);
-				text_items_names = new HashMap<String, Integer>(adjustValuesInHashMap(index, text_items_names));
-			}		
+		if (text_items_map.get(button_id) != null) {
+			text_items_map.remove(button_id);
 		}
-	}
-
-	public void removeText(int index) {
-		if (index < text_items.size()) {
-			text_items.remove(index);
-			text_items_names = new HashMap<String, Integer>(adjustValuesInHashMap(index, text_items_names));
-		}
-	}
-
-	public void setShiftMouseOverTextSlice(int index, float hue_shift, float saturation_shift, float brightness_shift, float scale_shift, boolean text_shift_mouse_over){
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
-			updated_button.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, scale_shift, text_shift_mouse_over);
-		}		
 	}
 
 	public void setShiftMouseOverTextSlice(String button_id, float hue_shift, float saturation_shift, float brightness_shift, float scale_shift, boolean text_shift_mouse_over){
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			setShiftMouseOverTextSlice(index, hue_shift, saturation_shift, brightness_shift, scale_shift, text_shift_mouse_over);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
+			updated_button.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, scale_shift, text_shift_mouse_over);
 		}
-	}
-
-	public void setTextVisible(int index) {
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
-			updated_button.visible();
-		}		
 	}
 
 	public void setTextVisible(String button_id) {
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			setTextVisible(index);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
+			updated_button.visible();
 		}
-	}
-
-	public void setTextInvisible(int index) {
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
-			updated_button.invisible();
-		}		
 	}
 
 	public void setTextInvisible(String button_id) {
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			setTextInvisible(index);
-		}
-	}
-
-	public void updateTextLocation(int index, int x, int y){
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
-			updated_button.setLocation(x, y);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
+			updated_button.invisible();
 		}
 	}
 
 	public void updateTextLocation(String button_id, int x, int y) {
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			updateTextLocation(index, x, y);
-		}
-	}
-
-	public void updateText(int index, String text){
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
-			updated_button.setName(text);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
+			updated_button.setLocation(x, y);
 		}
 	}
 
 	public void updateText(String button_id, String text) {
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			updateText(index, text);
-		}
-	}
-
-	public void updateTextDescription(int index, String text){
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
-			updated_button.setDescription(text);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
+			updated_button.setName(text);
 		}
 	}
 
 	public void updateTextDescription(String button_id, String text) {
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			updateText(index, text);
-		}
-	}
-
-	public void updateTextColor(int index, int color){
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
-			updated_button.setColorBaseARGB(color);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
+			updated_button.setDescription(text);
 		}
 	}
 
 	public void updateTextColor(String button_id, int color) {
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			updateTextColor(index, color);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
+			updated_button.setColorBaseARGB(color);
 		}
 	}
 
 	public void loadTextFont(String button_id, int font_number, int font_size){
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			if (index < text_items.size()) {
-				ShapeText updated_button = (ShapeText) text_items.get(index);
-				updated_button.loadFontTitle(font_number, font_size);
-			}
-		}
-	}
-
-	public void loadTextFont(int index, int font_number, int font_size){
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
 			updated_button.loadFontTitle(font_number, font_size);
-		}
+		}		
 	}
 
 	public void setTextSize(String button_id, int font_size){
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			setTextSize(index, font_size);
-		}
-	}
-
-	public void setTextSize(int index, int font_size){
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
 			updated_button.setFontSizeTitle(font_size);
 		}
 	}
 
 	public void setTextSizeDescription(String button_id, int font_size){
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			setTextSizeDescription(index, font_size);
-		}
-	}
-
-	public void setTextSizeDescription(int index, int font_size){
-		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+		if (text_items_map.get(button_id) != null) {
+			ShapeText updated_button = (ShapeText) text_items_map.get(button_id);
 			updated_button.setFontSizeDescription(font_size);
 		}
 	}

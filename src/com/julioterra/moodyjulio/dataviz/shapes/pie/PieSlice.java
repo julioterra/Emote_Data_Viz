@@ -57,8 +57,8 @@ public class PieSlice extends ShapeCircle {
 
 	  /* ****** SET METHODS ******* */
 
-	  public void scale(float percent_scale) {
-		  super.scale(percent_scale);
+	  public void setScale(float percent_scale) {
+		  super.setScale(percent_scale);
 		  this.scaleWidth();
 //		  PApplet.println(" WIDTH " + this.width + " SCALE " + this.scale);
 	  }

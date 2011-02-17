@@ -19,7 +19,7 @@ public class PieCreatorHeartrate extends PieCreator {
 	public PieCreatorHeartrate(float x, float y, int diameter, int pie_slices, String name) {
 		super(x, y, diameter);
 		this.pie_slices = pie_slices;
-		this.pie_name = name;		
+		this.title = name;		
 
 	} 
 
@@ -97,11 +97,11 @@ public class PieCreatorHeartrate extends PieCreator {
 
 		// initialize the pie with pie-level information
 		pie = new Pie_Line((int) location.x, (int) location.y, (float) diameter, (int)this.pie_slices, ShapeCircle.PIE_LINE_VAR_RADIUS);
-		pie.setName(this.pie_name);
+		pie.setName(this.title);
 		pie.setColorARGB(transparent_color);
 		pie.setTextLocationNameDescription(this.location_name.x, this.location_name.y, (this.location_description.x-this.location_name.x), (this.location_description.y-this.location_name.y));
 		pie.setTextVisibleNameDescription();
-		pie.setShiftMouseOverPie((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false);
+		pie.setShiftAllMouseOverPieSlices((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false);
 		pie.loadFontPie(font_main_bar_legend, 16, 1.0f);
 		pie.setWidthAll(4);
 
@@ -116,7 +116,7 @@ public class PieCreatorHeartrate extends PieCreator {
 			pie.textSetDescriptionSlice(i,description);
 		}
 		pie.setColorAllSlices(red_color);
-		pie.setShiftMouseOverSlices((float) 0.0, (float) 0.0, (float) -0.1, (float) 0.0, true);
+		pie.setShiftAllMouseOverSlices((float) 0.0, (float) 0.0, (float) -0.1, (float) 0.0, true);
 		pie.textLocationNameDescriptionSlices(this.location_name_slice.x, this.location_name_slice.y, (this.location_description_slice.x-this.location_name_slice.x), (this.location_description_slice.y-this.location_name_slice.y));
 		pie.loadFontTitleSlices(font_main_bar_legend, 16);
 		pie.loadFontDescriptionSlices(font_main_text, 20);

@@ -185,6 +185,14 @@ public class PieView extends DataVizElement {
 	    small_pie_night.display();
 	}
 
+	public void scrollDaysUp() {
+		scrollDays(1);
+	}
+
+	public void scrollDaysDown() {
+		scrollDays(-1);
+	}
+
 	public void scrollDays(int days) {
 		this.large_pie_day.scrollDays(days);
 		this.small_pie_day.scrollDays(days);

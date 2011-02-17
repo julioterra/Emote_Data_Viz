@@ -47,14 +47,6 @@ public class Bar extends ShapeRect {
 		  }
 	  }
 
-	  public void mouseOver() {
-		  super.mouseOver();
-		  for (int i = 0; i < slices.size(); i++) {
-			  BarSlice slice = slices.get(i);
-		      slice.mouseOver();
-		  }	  
-	  }
-
 	  /*********************************************************
 	   ** MOVE, SIZE & SCALE METHODS 
 	   **/
@@ -67,17 +59,18 @@ public class Bar extends ShapeRect {
 		  }
 	  }
 	  
-	  public void scale(float percent_scale) {
-		  super.scale(percent_scale);
+	  public void setScale(float percent_scale) {
+		  super.setScale(percent_scale);
 		  for (int i = 0; i < slices.size(); i++) {
 			  BarSlice slice = slices.get(i);
-			  slice.scale(percent_scale);
+			  slice.setScale(percent_scale);
 		  }
 		  this.shiftScaleReset();
 	  }
 
 	  public void size(float x, float y) {
 		  this.size = new PVector(x, y);
+		  this.size_base = new PVector(x, y);
 
 // 		add code here that resizes and re-locates all of the bar slices
 		  
@@ -103,7 +96,7 @@ public class Bar extends ShapeRect {
 		  }
 	  }
 
-	  public void shiftScale(float shift_scale) {	
+	  public void shiftSize(float shift_scale) {	
 //		  this.shiftScale(shift_scale);
 //		  size = new PVector ((float)(this.size.x * (this.scale + shift_scale)), (float)(this.size.y * (this.scale + shift_scale)));
 //		  PApplet.println("SHIFT SCALE METHOD - SHAPE RECT - scale " + this.scale + " base size " + this.size_base.x + " size " + this.size.x + " base color " + this.color_base);
@@ -124,8 +117,8 @@ public class Bar extends ShapeRect {
 			  slice.setName(name);
 			  slice.setDescription(description);		  
 			  slice.setValue((float)end_value);
-			  slice.setMouse_over_active(true);
-			  if (font_loaded_title) slice.loadFontDescription(this.font_number_title, this.font_size_title);
+			  slice.setMouseOverActive(true);
+			  if (font_loaded_title) slice.loadFontDescription(this.font_number_title, this.font_size_title_active);
 //			  PApplet.println("ADD SLICE " + slice.getString());
 		  }
 		  
@@ -159,36 +152,36 @@ public class Bar extends ShapeRect {
 		}
 
 		// SET_SHIFT_MOUSE_OVER_ALL - call this method to set the mouse over shift settings on all pie slices
-		public void setShiftMouseOverAll(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
-			super.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+		public void setShiftAllMouseOver(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
+			super.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
 			setShiftMouseOverAll();
 		}
 
 		public void setShiftMouseOverSlices(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
 			for (int i = 0; i < slices.size(); i++) {
 				BarSlice slice = slices.get(i);
-				slice.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+				slice.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
 			}
 		}
 		
 		public void setShiftMouseOverBar(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
-			super.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+			super.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
 		}
 
 		public void setShiftMouseOverAll() {
 			for (int i = 0; i < slices.size(); i++) {
 				BarSlice slice = slices.get(i);
-				slice.setShiftMouseOverAll(this.hue_shift_mouse_over, this.sat_shift_mouse_over, this.bright_shift_mouse_over, this.scale_shift_mouse_over, this.text_shift_mouse_over);
+				slice.setShiftAllMouseOver(this.hue_shift_mouse_over, this.sat_shift_mouse_over, this.bright_shift_mouse_over, this.size_shift_mouse_over, this.text_toggle_mouse_over);
 			}
 		}	
 		
 		public void scaleShiftAll() {
-			super.shiftScaleMouseOver();
-			  for (int i = 0; i < slices.size(); i++) {
+			super.shiftSize(this.size_shift_mouse_over);
+			for (int i = 0; i < slices.size(); i++) {
 				  BarSlice slice = slices.get(i);
-				  slice.shiftScaleMouseOver();
-			  }
-		  }
+				  slice.shiftSize(slice.size_shift_mouse_over);
+			}
+		}
 
 		public void scaleShiftResetAllBase() {
 			super.shiftScaleResetToBase();
@@ -212,7 +205,6 @@ public class Bar extends ShapeRect {
 		 **/
 
 		public void setColorSlice(int index, int argb) {
-//			this.pie_value_assign = ANGLE;
 			if (index < slices.size()) {
 				BarSlice slice = slices.get(index);
 				slice.setColorBaseARGB(argb);
@@ -220,7 +212,6 @@ public class Bar extends ShapeRect {
 		}
 
 		public void setColorAllSlices(int argb) {
-//			this.pie_value_assign = ANGLE;
 			for (int i = 0; i < slices.size(); i++) {
 				BarSlice slice = slices.get(i);
 				slice.setColorBaseARGB(argb);
@@ -230,7 +221,7 @@ public class Bar extends ShapeRect {
 		public void setMouseOverShiftSlice(int index, float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
 			if (index < slices.size()) {
 				BarSlice slice = slices.get(index);
-				slice.setShiftMouseOverAll(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+				slice.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
 			}
 		}
 		

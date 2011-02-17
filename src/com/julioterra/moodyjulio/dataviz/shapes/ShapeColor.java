@@ -13,9 +13,9 @@ public class ShapeColor extends Shape {
 	protected float 	sat_shift_mouse_over;
 	protected float 	bright_shift_mouse_over;	
 
-	protected float 	hue_shift_mouse_press;
-	protected float 	sat_shift_mouse_press;
-	protected float 	bright_shift_mouse_press;	
+	protected float 	hue_shift_mouse_clicked;
+	protected float 	sat_shift_mouse_clicked;
+	protected float 	bright_shift_mouse_clicked;	
 
 	/*********************************************************
 	 ** CONSTRUCTOR METHODS 
@@ -46,8 +46,57 @@ public class ShapeColor extends Shape {
 	 ** MOUSE OVER METHODS 
 	 **/
 
-	protected boolean contains(float x, float y) {
-		return false;
+	public void mouseOverActions() {
+		if(!this.mouse_over) {
+			if(this.mouse_over_active) {
+				this.shiftHue(this.hue_shift_mouse_over);
+				this.shiftSat(this.sat_shift_mouse_over);
+				this.shiftBright(this.bright_shift_mouse_over);
+				
+				this.shiftSize(this.size_shift_mouse_over);
+				if(this.text_toggle_mouse_over) this.setTextVisibleNameDescription();
+				this.mouseOverExternalActions();
+//				PApplet.println("Mouse Over");
+			}
+			this.mouse_over = true;			             // important to only change the flag at the end of the function
+		}
+	}
+
+	public void mouseOffActions() {
+		if (this.mouse_over) {
+			if(this.mouse_over_active) {
+				this.shiftScaleReset();
+				if(this.text_toggle_mouse_over) this.setTextInvisibleNameDescription();
+				this.mouseOffExternalActions();
+				this.shiftColorReset();
+//				PApplet.println("Mouse Gone");
+			}
+			this.mouse_over = false;
+		}
+	}
+
+	public void mouseClickedActions() {
+//		if(this.mouse_pressed) {
+			if(this.mouse_clicked_active) {
+				if (this.mouse_click_toggle) {
+					this.mouse_click_toggle = false;
+					this.shiftColorReset();
+					this.shiftScaleReset();
+					if(this.text_toggle_mouse_clicked) this.setTextInvisibleNameDescription();
+//					PApplet.println("Mouse Clicked - toggle off");
+				} else {
+					this.mouse_click_toggle = true;
+					this.shiftSize(this.size_shift_mouse_clicked);
+					if(this.text_toggle_mouse_clicked) this.setTextVisibleNameDescription();
+					this.shiftHue(this.hue_shift_mouse_clicked);
+					this.shiftSat(this.sat_shift_mouse_clicked);
+					this.shiftBright(this.bright_shift_mouse_clicked);
+//					PApplet.println("Mouse Clicked - toggle on");
+				}
+				this.mouseClickedExternalActions();	
+//			}
+			this.mouse_pressed = false;
+		}
 	}
 
 	/*********************************************************
@@ -56,12 +105,13 @@ public class ShapeColor extends Shape {
 
 	/** Shift Methods **/
 
-	public void setShiftMouseOverAll(float hue_shift, float saturation_shift, float brightness_shift, float scale_shift, boolean text_shift_mouse_over) {
+	public void setShiftAllMouseOver(float hue_shift, float saturation_shift, float brightness_shift, float scale_shift, boolean text_shift_mouse_over) {
 		this.hue_shift_mouse_over = hue_shift;
 		this.sat_shift_mouse_over = saturation_shift;
 		this.bright_shift_mouse_over = brightness_shift;
-		this.scale_shift_mouse_over = scale_shift;
-		this.text_shift_mouse_over = text_shift_mouse_over;
+		this.size_shift_mouse_over = scale_shift;
+		this.text_toggle_mouse_over = text_shift_mouse_over;
+//		this.mouse_over_active = true;
 	}
 	
 	public void setColorShiftMouseOver(float hue_shift, float sat_shift, float bright_shift) {
@@ -71,39 +121,21 @@ public class ShapeColor extends Shape {
 		this.bright_shift_mouse_over = bright_shift;
 	}
 
-	public void shiftHueMouseOver() {
-		if(mouse_over_active) shiftHue(this.hue_shift_mouse_over);
-//		PApplet.println("SHIFT HUE METHOD - base color " + this.color_base + " color " + this.color);
-	}
-
-	public void shiftSatMouseOver() {
-		if(mouse_over_active) shiftSat(this.sat_shift_mouse_over);
-//		PApplet.println("SHIFT SAT METHOD - base color " + this.color_base + " color " + this.color);
-	}
-
-	public void shiftBrightMouseOver() {
-		if(mouse_over_active) shiftBright(this.bright_shift_mouse_over);
-//		PApplet.println("SHIFT BRIGHT METHOD - base color " + this.color_base + " color " + this.color);
-	}
-
 	public void shiftHue(float shift_hue) {
 		float hue = processing_app.hue(this.color_base);
 		float hue_offshift = (float) (255f*shift_hue);
-//		float hue_offshift = (float) (hue*shift_hue);
 		this.color = adjustHue(this.color, (hue + hue_offshift));
 	}
 	
 	public void shiftSat(float shift_sat) {
 		float saturation = processing_app.saturation(this.color_base);
 		float sat_offshift = (float) (255f*shift_sat);
-//		float sat_offshift = (float) (saturation*shift_sat);
 		this.color = adjustSat(this.color, (saturation + sat_offshift));
 	}
 	
 	public void shiftBright(float shift_bright) {
 		float brightness = processing_app.brightness(this.color_base);
 		float bright_shift = (float) (255f*shift_bright);
-//		float bright_shift = (float) (brightness*shift_bright);
 		this.color = adjustBright(this.color, (brightness + bright_shift));
 	}
 
@@ -128,7 +160,6 @@ public class ShapeColor extends Shape {
 
 	public void shiftColorReset() {
 		this.color = this.color_base;
-//		  PApplet.println("SHIFT SCALE METHOD - SHAPE RECT - scale " + this.scale + " base color " + this.color_base);
 
 	}
 

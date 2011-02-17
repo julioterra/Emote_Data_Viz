@@ -117,5 +117,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/julioterra/Code/Processing/libraries/opengl/library/jogl_awt.dll"/>
+	<classpathentry kind="lib" path="/Users/julioterra/Code/Processing/libraries/opengl/library/jogl_cg.dll"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
