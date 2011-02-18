@@ -4,9 +4,6 @@ import java.util.ArrayList;
 //import processing.core.PApplet;
 import processing.core.PVector;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeRect;
-//import com.julioterra.moodyjulio.dataviz.shapes.pie.PieSlice;
-//import com.julioterra.moodyjulio.dataviz.shapes.pie.PieSliceArc;
-//import com.julioterra.moodyjulio.dataviz.shapes.pie.PieSliceLine;
 
 public class Bar extends ShapeRect {
 
@@ -69,7 +66,7 @@ public class Bar extends ShapeRect {
 	  }
 
 	  public void size(float x, float y) {
-		  this.size = new PVector(x, y);
+		  this.size_active = new PVector(x, y);
 		  this.size_base = new PVector(x, y);
 
 // 		add code here that resizes and re-locates all of the bar slices
@@ -116,19 +113,18 @@ public class Bar extends ShapeRect {
 			  BarSlice slice = slices.get(slices.size()-1);
 			  slice.setName(name);
 			  slice.setDescription(description);		  
-			  slice.setValue((float)end_value);
 			  slice.setMouseOverActive(true);
-			  if (font_loaded_title) slice.loadFontDescription(this.font_number_title, this.font_size_title_active);
+			  if (font_loaded_label) slice.loadFontDescription(this.font_number_label, this.font_size_label_active);
 //			  PApplet.println("ADD SLICE " + slice.getString());
 		  }
 		  
 		  protected void addSliceInLocation(String text, double start_value, double end_value){
 			float start_loc_y = (float)(start_value - this.min_value);
-			start_loc_y = (float)((start_loc_y / this.value_range_size) * this.size.y);
+			start_loc_y = (float)((start_loc_y / this.value_range_size) * this.size_active.y);
 			float length_y = (float)(end_value - start_value);
-			length_y = (float)((length_y / this.value_range_size) * this.size.y);
+			length_y = (float)((length_y / this.value_range_size) * this.size_active.y);
 //			PApplet.println(slice.getString());
-			this.slices.add(new BarSlice((int)this.location.x, (int)(this.location.y+start_loc_y), (int)this.size.x, (int)length_y, text));
+			this.slices.add(new BarSlice((int)this.location.x, (int)(this.location.y+start_loc_y), (int)this.size_active.x, (int)length_y, text));
 		  }
 
 		  public void removeSlice(int index) {
@@ -326,7 +322,7 @@ public class Bar extends ShapeRect {
 		}
 		
 		public String getString() {
-			return "Bar - location x " + location.x + " location y " + location.y + " size x " + size.x + " size y " + size.y;
+			return "Bar - location x " + location.x + " location y " + location.y + " size x " + size_active.x + " size y " + size_active.y;
 		}
 
 }

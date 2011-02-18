@@ -1,33 +1,25 @@
 package com.julioterra.moodyjulio.dataviz.shapes.panel;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ArrayList;
 import processing.core.PApplet;
+
+import com.julioterra.moodyjulio.dataviz.shapes.ShapeRectText;
 import com.julioterra.moodyjulio.dataviz.shapes.pie.PieSlice;
 
-public class ButtonDropDown extends ButtonText {
+public class ButtonDropDown extends ShapeRectText {
 
-	public HashMap <String, ButtonText> button_map;
-	public ArrayList<ButtonText> buttons;
-	public int dropdown_color;
+	public HashMap <String, ShapeRectText> button_map;
 	public boolean drop_down_active;
 	protected long last_mouse_over;
-	protected long drop_down_pause = 300;
+	protected static long drop_down_pause = 300;
 	
-	public ButtonDropDown(int x, int y, String text, int color, int font_number, int text_align, boolean activate_mouse_over, boolean activate_mouse_press) {
-		super(x, y, text, color, font_number, text_align, activate_mouse_over, activate_mouse_press);
-		buttons = new ArrayList<ButtonText>();
-		button_map = new HashMap <String, ButtonText>();
-		this.dropdown_color = this.font_color_title_active;
-	}
-
-	public ButtonDropDown(int x, int y, String text, int color, int font_number, int text_align) {
-		super(x, y, text, color, font_number, text_align, true, true);
-		buttons = new ArrayList<ButtonText>();
-		button_map = new HashMap <String, ButtonText>();
-		this.dropdown_color = this.font_color_title_active;
+	public ButtonDropDown(int x, int y, int width, int height, String text, int color, int font_number, int text_align) {
+		super(x, y, width, height, text, color, font_number, text_align, 0, true, true);
+		button_map = new HashMap <String, ShapeRectText>();
 	}
 	
 	
@@ -36,17 +28,17 @@ public class ButtonDropDown extends ButtonText {
 	 ***************************************/
 	
 	public void addSubButton(String text, int color, Object object, String method_name){
-		float location_y = this.location.y + (this.size.y * (buttons.size()+1));
-		ButtonText new_button = new ButtonText((int)location.x, (int)location_y, text, color, this.font_number_title, this.alignment_text, true, false);
-		new_button.addMouseClickedAction(""+buttons.size(), object, method_name);
-		buttons.add(new_button);
+		float location_y = this.location.y + (this.size_active.y * (button_map.size()+1));
+		ShapeRectText new_button = new ShapeRectText((int)location.x, (int)location_y, (int)this.size_base.x, (int)this.size_base.y, text, color, this.font_number_label, this.alignment_text, PApplet.LEFT, true, true);
+		new_button.addMouseClickedAction(""+button_map.size(), object, method_name);
+		button_map.put(text, new_button);
 	}
 
 	public void addSubButton(String text, Object object, String method_name){
-		float location_y = this.location.y + (this.size.y * (buttons.size()+1));
-		ButtonText new_button = new ButtonText((int)location.x, (int)location_y, text, this.dropdown_color, this.font_number_title, this.alignment_text, true, false);
-		new_button.addMouseClickedAction(""+buttons.size(), object, method_name);
-		buttons.add(new_button);
+		float location_y = this.location.y + (this.size_active.y * (button_map.size()+1));
+		ShapeRectText new_button = new ShapeRectText((int)location.x, (int)location_y,(int)size_base.x, (int)size_base.y, text, this.color_base, this.font_number_label, this.alignment_text, PApplet.LEFT, true, true);
+		new_button.addMouseClickedAction(""+button_map.size(), object, method_name);
+		button_map.put(text, new_button);
 	}
 
 	/***************************************
@@ -56,10 +48,12 @@ public class ButtonDropDown extends ButtonText {
 	 public void display() {
 		  super.display();
 		  if(drop_down_active) {
-			  for (int i = 0; i < buttons.size(); i++) {
-				  ButtonText button = buttons.get(i);
-				  button.display();
-			  }
+				Iterator<Map.Entry<String, ShapeRectText>> button_it = button_map.entrySet().iterator();
+				while (button_it.hasNext()) {
+					Map.Entry<String, ShapeRectText> button_entry = (Map.Entry<String, ShapeRectText>) button_it.next();
+					ShapeRectText button = button_entry.getValue();	 
+					  button.display();
+				}
 		  }
 	  }
 
@@ -70,15 +64,24 @@ public class ButtonDropDown extends ButtonText {
 			  last_mouse_over = processing_app.millis();
 		  }
 		  if(drop_down_active) {
-			  for (int i = 0; i < buttons.size(); i++) {
-				  ButtonText button = buttons.get(i);
-				  button.mouseOver();
-				  if (button.mouse_over) { last_mouse_over = processing_app.millis(); }
-			  }
+				Iterator<Map.Entry<String, ShapeRectText>> button_it = button_map.entrySet().iterator();
+				while (button_it.hasNext()) {
+					Map.Entry<String, ShapeRectText> button_entry = (Map.Entry<String, ShapeRectText>) button_it.next();
+					ShapeRectText button = button_entry.getValue();	 
+					button.mouseOver();
+					if (button.mouse_over) { last_mouse_over = processing_app.millis(); }
+				}
 			  if (!this.mouse_over && (processing_app.millis() - last_mouse_over > drop_down_pause)) {
 				  drop_down_active = false;
 			  }
 		  }
 	  }
+	  
+		/***************************************
+		 ** NEW METHODS TO COME:
+		 ** 1. scale
+		 ** 2. size 
+		 ***************************************/
+
 	
 }

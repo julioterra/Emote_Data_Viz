@@ -7,7 +7,7 @@ import processing.core.PApplet;
 public class ShapeColor extends Shape {
 
 	protected int color_base = colorARGB(0, 255, 255, 255);
-	protected int color = color_base;
+	protected int color_active = color_base;
 
 	protected float 	hue_shift_mouse_over;
 	protected float 	sat_shift_mouse_over;
@@ -23,97 +23,20 @@ public class ShapeColor extends Shape {
 
 	public ShapeColor() {
 		super();
-		this.color = Transparent_Color;
+		this.color_active = Transparent_Color;
 	}
 	
-	public ShapeColor (int x, int y) {
+	public ShapeColor (float x, float y) {
 		super(x, y);
-		this.color = Transparent_Color;
+		this.color_active = Transparent_Color;
 	}
 
-	public ShapeColor (int x, int y, int color) {
+	public ShapeColor (float x, float y, int color) {
 		super(x, y);
 		this.color_base = color;
-		this.color = this.color_base;
+		this.color_active = this.color_base;
 	}
 
-	/*********************************************************
-	 ** DISPLAY METHODS 
-	 ** defined in shape class along with move, turn, scale
-	 **/
-	
-	/*********************************************************
-	 ** MOUSE OVER METHODS 
-	 **/
-
-	public void mouseOverActions() {
-		if(!this.mouse_over) {
-			if(this.mouse_over_active) {
-				this.shiftHue(this.hue_shift_mouse_over);
-				this.shiftSat(this.sat_shift_mouse_over);
-				this.shiftBright(this.bright_shift_mouse_over);
-				
-				this.shiftSize(this.size_shift_mouse_over);
-				if(this.text_toggle_mouse_over) this.setTextVisibleNameDescription();
-				this.mouseOverExternalActions();
-//				PApplet.println("Mouse Over");
-			}
-			this.mouse_over = true;			             // important to only change the flag at the end of the function
-		}
-	}
-
-	public void mouseOffActions() {
-		if (this.mouse_over) {
-			if(this.mouse_over_active) {
-				this.shiftScaleReset();
-				if(this.text_toggle_mouse_over) this.setTextInvisibleNameDescription();
-				this.mouseOffExternalActions();
-				this.shiftColorReset();
-//				PApplet.println("Mouse Gone");
-			}
-			this.mouse_over = false;
-		}
-	}
-
-	public void mouseClickedActions() {
-//		if(this.mouse_pressed) {
-			if(this.mouse_clicked_active) {
-				if (this.mouse_click_toggle) {
-					this.mouse_click_toggle = false;
-					this.shiftColorReset();
-					this.shiftScaleReset();
-					if(this.text_toggle_mouse_clicked) this.setTextInvisibleNameDescription();
-//					PApplet.println("Mouse Clicked - toggle off");
-				} else {
-					this.mouse_click_toggle = true;
-					this.shiftSize(this.size_shift_mouse_clicked);
-					if(this.text_toggle_mouse_clicked) this.setTextVisibleNameDescription();
-					this.shiftHue(this.hue_shift_mouse_clicked);
-					this.shiftSat(this.sat_shift_mouse_clicked);
-					this.shiftBright(this.bright_shift_mouse_clicked);
-//					PApplet.println("Mouse Clicked - toggle on");
-				}
-				this.mouseClickedExternalActions();	
-//			}
-			this.mouse_pressed = false;
-		}
-	}
-
-	/*********************************************************
-	 ** COLOR METHOD 
-	 **/
-
-	/** Shift Methods **/
-
-	public void setShiftAllMouseOver(float hue_shift, float saturation_shift, float brightness_shift, float scale_shift, boolean text_shift_mouse_over) {
-		this.hue_shift_mouse_over = hue_shift;
-		this.sat_shift_mouse_over = saturation_shift;
-		this.bright_shift_mouse_over = brightness_shift;
-		this.size_shift_mouse_over = scale_shift;
-		this.text_toggle_mouse_over = text_shift_mouse_over;
-//		this.mouse_over_active = true;
-	}
-	
 	public void setColorShiftMouseOver(float hue_shift, float sat_shift, float bright_shift) {
 		// all values should range from 0 - 1
 		this.hue_shift_mouse_over = hue_shift;
@@ -121,56 +44,66 @@ public class ShapeColor extends Shape {
 		this.bright_shift_mouse_over = bright_shift;
 	}
 
+	public void setColorShiftMouseClicked(float hue_shift, float sat_shift, float bright_shift) {
+		// all values should range from 0 - 1
+		this.hue_shift_mouse_clicked = hue_shift;
+		this.sat_shift_mouse_clicked = sat_shift;
+		this.bright_shift_mouse_clicked = bright_shift;
+	}
+
 	public void shiftHue(float shift_hue) {
+		PApplet.println("changing hue - before" + id_number + " shift " + shift_hue + " hue " + processing_app.hue(this.color_base));
 		float hue = processing_app.hue(this.color_base);
 		float hue_offshift = (float) (255f*shift_hue);
-		this.color = adjustHue(this.color, (hue + hue_offshift));
+		this.color_active = adjustHue(this.color_active, (hue + hue_offshift));
+		PApplet.println("changing hue - after" + id_number + " shift " + shift_hue + " hue " + processing_app.hue(this.color_base));
 	}
 	
 	public void shiftSat(float shift_sat) {
 		float saturation = processing_app.saturation(this.color_base);
 		float sat_offshift = (float) (255f*shift_sat);
-		this.color = adjustSat(this.color, (saturation + sat_offshift));
+		this.color_active = adjustSat(this.color_active, (saturation + sat_offshift));
+		PApplet.println("changing saturation " + id_number);
 	}
 	
 	public void shiftBright(float shift_bright) {
 		float brightness = processing_app.brightness(this.color_base);
 		float bright_shift = (float) (255f*shift_bright);
-		this.color = adjustBright(this.color, (brightness + bright_shift));
+		this.color_active = adjustBright(this.color_active, (brightness + bright_shift));
 	}
 
 	/** SET BASE COLOR METHODS **/
 
 	public void setColorBaseARGB(int a, int r, int g, int b) {
 		this.color_base = ShapeColor.colorARGB(a, r, g, b);
-		this.color = this.color_base;
+		this.color_active = this.color_base;
 	}
 	
 	public void setColorBaseARGB(int argb) {
 		this.color_base = argb;
-		this.color = this.color_base;
+		this.color_active = this.color_base;
 	}
 
 	public void setColorBase(int rgb) {
 		this.color_base = colorRGB(rgb);
-		this.color = this.color_base;
+		this.color_active = this.color_base;
 	}
 
 	/** RESET COLOR METHOD **/
 
 	public void shiftColorReset() {
-		this.color = this.color_base;
+		this.color_active = this.color_base;
 
 	}
 
 	/** SET ACTIVE RGB COLOR METHODS **/
 
 	public void setColorARGB(int a, int r, int g, int b) {
-		this.color = colorARGB(a, r, g, b);
+		this.color_active = colorARGB(a, r, g, b);
 	}
 
 	public void setColorARGB(int argb) {
-		this.color = argb;
+		this.color_active = argb;
 	}
 
 	public void setColorRGB(int r, int g, int b) {
@@ -179,25 +112,25 @@ public class ShapeColor extends Shape {
 	}
 
 	public void setColorRGB(int rgb) {
-		this.color = colorRGB(rgb);
+		this.color_active = colorRGB(rgb);
 	}
 
 	/** SET ACTIVE HSB COLOR METHODS **/
 	
 	public void setColorHSB(float hue, float saturation, float brightness) {
-		this.color = Color.HSBtoRGB(hue, saturation, brightness);
+		this.color_active = Color.HSBtoRGB(hue, saturation, brightness);
 	}
 
 	public void setColorHue(float hue) {
-		this.color = adjustHue(this.color, hue);
+		this.color_active = adjustHue(this.color_active, hue);
 	}
 
 	public void setColorSat(float saturation) {
-		this.color = adjustSat(this.color, saturation);	
+		this.color_active = adjustSat(this.color_active, saturation);	
 	}
 
 	public void setColorBright(float brightness) {
-		this.color = adjustBright(this.color, brightness);
+		this.color_active = adjustBright(this.color_active, brightness);
 	}
 
 	/** GET METHODS **/
@@ -207,19 +140,19 @@ public class ShapeColor extends Shape {
 	}
 
 	public int getColor() {
-		return this.color;
+		return this.color_active;
 	}
 	
 	public float getColorHue() {
-		return processing_app.hue(this.color);
+		return processing_app.hue(this.color_active);
 	}
 
 	public float getColorSat() {
-		return processing_app.saturation(this.color);
+		return processing_app.saturation(this.color_active);
 	}
 
 	public float getColorBright() {
-		return processing_app.brightness(this.color);
+		return processing_app.brightness(this.color_active);
 	}
 
 	/*********************************************************

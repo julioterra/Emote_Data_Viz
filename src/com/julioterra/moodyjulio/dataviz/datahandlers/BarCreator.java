@@ -14,10 +14,10 @@ import com.julioterra.moodyjulio.dataviz.data.PieEmotionData;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeCircle;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeRect;
-import com.julioterra.moodyjulio.dataviz.shapes.ShapeText;
+import com.julioterra.moodyjulio.dataviz.shapes.ShapeRectText;
 import com.julioterra.moodyjulio.dataviz.shapes.bar.Bar;
 import com.julioterra.moodyjulio.dataviz.shapes.panel.ButtonDropDown;
-import com.julioterra.moodyjulio.dataviz.shapes.panel.ButtonText;
+import com.julioterra.moodyjulio.dataviz.shapes.panel.ShapeText;
 import com.julioterra.moodyjulio.dataviz.shapes.pie.Pie;
 import com.julioterra.moodyjulio.dataviz.shapes.pie.Pie_Arc;
 
@@ -39,7 +39,7 @@ public class BarCreator extends DataProcessor {
 	public PVector location_title_slice;
 	public PVector location_description_slice;
 
-	public ArrayList<ShapeText> text_items;
+	public ArrayList<ShapeRectText> text_items;
 	HashMap<String, Integer> text_items_names;
 
 	public Date date_range_start; 
@@ -52,7 +52,7 @@ public class BarCreator extends DataProcessor {
     
 	public BarCreator(float x, float y, float width, float height, float bar_offset){
 		super();
-		this.text_items = new ArrayList<ShapeText>();
+		this.text_items = new ArrayList<ShapeRectText>();
 		text_items_names = new HashMap<String, Integer>();
 		this.bar_data = new ArrayList<Data>();
 		this.bars = new ArrayList<Bar>();
@@ -92,7 +92,7 @@ public class BarCreator extends DataProcessor {
 	    	bar.display();
 	    }
 	    for (int i = 0; i < text_items.size(); i++) {
-	    	ShapeText display_button = text_items.get(i);	 
+	    	ShapeRectText display_button = text_items.get(i);	 
 			display_button.display();
 	    }
 	}
@@ -104,7 +104,7 @@ public class BarCreator extends DataProcessor {
 	    	bar.mouseOver();
 	    }
 	    for (int j = 0; j < text_items.size(); j++) {
-	    	ShapeText text_item = text_items.get(j);
+	    	ShapeRectText text_item = text_items.get(j);
 	    	text_item.mouseOver();
 		}
 	}
@@ -155,7 +155,7 @@ public class BarCreator extends DataProcessor {
 			bar.addSlice(name, description, bar_record.activity.toLowerCase(), Time.calculate_time_dif_seconds(new Time("00:00:00"), temp_time_start), Time.calculate_time_dif_seconds_maxout(new Time("00:00:00"), temp_time_end));
 			this.add_time_count(bar_record.activity, Time.calculate_time_dif_seconds(bar_record.time_stamp, bar_record.time_end));
 		}
-		bar.setShiftMouseOverSlices((float) 0.0, (float) 0.0, (float) -0.1, (float) 0.0, true);
+		bar.setShiftMouseOverSlices((float) 0.2, (float) 0.0, (float) -0.2, (float) 0, true);
 		bar.loadFontSlices(DataVizElement.font_main_text, DataVizElement.fonts_size[DataVizElement.font_main_text], 1f);
 		bar.textLocationNameDescriptionSlices(675, 175, 0, 50);
 		PApplet.println("number of slices " + bar.slices.size());
@@ -297,33 +297,33 @@ public class BarCreator extends DataProcessor {
 	}
 
 	public void addTextRect(String id, int x, int y, int width, int height, String text, int color, int text_color, int font_number, int align_mode){
-		ShapeText new_button = new ShapeText((int)(location.x+x), (int)(location.y+y), width, height, text, color, text_color, font_number, align_mode, false, false);
+		ShapeRectText new_button = new ShapeRectText((int)(location.x+x), (int)(location.y+y), width, height, text, color, text_color, font_number, align_mode, false, false);
 		text_items.add(new_button);
 		text_items_names.put(id, text_items.size()-1);
 	}
 
 	public void addTextRect(String id, int x, int y, int width, int height, String text, int color, int text_color, int font_number, int align_mode, float rotation){
-		ShapeText new_button = new ShapeText(x, y, width, height, text, color, text_color, font_number, align_mode, rotation, false, false);
+		ShapeRectText new_button = new ShapeRectText(x, y, width, height, text, color, text_color, font_number, align_mode, rotation, false, false);
 		text_items.add(new_button);
 		text_items_names.put(id, text_items.size()-1);
 	}
 
 	public void addTextRect(String id, int x, int y, int width, int height, String text, int color, int text_color, int font_number, int font_size, int align_mode, float rotation){
-		ShapeText new_button = new ShapeText(x, y, width, height, text, color, text_color, font_number, align_mode, rotation, false, false);
+		ShapeRectText new_button = new ShapeRectText(x, y, width, height, text, color, text_color, font_number, align_mode, rotation, false, false);
 		new_button.setFontSizeAll(font_size);
 		text_items.add(new_button);
 		text_items_names.put(id, text_items.size()-1);
 	}
 
 	public void addTextRectButton(String id, int x, int y, int width, int height, String text, int description_x, int description_y, String description, int color, int text_color, int font_number, int align_mode, float rotation){
-		ShapeText new_button = new ShapeText(x, y, width, height, text, description, color, text_color, font_number, align_mode, rotation, true, true);
+		ShapeRectText new_button = new ShapeRectText(x, y, width, height, text, description, color, text_color, font_number, align_mode, rotation, true, true);
 		new_button.setTextLocationDescription(description_x, description_y);
 		text_items.add(new_button);
 		text_items_names.put(id, text_items.size()-1);
 	}
 
 	public void addTextRectButton(String id, int x, int y, int width, int height, String text, int description_x, int description_y, String description, int color, int text_color, int font_number, int font_size, int align_mode, float rotation){
-		ShapeText new_button = new ShapeText(x, y, width, height, text, description, color, text_color, font_number, align_mode, rotation, true, true);
+		ShapeRectText new_button = new ShapeRectText(x, y, width, height, text, description, color, text_color, font_number, align_mode, rotation, true, true);
 		new_button.setTextLocationDescription(description_x, description_y);
 		new_button.setFontSizeAll(font_size);
 		text_items.add(new_button);
@@ -331,49 +331,49 @@ public class BarCreator extends DataProcessor {
 	}
 
 	public void addText(String id, int x, int y, String text, int color, int font_number, int align_mode){
-		ButtonText new_button = new ButtonText((int)(location.x+x), (int)(location.y+y), text, color, font_number, align_mode, false, false);
+		ShapeText new_button = new ShapeText((int)(location.x+x), (int)(location.y+y), text, color, font_number, align_mode, false, false);
 		text_items.add(new_button);
 		text_items_names.put(id, text_items.size()-1);
 	}
 
 	public void addTextButton(String id, int x, int y, String text, int color, int font_number, int align_mode, boolean mouse_over_active, boolean mouse_press_active){
-		ButtonText new_button = new ButtonText((int)(location.x+x), (int)(location.y+y), text, color, font_number, align_mode, mouse_over_active, mouse_press_active);
+		ShapeText new_button = new ShapeText((int)(location.x+x), (int)(location.y+y), text, color, font_number, align_mode, mouse_over_active, mouse_press_active);
 		text_items.add(new_button);
 		text_items_names.put(id, text_items.size()-1);
 	}
 	
 	public void addTextButton(String id, int x, int y, String text, int color, int font_number, int font_size, int align_mode){
-		ButtonText new_button = new ButtonText(x, y, text, color, font_number, align_mode, true, true);
+		ShapeText new_button = new ShapeText(x, y, text, color, font_number, align_mode, true, true);
 		new_button.setFontSizeAll(font_size);
 		text_items.add(new_button);
 		text_items_names.put(id, text_items.size()-1);
 	}
 
-	public void addDropDownButton(String id, int x, int y, String text, int color, int font_number, int align_mode, boolean mouse_over_active, boolean mouse_press_active){
-		ButtonDropDown new_button = new ButtonDropDown((int)(location.x+x), (int)(location.y+y), text, color, font_number, align_mode, mouse_over_active, mouse_press_active);
-		text_items.add(new_button);
-		text_items_names.put(id, text_items.size()-1);
-	}
-
-	public void addDropDownSubButton(String button_id, String text, int color, Object object, String method){
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			if(index < text_items.size()) { 
-				ButtonDropDown current_button = (ButtonDropDown) text_items.get(index);
-				current_button.addSubButton(text, color, object, method);				
-			}
-		}
-	}
-
-	public void addDropDownSubButton(String button_id, String text, Object object, String method){
-		if (text_items_names.get(button_id) != null) {
-			int index = Integer.parseInt(""+text_items_names.get(button_id));
-			if(index < text_items.size()) { 
-				ButtonDropDown current_button = (ButtonDropDown) text_items.get(index);
-				current_button.addSubButton(text, object, method);				
-			}
-		}
-	}
+//	public void addDropDownButton(String id, int x, int y, String text, int color, int font_number, int align_mode, boolean mouse_over_active, boolean mouse_press_active){
+//		ButtonDropDown new_button = new ButtonDropDown((int)(location.x+x), (int)(location.y+y), text, color, font_number, align_mode, mouse_over_active, mouse_press_active);
+//		text_items.add(new_button);
+//		text_items_names.put(id, text_items.size()-1);
+//	}
+//
+//	public void addDropDownSubButton(String button_id, String text, int color, Object object, String method){
+//		if (text_items_names.get(button_id) != null) {
+//			int index = Integer.parseInt(""+text_items_names.get(button_id));
+//			if(index < text_items.size()) { 
+//				ButtonDropDown current_button = (ButtonDropDown) text_items.get(index);
+//				current_button.addSubButton(text, color, object, method);				
+//			}
+//		}
+//	}
+//
+//	public void addDropDownSubButton(String button_id, String text, Object object, String method){
+//		if (text_items_names.get(button_id) != null) {
+//			int index = Integer.parseInt(""+text_items_names.get(button_id));
+//			if(index < text_items.size()) { 
+//				ButtonDropDown current_button = (ButtonDropDown) text_items.get(index);
+//				current_button.addSubButton(text, object, method);				
+//			}
+//		}
+//	}
 
 	public void removeText(String button_id) {
 		if (text_items_names.get(button_id) != null) {
@@ -394,7 +394,7 @@ public class BarCreator extends DataProcessor {
 
 	public void setShiftMouseOverTextSlice(int index, float hue_shift, float saturation_shift, float brightness_shift, float scale_shift, boolean text_shift_mouse_over){
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, scale_shift, text_shift_mouse_over);
 		}		
 	}
@@ -408,7 +408,7 @@ public class BarCreator extends DataProcessor {
 
 	public void setTextVisible(int index) {
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.visible();
 		}		
 	}
@@ -422,7 +422,7 @@ public class BarCreator extends DataProcessor {
 
 	public void setTextInvisible(int index) {
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.invisible();
 		}		
 	}
@@ -436,7 +436,7 @@ public class BarCreator extends DataProcessor {
 
 	public void updateTextLocation(int index, int x, int y){
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.setLocation(x, y);
 		}
 	}
@@ -450,7 +450,7 @@ public class BarCreator extends DataProcessor {
 
 	public void updateText(int index, String text){
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.setName(text);
 		}
 	}
@@ -464,7 +464,7 @@ public class BarCreator extends DataProcessor {
 
 	public void updateTextDescription(int index, String text){
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.setDescription(text);
 		}
 	}
@@ -478,7 +478,7 @@ public class BarCreator extends DataProcessor {
 
 	public void updateTextColor(int index, int color){
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.setColorBaseARGB(color);
 		}
 	}
@@ -494,7 +494,7 @@ public class BarCreator extends DataProcessor {
 		if (text_items_names.get(button_id) != null) {
 			int index = Integer.parseInt(""+text_items_names.get(button_id));
 			if (index < text_items.size()) {
-				ShapeText updated_button = (ShapeText) text_items.get(index);
+				ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 				updated_button.loadFontTitle(font_number, font_size);
 			}
 		}
@@ -502,7 +502,7 @@ public class BarCreator extends DataProcessor {
 
 	public void loadTextFont(int index, int font_number, int font_size){
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.loadFontTitle(font_number, font_size);
 		}
 	}
@@ -516,7 +516,7 @@ public class BarCreator extends DataProcessor {
 
 	public void setTextSize(int index, int font_size){
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.setFontSizeTitle(font_size);
 		}
 	}
@@ -530,7 +530,7 @@ public class BarCreator extends DataProcessor {
 
 	public void setTextSizeDescription(int index, int font_size){
 		if (index < text_items.size()) {
-			ShapeText updated_button = (ShapeText) text_items.get(index);
+			ShapeRectText updated_button = (ShapeRectText) text_items.get(index);
 			updated_button.setFontSizeDescription(font_size);
 		}
 	}

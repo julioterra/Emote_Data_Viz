@@ -1,17 +1,22 @@
 package com.julioterra.moodyjulio.dataviz.application;
 
 import java.awt.event.MouseEvent;
-
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import processing.core.*;
 import com.julioterra.moodyjulio.dataviz.basicelements.*;
 import com.julioterra.moodyjulio.dataviz.datahandlers.*;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
-import com.julioterra.moodyjulio.dataviz.shapes.ShapeText;
+import com.julioterra.moodyjulio.dataviz.shapes.ShapeRectText;
 import com.julioterra.moodyjulio.dataviz.shapes.bar.Bar;
 import com.julioterra.moodyjulio.dataviz.shapes.bar.BarSlice;
 import com.julioterra.moodyjulio.dataviz.shapes.panel.ButtonDropDown;
-import com.julioterra.moodyjulio.dataviz.shapes.panel.ButtonText;
+import com.julioterra.moodyjulio.dataviz.shapes.panel.ShapeText;
 import com.julioterra.moodyjulio.dataviz.shapes.panel.Panel;
 import com.julioterra.moodyjulio.dataviz.view.PieView;
+import com.julioterra.moodyjulio.dataviz.view.View;
+
 import processing.core.*;
 
 //import processing.core.PApplet;
@@ -20,10 +25,13 @@ import processing.core.*;
 public class DataVizLib extends PApplet {
 
 	PGraphics buffer;
+
 	PieView emotion_view;
-	Bar bar_view;
-	BarCreator bar_creator;	
+	Bar bar_view_old;
 	Panel main_nav;
+	BarCreator bar_creator;	
+	
+	public HashMap<String, View> views;
 		
 	int update_count = 0;
 	boolean process_data = false;
@@ -78,8 +86,8 @@ public class DataVizLib extends PApplet {
     	main_nav.addTextButton("nav_bars", 500, 7, "BARS", ShapeColor.colorARGB(255, 255, 255, 255), DataVizElement.font_nav_small, PApplet.LEFT, true, false);
     	main_nav.addTextButton("nav_imgs", 600, 7, "IMGS", ShapeColor.colorARGB(255, 255, 255, 255), DataVizElement.font_nav_small, PApplet.LEFT, true, false);
     	main_nav.setAllShiftMouseOverPanelItems(0, 0, 0, 0.2f, false);
-    	main_nav.addMouseClickedAction("test_nav", this, "test_print");
-    	main_nav.addMouseOverAction("test_nav_2", this, "test_print_2");
+    	main_nav.addMouseClickedActionElement("nav_pie", "pie_view", this, "pie_view");
+    	main_nav.addMouseClickedActionElement("nav_bars", "bar_view", this, "bar_view");
 
 	    buffer.beginDraw();
 	    buffer.fill(200);
@@ -90,20 +98,12 @@ public class DataVizLib extends PApplet {
 
 	}  
 
-	public void test_print() {
-		println("****************");
-		println("****************");
-		println("got the callback - click");
-		println("****************");
-		println("****************");
+	public void pie_view() {
+		current_view = 1;
 	}
-
-	public void test_print_2() {
-		println("****************");
-		println("****************");
-		println("got the callback - over");
-		println("****************");
-		println("****************");
+	
+	public void bar_view() {
+		current_view = 0;
 	}
 
 	public void draw() {
@@ -112,8 +112,7 @@ public class DataVizLib extends PApplet {
 
 	    if (current_view == 0) bar_creator.display();
 	    else emotion_view.display();
-	    main_nav.display();
-	    
+	    main_nav.display();	    
 	}
 	
 	public void keyPressed() {

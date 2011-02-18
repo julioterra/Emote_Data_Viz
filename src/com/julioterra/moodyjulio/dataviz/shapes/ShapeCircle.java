@@ -4,7 +4,7 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 
-public class ShapeCircle extends ShapeColor{
+public class ShapeCircle extends ShapeLabel {
 
 	  public static final int UNDEFINED = -1;
 	  public static final int PIE_ARC_SET_RADIUS = 0;
@@ -21,9 +21,9 @@ public class ShapeCircle extends ShapeColor{
 	  protected int value_2_type = UNDEFINED;
 	  protected int value_3_type = UNDEFINED;
 
-	  protected float radius;
+	  protected float radius_active;
 	  protected float radius_base;
-	  protected float diameter;
+	  protected float diameter_active;
 	  protected float diameter_base;
 
 	  protected float angle_start;
@@ -46,10 +46,10 @@ public class ShapeCircle extends ShapeColor{
 
 	  public ShapeCircle(int x_loc, int y_loc, float radius, float angle_start) {
 		  super(x_loc, y_loc, ShapeColor.colorARGB(255,255,255,255));
-	      this.radius = radius;
-	      this.radius_base = this.radius;
-	      this.diameter = this.radius*2;
-	      this.diameter_base = this.diameter;
+	      this.radius_active = radius;
+	      this.radius_base = this.radius_active;
+	      this.diameter_active = this.radius_active*2;
+	      this.diameter_base = this.diameter_active;
 
 	      this.angle_slice = 0;
 	      this.value_one = PApplet.degrees(this.angle_slice);
@@ -65,9 +65,9 @@ public class ShapeCircle extends ShapeColor{
 	  public void resetMouseOverShape() {
 	      this.mouse_over_angle_slice = PApplet.degrees(this.angle_slice);
 	      this.mouse_over_angle_start = -PApplet.degrees(this.angle_start) - this.mouse_over_angle_slice;
-	      this.mouse_over_location = new PVector (this.location.x - this.radius, this.location.y - this.radius);   
+	      this.mouse_over_location = new PVector (this.location.x - this.radius_active, this.location.y - this.radius_active);   
 	      this.mouse_over_shape = new java.awt.geom.Arc2D.Float(this.mouse_over_location.x, this.mouse_over_location.y, 
-	                                                       this.diameter, this.diameter, 
+	                                                       this.diameter_active, this.diameter_active, 
 	                                                       this.mouse_over_angle_start, this.mouse_over_angle_slice, 
 	                                                       java.awt.geom.Arc2D.PIE);
 	  }
@@ -98,7 +98,7 @@ public class ShapeCircle extends ShapeColor{
 	   **/
 	  
 	  public void shiftSize(float shift_scale) {		  
-		  this.setRadius((float) (this.radius * (this.scale+shift_scale)));
+		  this.setRadius((float) (this.radius_active * (this.scale+shift_scale)));
 	  }
 
 	  public void shiftScaleReset() {
@@ -129,16 +129,16 @@ public class ShapeCircle extends ShapeColor{
 	  /* ****** SET METHODS ******* */
 
 	  public void setBaseRadius(float radius) {
-		  this.radius = radius;
-	      this.radius_base = this.radius;
-		  this.diameter = this.radius * 2;
-	      this.diameter_base = this.diameter;
+		  this.radius_active = radius;
+	      this.radius_base = this.radius_active;
+		  this.diameter_active = this.radius_active * 2;
+	      this.diameter_base = this.diameter_active;
 		  this.resetMouseOverShape();
 	  }
 
 	  public void setRadius(float radius) {
-		  this.radius = radius;
-		  this.diameter = this.radius * 2;
+		  this.radius_active = radius;
+		  this.diameter_active = this.radius_active * 2;
 		  this.resetMouseOverShape();
   }
 
@@ -149,11 +149,11 @@ public class ShapeCircle extends ShapeColor{
 	  /* ****** GET METHODS ******* */
 	  
 	  public float getRadius() {
-		  return this.radius;
+		  return this.radius_active;
 	  }
 
 	  public float getDiameter() {
-		  return this.diameter;
+		  return this.diameter_active;
 	  }
 	  
 	  /*********************************************************

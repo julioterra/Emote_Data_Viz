@@ -39,13 +39,13 @@ public class PieSlice extends ShapeCircle {
 		      switch (this.pie_shape_type) {
 		      	  case PIE_ARC_SET_RADIUS:
 		      		  processing_app.noStroke();
-				      processing_app.fill(this.color);
-				      processing_app.arc(0, 0, diameter, diameter, 0, angle_slice);
+				      processing_app.fill(this.color_active);
+				      processing_app.arc(0, 0, diameter_active, diameter_active, 0, angle_slice);
 				      break;
 		      	  case PIE_LINE_VAR_RADIUS:
 				      processing_app.strokeWeight(this.width);
-				      processing_app.stroke(this.color);
-				      processing_app.line(this.radius,0,0,0);
+				      processing_app.stroke(this.color_active);
+				      processing_app.line(this.radius_active,0,0,0);
 				      break;
 		      }		      
 		 processing_app.popMatrix();

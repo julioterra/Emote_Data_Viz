@@ -1,9 +1,7 @@
 package com.julioterra.moodyjulio.dataviz.shapes.pie;
 
 import java.util.ArrayList;
-
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeCircle;
-
 import processing.core.PApplet;
 
 public class Pie extends ShapeCircle {
@@ -29,8 +27,8 @@ public class Pie extends ShapeCircle {
 		else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) this.pie_value_assign = RADIUS;
 
 		this.slices = new ArrayList<PieSlice>();
-		this.diameter = diameter;
-		this.color = colorARGB(255, 255, 255, 255);
+		this.diameter_active = diameter;
+		this.color_active = colorARGB(255, 255, 255, 255);
 	}
 
 	public Pie(int x, int y, float diameter, int number_of_slices, int radius_type) {
@@ -58,12 +56,12 @@ public class Pie extends ShapeCircle {
 			for (int i = 0; i < this.number_of_slices; i++) {
 
 				if (this.pie_shape_type == PIE_ARC_SET_RADIUS) {
-					this.slices.add(new PieSliceArc((int)this.location.x, (int)this.location.y, this.diameter/2, (float) size_in_percent, (float) temp_angle_start, this.color));
+					this.slices.add(new PieSliceArc((int)this.location.x, (int)this.location.y, this.diameter_active/2, (float) size_in_percent, (float) temp_angle_start, this.color_active));
 					this.value_one += degrees_per_slice;
 				}
 				
 				else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) {
-					this.slices.add(new PieSliceLine((int)this.location.x, (int)this.location.y, 0, (float)size_in_percent, (float) temp_angle_start, this.color));
+					this.slices.add(new PieSliceLine((int)this.location.x, (int)this.location.y, 0, (float)size_in_percent, (float) temp_angle_start, this.color_active));
 					this.value_one = degrees_per_slice; 
 				}
 
@@ -156,14 +154,14 @@ public class Pie extends ShapeCircle {
 			this.value_one += value;
 			PieSlice slice = slices.get(slices.size()-1);
 			slice.setValue(value);
-			if (font_loaded_title) slice.loadFontDescription(this.font_number_title, this.font_size_title_active);
+			if (font_loaded_label) slice.loadFontDescription(this.font_number_label, this.font_size_label_active);
 		}
 		else if (this.pie_shape_type == PIE_LINE_VAR_RADIUS) {
-			this.slices.add(new PieSliceLine((int)this.location.x, (int)this.location.y, 0, 0, 0, this.color));
+			this.slices.add(new PieSliceLine((int)this.location.x, (int)this.location.y, 0, 0, 0, this.color_active));
 			if (value > this.value_one) this.value_one = value; 
 			PieSlice slice = slices.get(slices.size()-1);
 			slice.setValue(value);
-			if (font_loaded_title) slice.loadFontDescription(this.font_number_title, this.font_size_title_active);
+			if (font_loaded_label) slice.loadFontDescription(this.font_number_label, this.font_size_label_active);
 		}
 		this.applyValuesToSliceDisplay();
 		this.setShiftMouseOverAll();
@@ -288,7 +286,7 @@ public class Pie extends ShapeCircle {
 			slice.setRadius(radius);
 		}
 
-		if (radius > this.radius) this.radius = radius;
+		if (radius > this.radius_active) this.radius_active = radius;
 	}
 
 
@@ -444,7 +442,7 @@ public class Pie extends ShapeCircle {
 
 			  for (int i = 0; i < slices.size(); i++) {
 					PieSlice slice = slices.get(i);
-					slice.setBaseRadius((float) (slice.getValue()/this.value_one*this.radius) );
+					slice.setBaseRadius((float) (slice.getValue()/this.value_one*this.radius_active) );
 					if (this.value_one < slice.getValue()) this.value_one = slice.getValue();
 //					PApplet.println(" current value " + slice.getValue() + " radius " + slice.getRadius());
 			  }
@@ -503,7 +501,7 @@ public class Pie extends ShapeCircle {
 	}
 
 	public int getColor() {
-		return this.color;
+		return this.color_active;
 	}
 
 	public int getBaseColorSlice(int index) {

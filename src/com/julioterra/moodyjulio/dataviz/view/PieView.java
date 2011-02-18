@@ -171,13 +171,6 @@ public class PieView extends DataVizElement {
 
 	}
 	
-	public void mouseOver() {
-	    large_pie_day.mouseOver();
-	    small_pie_day.mouseOver();
-	    large_pie_night.mouseOver();
-	    small_pie_night.mouseOver();
-	}
-
 	public void display() {
 	    large_pie_day.display();
 	    small_pie_day.display();
