@@ -29,14 +29,14 @@ public class ButtonDropDown extends ShapeRectText {
 	
 	public void addSubButton(String text, int color, Object object, String method_name){
 		float location_y = this.location.y + (this.size_active.y * (button_map.size()+1));
-		ShapeRectText new_button = new ShapeRectText((int)location.x, (int)location_y, (int)this.size_base.x, (int)this.size_base.y, text, color, this.font_number_label, this.alignment_text, PApplet.LEFT, true, true);
+		ShapeRectText new_button = new ShapeRectText((int)location.x, (int)location_y, (int)this.size_base.x, (int)this.size_base.y, text, color, this.label.font_number, this.label.alignment, PApplet.LEFT, true, true);
 		new_button.addMouseClickedAction(""+button_map.size(), object, method_name);
 		button_map.put(text, new_button);
 	}
 
 	public void addSubButton(String text, Object object, String method_name){
 		float location_y = this.location.y + (this.size_active.y * (button_map.size()+1));
-		ShapeRectText new_button = new ShapeRectText((int)location.x, (int)location_y,(int)size_base.x, (int)size_base.y, text, this.color_base, this.font_number_label, this.alignment_text, PApplet.LEFT, true, true);
+		ShapeRectText new_button = new ShapeRectText((int)location.x, (int)location_y,(int)size_base.x, (int)size_base.y, text, this.color_base, this.label.font_number, this.label.alignment, PApplet.LEFT, true, true);
 		new_button.addMouseClickedAction(""+button_map.size(), object, method_name);
 		button_map.put(text, new_button);
 	}

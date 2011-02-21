@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import processing.core.*;
+
 import com.julioterra.moodyjulio.dataviz.basicelements.DataVizElement;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
@@ -23,8 +24,8 @@ public class Shape extends DataVizElement{
 	
 	protected boolean mouse_clicked_active;		
 	public boolean mouse_pressed;				
-	public float size_shift_mouse_clicked;
 	public boolean mouse_clicked_toggle;			
+	public float size_shift_mouse_clicked;
 
 	protected HashMap<String, Object> mouse_over_action_objects;
 	protected HashMap<String, Method> mouse_over_action_methods;
@@ -40,7 +41,7 @@ public class Shape extends DataVizElement{
 	public Shape (float x, float y) {
 		processing_app.registerMouseEvent(this);
 
-		this.id_number = getIDColorNumber();
+		this.id_number = getShapeID();
 		this.display_layer = 1;
 		this.location = new PVector(x, y, display_layer);
 		this.visible = true;
@@ -89,16 +90,16 @@ public class Shape extends DataVizElement{
 	 ** VISIBILITY AND MOVEMENT METHODS 
 	 **/
 	
-	public void visible() {
+	public void setVisible() {
 		this.visible = true;
 	}
 
-	public void invisible() {
+	public void setInvisible() {
 		this.visible = false;
 	}
 
-	public void rotate(float rotation_angle) {
-		rotation += rotation_angle;
+	public void setRotation(float angle_in_degrees) {
+		rotation += angle_in_degrees;
 	}
 
 	public float getRotation() {
@@ -121,7 +122,14 @@ public class Shape extends DataVizElement{
 		return scale;
 	}
 
+	public void setLocation(float x, float y) {
+		this.location = new PVector(x, y);
+	}
 	
+	public PVector getLocation() {
+		return location;
+	}
+
 	/*********************************************************
 	 ** MOUSE EVENT METHODS 
 	 **/
@@ -302,7 +310,7 @@ public class Shape extends DataVizElement{
 	   ** SCALE SHIFT METHODS 
 	   **/
 	
-	  public void shiftSize(float scale_shift) {
+	  public void shiftSize(float shift_size) {
 	  }
 
 	  public void shiftScaleReset() {

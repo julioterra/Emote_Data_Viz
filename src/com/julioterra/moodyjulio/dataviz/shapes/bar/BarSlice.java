@@ -56,18 +56,18 @@ public class BarSlice extends ShapeRect {
 
 	public void mouseOver() {
 		super.mouseOver();
-		for (int i = 0; i < slices.size(); i++) {
-			ShapeRect current_slice = slices.get(i);
-			if (current_slice.mouse_over && !this.mouse_over) this.mouseOverActions();
-//			PApplet.println(id_number + " Bar Slice - Mouse Over - Checking Parts " + i + " " + !current_slice.mouse_over);
-		}
-		if (mouse_over) {
-			for (int i = 0; i < slices.size(); i++) {
-				ShapeRect current_slice = slices.get(i);
-				if (!current_slice.mouse_over) current_slice.mouseOverActions();
-//				PApplet.println(id_number + " Bar Slice - Mouse Over - Fixing Parts " + i + " " + !current_slice.mouse_over);
-			}
-		}
+//		for (int i = 0; i < slices.size(); i++) {
+//			ShapeRect current_slice = slices.get(i);
+//			if (current_slice.mouse_over && !this.mouse_over) this.mouseOverActions();
+////			PApplet.println(id_number + " Bar Slice - Mouse Over - Checking Parts " + i + " " + !current_slice.mouse_over);
+//		}
+//		if (mouse_over) {
+//			for (int i = 0; i < slices.size(); i++) {
+//				ShapeRect current_slice = slices.get(i);
+//				if (!current_slice.mouse_over) current_slice.mouseOverActions();
+////				PApplet.println(id_number + " Bar Slice - Mouse Over - Fixing Parts " + i + " " + !current_slice.mouse_over);
+//			}
+//		}
 	}
 
 	public void shiftColorReset() {
@@ -79,22 +79,22 @@ public class BarSlice extends ShapeRect {
 
 	
 	// SET_SHIFT_MOUSE_OVER_ALL - call this method to set the mouse over shift settings on all pie slices
-	public void setShiftAllMouseOver(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
-		super.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+	public void setShiftAllMouseOver(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean name_shift_mouse_over, boolean description_shift_mouse_over) {
+		super.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, name_shift_mouse_over, description_shift_mouse_over);
 		setShiftMouseOverAll();
 	}
 
-	public void setShiftAllMouseOverSlices(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
+	public void setShiftAllMouseOverSlices(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean name_shift_mouse_over, boolean description_shift_mouse_over) {
 		for (int i = 0; i < slices.size(); i++) {
 			ShapeRect slice = slices.get(i);
-			slice.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+			slice.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, name_shift_mouse_over, description_shift_mouse_over);
 		}
 	}
 	
 	public void setShiftMouseOverAll() {
 		for (int i = 0; i < slices.size(); i++) {
 			ShapeRect slice = slices.get(i);
-			slice.setShiftAllMouseOver(this.hue_shift_mouse_over, this.sat_shift_mouse_over, this.bright_shift_mouse_over, this.size_shift_mouse_over, this.text_toggle_mouse_over);
+			slice.setShiftAllMouseOver(this.hue_shift_mouse_over, this.sat_shift_mouse_over, this.bright_shift_mouse_over, this.size_shift_mouse_over, this.label_toggle_mouse_over, this.label_toggle_mouse_over);
 		}
 	}	
 	

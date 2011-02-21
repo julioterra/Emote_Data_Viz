@@ -8,6 +8,8 @@ import java.util.Set;
 
 import com.julioterra.moodyjulio.dataviz.application.DataVizLib;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
+import com.julioterra.moodyjulio.dataviz.shapes.TextArea;
+
 import de.bezier.data.sql.MySQL;
 import processing.core.*;
 
@@ -142,7 +144,6 @@ public class DataVizElement {
 		if (activity.contains("school class")) return Activity_Colors[color_school_class];
 		if (activity.contains("school event")) return Activity_Colors[color_school_event];
 		if (activity.contains("social")) return Activity_Colors[color_social];
-//		if (activity.contains("work")) return Activity_Colors[color_work];
 		if (activity.contains("csa")) return Activity_Colors[color_csa];
 		if (activity.contains("transportation")) return Activity_Colors[color_transportation];
 		if (activity.contains("shopping")) return Activity_Colors[color_shopping];
@@ -153,14 +154,20 @@ public class DataVizElement {
 
 	
 	/*******************************************
-	 ** MOUSE EVENT RELATED STATIC GLOBAL VARIABLS AND CONSTANTS
+	 ** SHAPE ELEMENTID STATIC GLOBAL VARIABLS AND CONSTANTS
 	 *******************************************/
 
-	public static int				id_counter = 0;
-	public static int getIDColorNumber() {
+	public static int id_counter = 0;
+	public static int getShapeID() {
 		id_counter--;
 		return id_counter;
 	}
+	
+	/*******************************************
+	 ** MANAGING ALL TEXT AREAS
+	 *******************************************/
+	public static HashMap<String, TextArea> text_areas;
+	
 	
 	/*******************************************
 	 ** FILE READING RELATED STATIC GLOBAL VARIABLES USED BY CHILD CLASSES

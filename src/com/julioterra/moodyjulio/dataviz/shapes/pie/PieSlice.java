@@ -16,7 +16,7 @@ public class PieSlice extends ShapeCircle {
 
 	  public PieSlice(int x_loc, int y_loc, float radius, float size_in_percent, float angle_start, int color) {
 		  super(x_loc, y_loc, radius, angle_start);
-		  this.setColorBaseARGB(color);
+		  this.setColorARGB(color);
 
 	      this.width = 0;
 		  this.width_base = this.width;

@@ -97,10 +97,10 @@ public class PieCreatorHeartrate extends PieCreator {
 
 		// initialize the pie with pie-level information
 		pie = new Pie_Line((int) location.x, (int) location.y, (float) diameter, (int)this.pie_slices, ShapeCircle.PIE_LINE_VAR_RADIUS);
-		pie.setName(this.title);
-		pie.setColorARGB(transparent_color);
-		pie.setTextLocationNameDescription(this.location_name.x, this.location_name.y, (this.location_description.x-this.location_name.x), (this.location_description.y-this.location_name.y));
-		pie.setTextVisibleNameDescription();
+		pie.label.setText(this.title);
+		pie.setColorActiveARGB(transparent_color);
+		pie.setTextLocationAll(this.location_name.x, this.location_name.y, (this.location_description.x-this.location_name.x), (this.location_description.y-this.location_name.y));
+		pie.setTextVisibleAll();
 		pie.setShiftAllMouseOverPieSlices((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false);
 		pie.loadFontPie(font_main_bar_legend, 16, 1.0f);
 		pie.setWidthAll(4);

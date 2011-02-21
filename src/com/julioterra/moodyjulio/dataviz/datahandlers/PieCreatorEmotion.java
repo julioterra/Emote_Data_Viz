@@ -41,7 +41,7 @@ public class PieCreatorEmotion extends PieCreator {
 		this.pie_mode = 1;
 		loadPie();
 		this.description = NamesOfDays[day_of_week] + " average";
-		pie.setDescription(this.description);
+		pie.description.setText(this.description);
 	}
 	
 	private PieEmotionData loadTimeRangeFromDate(int day_of_week, Time time_range_start, Time time_range_end) {
@@ -105,13 +105,13 @@ public class PieCreatorEmotion extends PieCreator {
 		this.description = Date.getDateInString(date_range_start);
 		
 		pie = new Pie_Arc((int) location.x, (int) location.y, (float) diameter, ShapeCircle.PIE_ARC_SET_RADIUS);
-		pie.setName(this.title);
-		pie.setDescription(this.description);
-		pie.setColorARGB(Cur_Background_Color);
-		pie.setShiftAllMouseOver((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false);
-		pie.setTextLocationNameDescription(this.location_name.x, this.location_name.y, (this.location_description.x-this.location_name.x), (this.location_description.y-this.location_name.y));
+		pie.label.setText(this.title);
+		pie.description.setText(this.description);
+		pie.setColorActiveARGB(Cur_Background_Color);
+		pie.setShiftAllMouseOver((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false, false);
+		pie.setTextLocationAll(this.location_name.x, this.location_name.y, (this.location_description.x-this.location_name.x), (this.location_description.y-this.location_name.y));
 		pie.loadFontPie(font_main_bar_legend, 18, 1.4f);
-		pie.setTextVisibleNameDescription();
+		pie.setTextVisibleAll();
 		float slice_time = 0;
 
 		for (int i = 0; i < pie_data.size(); i++) {
@@ -151,6 +151,7 @@ public class PieCreatorEmotion extends PieCreator {
 		pie.loadFontTitleSlices(font_main_bar_legend, 16);
 		pie.loadFontDescriptionSlices(font_main_text, 20);
 		pie.applyValuesToSliceDisplay();
+
 		PApplet.println("number of slices " + pie.slices.size() + "  " + slice_time);
 		Emotion_Legend_Rollover[emotion_positive] = "" + (int)(time_per_emotion[emotion_positive]/time_emotion_total*100);
 		Emotion_Legend_Rollover[emotion_negative] = "" + (int)(time_per_emotion[emotion_negative]/time_emotion_total*100);

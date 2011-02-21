@@ -4,10 +4,10 @@ import java.awt.Color;
 
 import processing.core.PApplet;
 
-public class ShapeColor extends Shape {
+public class NewShapeColor extends Shape {
 
-	public int color_base = colorARGB(0, 255, 255, 255);
-	public int color_active = color_base;
+	protected int color_base = colorARGB(0, 255, 255, 255);
+	protected int color_active = color_base;
 
 	protected float 	hue_shift_mouse_over;
 	protected float 	sat_shift_mouse_over;
@@ -21,27 +21,21 @@ public class ShapeColor extends Shape {
 	 ** CONSTRUCTOR METHODS 
 	 **/
 
-	public ShapeColor() {
+	public NewShapeColor() {
 		super();
-		this.color_base = Transparent_Color;
-		this.color_active = this.color_base;
+		this.color_active = Transparent_Color;
 	}
 	
-	public ShapeColor (float x, float y) {
+	public NewShapeColor (float x, float y) {
 		super(x, y);
-		this.color_base = Transparent_Color;
-		this.color_active = this.color_base;
+		this.color_active = Transparent_Color;
 	}
 
-	public ShapeColor (float x, float y, int color) {
+	public NewShapeColor (float x, float y, int color) {
 		super(x, y);
 		this.color_base = color;
 		this.color_active = this.color_base;
 	}
-
-	/*********************************************************
-	 ** MOUSE OVER SET METHODS 
-	 **/
 
 	public void setColorShiftMouseOver(float hue_shift, float sat_shift, float bright_shift) {
 		// all values should range from 0 - 1
@@ -57,20 +51,19 @@ public class ShapeColor extends Shape {
 		this.bright_shift_mouse_clicked = bright_shift;
 	}
 
-	/*********************************************************
-	 ** SHIFT COLOR METHODS 
-	 **/
-
 	public void shiftHue(float shift_hue) {
+		PApplet.println("changing hue - before" + id_number + " shift " + shift_hue + " hue " + processing_app.hue(this.color_base));
 		float hue = processing_app.hue(this.color_base);
 		float hue_offshift = (float) (255f*shift_hue);
 		this.color_active = adjustHue(this.color_active, (hue + hue_offshift));
+		PApplet.println("changing hue - after" + id_number + " shift " + shift_hue + " hue " + processing_app.hue(this.color_base));
 	}
 	
 	public void shiftSat(float shift_sat) {
 		float saturation = processing_app.saturation(this.color_base);
 		float sat_offshift = (float) (255f*shift_sat);
 		this.color_active = adjustSat(this.color_active, (saturation + sat_offshift));
+		PApplet.println("changing saturation " + id_number);
 	}
 	
 	public void shiftBright(float shift_bright) {
@@ -79,57 +72,68 @@ public class ShapeColor extends Shape {
 		this.color_active = adjustBright(this.color_active, (brightness + bright_shift));
 	}
 
+	/** SET BASE COLOR METHODS **/
 
-	/*********************************************************
-	 ** SET BASE COLOR METHODS 
-	 **/
-
-	public void setColorARGB(int a, int r, int g, int b) {
+	public void setColorBaseARGB(int a, int r, int g, int b) {
 		this.color_base = ShapeColor.colorARGB(a, r, g, b);
 		this.color_active = this.color_base;
 	}
 	
-	public void setColorARGB(int argb) {
+	public void setColorBaseARGB(int argb) {
 		this.color_base = argb;
 		this.color_active = this.color_base;
 	}
 
-	public void setColorRGB(int rgb) {
+	public void setColorBase(int rgb) {
 		this.color_base = colorRGB(rgb);
 		this.color_active = this.color_base;
-	}
-
-
-	/*********************************************************
-	 ** SET ACTIVE COLOR METHODS 
-	 **/
-
-	public void setColorActiveARGB(int a, int r, int g, int b) {
-		this.color_active = colorARGB(a, r, g, b);
-	}
-
-	public void setColorActiveARGB(int argb) {
-		this.color_active = argb;
-	}
-
-	public void setColorActiveRGB(int rgb) {
-		this.color_active = colorRGB(rgb);
-	}
-
-	public void setColorActiveHSB(float hue, float saturation, float brightness) {
-		this.color_active = Color.HSBtoRGB(hue, saturation, brightness);
 	}
 
 	/** RESET COLOR METHOD **/
 
 	public void shiftColorReset() {
 		this.color_active = this.color_base;
+
 	}
 
+	/** SET ACTIVE RGB COLOR METHODS **/
+
+	public void setColorARGB(int a, int r, int g, int b) {
+		this.color_active = colorARGB(a, r, g, b);
+	}
+
+	public void setColorARGB(int argb) {
+		this.color_active = argb;
+	}
+
+	public void setColorRGB(int r, int g, int b) {
+		int a = 255;
+		this.setColorARGB(a, r, g, b);
+	}
+
+	public void setColorRGB(int rgb) {
+		this.color_active = colorRGB(rgb);
+	}
+
+	/** SET ACTIVE HSB COLOR METHODS **/
 	
-	/*********************************************************
-	 ** GET ACTIVE COLOR METHODS 
-	 **/
+	public void setColorHSB(float hue, float saturation, float brightness) {
+		this.color_active = Color.HSBtoRGB(hue, saturation, brightness);
+	}
+
+	public void setColorHue(float hue) {
+		this.color_active = adjustHue(this.color_active, hue);
+	}
+
+	public void setColorSat(float saturation) {
+		this.color_active = adjustSat(this.color_active, saturation);	
+	}
+
+	public void setColorBright(float brightness) {
+		this.color_active = adjustBright(this.color_active, brightness);
+	}
+
+	/** GET METHODS **/
 
 	public int getBaseColor() {
 		return this.color_base;
@@ -151,12 +155,9 @@ public class ShapeColor extends Shape {
 		return processing_app.brightness(this.color_active);
 	}
 
-	
-	
 	/*********************************************************
 	 ** STATIC METHODS 
-	 **
-	 *********************************************************/
+	 **/
 
 	/** GET COLOR METHODS **/
 
@@ -195,11 +196,15 @@ public class ShapeColor extends Shape {
 		return  a | rgb;
 	}
 
+	/** ADJUST METHODS **/
+	
 	public static int adjustHue(int color, float hue) {
 		if (hue > 255) hue = 1;
 		else hue = (hue / 255);
 		float saturation = (processing_app.saturation(color) / 255);
 		float brightness = (processing_app.brightness(color) / 255);
+//		if (DataVizElement.debug_code) PApplet.println("color hue: hue " + hue + " sat " + saturation + " bright " + brightness);
+
 		return colorRGB(Color.HSBtoRGB(hue, saturation, brightness));
 	}
 
@@ -208,6 +213,8 @@ public class ShapeColor extends Shape {
 		else saturation = (saturation / 255);
 		float hue = (processing_app.hue(color) / 255);
 		float brightness = (processing_app.brightness(color) / 255);
+//		if (DataVizElement.debug_code) PApplet.println("color sat: hue " + hue + " sat " + saturation + " bright " + brightness);
+
 		return colorRGB(Color.HSBtoRGB(hue, saturation, brightness));
 	}
 	
@@ -216,6 +223,8 @@ public class ShapeColor extends Shape {
 		else brightness = (brightness / 255);
 		float hue = (processing_app.hue(color) / 255);
 		float saturation = (processing_app.saturation(color) / 255);
+//		if (DataVizElement.debug_code) PApplet.println("color bright: hue " + hue + " sat " + saturation + " bright " + brightness);
+
 		return colorRGB(Color.HSBtoRGB(hue, saturation, brightness));
 	}
 

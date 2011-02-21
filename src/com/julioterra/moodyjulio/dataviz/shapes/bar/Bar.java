@@ -41,7 +41,9 @@ public class Bar extends ShapeRect {
 		  for (int i = 0; i < slices.size(); i++) {
 			  BarSlice slice = slices.get(i);
 			  slice.display();
+			  slice.displayText();
 		  }
+		  super.displayText();
 	  }
 
 	  /*********************************************************
@@ -107,14 +109,14 @@ public class Bar extends ShapeRect {
 		 **
 		 **/
 
-		  public void addSlice(String name, String description, String text, double start_value, double end_value){
+		  public void addSlice(String name, String description, String csv_list, double start_value, double end_value){
 //			  PApplet.println("ADD SLICE - INPUT - start value " + start_value + " end value " + end_value + " max " + this.max_value + " min " + this.min_value + " range " + value_range_size);
-			  this.addSliceInLocation(text, start_value, end_value);
+			  this.addSliceInLocation(csv_list, start_value, end_value);
 			  BarSlice slice = slices.get(slices.size()-1);
-			  slice.setName(name);
-			  slice.setDescription(description);		  
+			  slice.label.setText(name);
+			  slice.description.setText(description);		  
 			  slice.setMouseOverActive(true);
-			  if (font_loaded_label) slice.loadFontDescription(this.font_number_label, this.font_size_label_active);
+//			  if (font_loaded_label) slice.loadFontDescription(this.font_number_label, this.font_size_label_active);
 //			  PApplet.println("ADD SLICE " + slice.getString());
 		  }
 		  
@@ -141,33 +143,33 @@ public class Bar extends ShapeRect {
 		 **/
 
 		public void setColorAll(int argb) {
-			this.setColorBaseARGB(argb);
+			this.setColorARGB(argb);
 			for (int i = 0; i < slices.size(); i++) {
 				this.setColorSlice(i, argb);
 			}
 		}
 
 		// SET_SHIFT_MOUSE_OVER_ALL - call this method to set the mouse over shift settings on all pie slices
-		public void setShiftAllMouseOver(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
-			super.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+		public void setShiftAllMouseOver(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean name_shift_mouse_over, boolean description_shift_mouse_over) {
+			super.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, name_shift_mouse_over, description_shift_mouse_over);
 			setShiftMouseOverAll();
 		}
 
-		public void setShiftMouseOverSlices(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
+		public void setShiftMouseOverSlices(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean name_shift_mouse_over, boolean description_shift_mouse_over) {
 			for (int i = 0; i < slices.size(); i++) {
 				BarSlice slice = slices.get(i);
-				slice.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+				slice.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, name_shift_mouse_over, description_shift_mouse_over);
 			}
 		}
 		
-		public void setShiftMouseOverBar(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
-			super.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+		public void setShiftMouseOverBar(float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean label_shift_mouse_over, boolean description_shift_mouse_over) {
+			super.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, label_shift_mouse_over, description_shift_mouse_over);
 		}
 
 		public void setShiftMouseOverAll() {
 			for (int i = 0; i < slices.size(); i++) {
 				BarSlice slice = slices.get(i);
-				slice.setShiftAllMouseOver(this.hue_shift_mouse_over, this.sat_shift_mouse_over, this.bright_shift_mouse_over, this.size_shift_mouse_over, this.text_toggle_mouse_over);
+				slice.setShiftAllMouseOver(this.hue_shift_mouse_over, this.sat_shift_mouse_over, this.bright_shift_mouse_over, this.size_shift_mouse_over, this.label_toggle_mouse_over, this.description_toggle_mouse_over);
 			}
 		}	
 		
@@ -203,21 +205,21 @@ public class Bar extends ShapeRect {
 		public void setColorSlice(int index, int argb) {
 			if (index < slices.size()) {
 				BarSlice slice = slices.get(index);
-				slice.setColorBaseARGB(argb);
+				slice.setColorARGB(argb);
 			}
 		}
 
 		public void setColorAllSlices(int argb) {
 			for (int i = 0; i < slices.size(); i++) {
 				BarSlice slice = slices.get(i);
-				slice.setColorBaseARGB(argb);
+				slice.setColorARGB(argb);
 			}
 		}
 
-		public void setMouseOverShiftSlice(int index, float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean text_shift_mouse_over) {
+		public void setMouseOverShiftSlice(int index, float hue_shift, float saturation_shift, float brightness_shift, float radius_shift, boolean name_shift_mouse_over, boolean description_shift_mouse_over) {
 			if (index < slices.size()) {
 				BarSlice slice = slices.get(index);
-				slice.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, text_shift_mouse_over);
+				slice.setShiftAllMouseOver(hue_shift, saturation_shift, brightness_shift, radius_shift, name_shift_mouse_over, description_shift_mouse_over);
 			}
 		}
 		
@@ -246,35 +248,34 @@ public class Bar extends ShapeRect {
 			}
 		}
 
-		public void setTextLocationNameDescription(float x, float y, float offset_x, float offset_y) {
-			super.setTextLocationNameDescription(x, y, offset_x, offset_y);
+		public void setTextLocationAll(float x, float y, float offset_x, float offset_y) {
+			super.setTextLocationAll(x, y, offset_x, offset_y);
 		}
 
 		public void textLocationNameDescriptionSlices(float x, float y, float offset_x, float offset_y) {
 			for (int i = 0; i < slices.size(); i++) {
 				BarSlice slice = slices.get(i);
-				slice.setTextLocationNameDescription(x, y, offset_x, offset_y);
+				slice.setTextLocationAll(x, y, offset_x, offset_y);
 			}
 		}
 
 		public void textSetNameSlice(int index, String name) {
 			if (slices.size() > index) {
 				BarSlice slice = slices.get(index);
-				slice.setName(name);
+				slice.label.setText(name);
 			}		
 		}
 
 		public void textSetDescriptionSlice(int index, String description) {
 			if (slices.size() > index) {
 				BarSlice slice = slices.get(index);
-				slice.setDescription(description);
+				slice.description.setText(description);
 			}		
 		}
 
 		public void setFontColorSlice(int index, int font_color) {
 			if (slices.size() > index) {
 				BarSlice slice = slices.get(index);
-				slice.setDescription(description);
 				this.setFontColorAll(font_color);
 			}
 		}
@@ -282,42 +283,42 @@ public class Bar extends ShapeRect {
 		public void textVisibleSlice(int index) {
 			if (slices.size() > index) {
 				BarSlice slice = slices.get(index);
-				slice.setTextVisibleNameDescription();
+				slice.setTextVisibleAll();
 			}		
 		}
 
 		public void textInvisibleSlice(int index) {
 			if (slices.size() > index) {
 				BarSlice slice = slices.get(index);
-				slice.setTextInvisibleNameDescription();
+				slice.setTextInvisibleAll();
 			}		
 		}
 
 		public void textNameVisibleSlice(int index) {
 			if (slices.size() > index) {
 				BarSlice slice = slices.get(index);
-				slice.setTextVisibleName();
+				slice.label.setVisible();
 			}		
 		}
 
 		public void textNameInvisibleSlice(int index) {
 			if (slices.size() > index) {
 				BarSlice slice = slices.get(index);
-				slice.setTextInvisibleName();
+				slice.label.setInvisible();
 			}		
 		}
 		
 		public void textDescriptionVisibleSlice(int index) {
 			if (slices.size() > index) {
 				BarSlice slice = slices.get(index);
-				slice.setTextVisibleDescription();
+				slice.description.setVisible();
 			}		
 		}
 
 		public void textDescriptionInvisibleSlice(int index) {
 			if (slices.size() > index) {
 				BarSlice slice = slices.get(index);
-				slice.setTextInvisibleDescription();
+				slice.description.setInvisible();
 			}		
 		}
 		
