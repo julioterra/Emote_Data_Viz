@@ -119,7 +119,7 @@ public class DataProcessor extends DataVizElement{
 			else if (datatable_number == HEART_RATE) {
 				PieHeartData new_heart_reading = new PieHeartData(temp_day_start, temp_time_start, temp_day_end, temp_time_end);
 				this.add(datatable_number, new_heart_reading);				
-//				if (debug_code) PApplet.println("ADD new HEART object to array [pie-data-processor] " + valid_readings + " " + new_heart_reading.date_end.get_date_in_string() + " " + new_heart_reading.time_end.get_time_in_string());			
+				if (debug_code) PApplet.println("ADD new HEART object to array [pie-data-processor] " + valid_readings + " " + new_heart_reading.date_end.get_date_in_string() + " " + new_heart_reading.time_end.get_time_in_string());			
 			}
 
 			//check if we have reached the end of the time range
@@ -238,7 +238,7 @@ public class DataProcessor extends DataVizElement{
 
 	
 	public void create_end_date_time() {
-		this.data_list_raw = load_date_and_time_range(JournalData, new Date("2010-11-17"), new Time("00:00:00"), new Date("2010-12-09"), new Time("23:59:59"));
+		this.data_list_raw = load_date_and_time_range(JournalData, new Date("2011-02-21"), new Time("00:00:00"), new Date("2011-03-05"), new Time("23:59:59"));
 
 		for (int i = 0; i < data_list_raw.size(); i++) {
 			JournalData current_record = (JournalData) data_list_raw.get(i);
@@ -264,13 +264,16 @@ public class DataProcessor extends DataVizElement{
 		}
 
 		// upload new data into database
-		String insert_format = "UPDATE JournalData\n";
+		String insert_format = "UPDATE " + database_name[JournalData] + "\n";
 		for (int j =  0; j < data_list_raw.size(); j++) {
 			JournalData load_reading = (JournalData) data_list_raw.get(j);
 			String insert_data = "SET date_end = \'"  + load_reading.date_end.get_date_for_sql() + "\', time_end = \'"  + load_reading.time_end.get_time_for_sql() + "\'\n" +
 				"WHERE date_stamp = \'" + load_reading.date_stamp.get_date_for_sql() + "\' AND time_stamp = \'" + load_reading.time_stamp.get_time_for_sql() + "\'"; 
 			if (DataVizElement.debug_code) PApplet.println(insert_format + insert_data);					
-			if(database.connection != null && DataVizElement.data_load) database.execute(insert_format + insert_data);
+			if(database.connection != null && DataVizElement.data_load) { 
+				PApplet.println("data uploading");					
+				database.execute(insert_format + insert_data);
+			}
 		}
 
 	}
@@ -384,6 +387,7 @@ public class DataProcessor extends DataVizElement{
 		if (data_table_name == JournalData) {
 			while (database.next()) {
 				JournalData most_recent = new JournalData(database.getString("time_stamp"), database.getString("date_stamp"),
+//								"00:00:00", "2000:01:01",
 								database.getString("time_end"), database.getString("date_end"),
 								database.getString("emotion_L1"), database.getString("emotion_L2"),
 								database.getString("emotion_L3"), database.getString("activity"), 

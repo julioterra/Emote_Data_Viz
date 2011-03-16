@@ -9,20 +9,23 @@ import com.julioterra.moodyjulio.dataviz.basicelements.DataVizElement;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
 
-public class Shape extends DataVizElement{
+public abstract class Shape extends DataVizElement{
 
 	public int id_number;
 	public int display_layer;
 	public PVector location;
 	public boolean visible;
 	public double scale;
-	public float rotation;
+	public PVector size_active;
+	public PVector size_base;
+	public float rotation_active;
+	public float rotation_base;
 
-	protected boolean mouse_over_active;		
+	public boolean mouse_over_active;		
 	public boolean mouse_over;	
 	public float size_shift_mouse_over;
 	
-	protected boolean mouse_clicked_active;		
+	public boolean mouse_clicked_active;		
 	public boolean mouse_pressed;				
 	public boolean mouse_clicked_toggle;			
 	public float size_shift_mouse_clicked;
@@ -39,14 +42,14 @@ public class Shape extends DataVizElement{
 	}
 
 	public Shape (float x, float y) {
-		processing_app.registerMouseEvent(this);
+//		processing_app.registerMouseEvent(this);
 
 		this.id_number = getShapeID();
 		this.display_layer = 1;
 		this.location = new PVector(x, y, display_layer);
 		this.visible = true;
 		this.scale = 1;
-		this.rotation = 0;
+		this.rotation_active = 0;
 
 		this.mouse_over_active = true;
 		this.mouse_over = false;
@@ -98,24 +101,63 @@ public class Shape extends DataVizElement{
 		this.visible = false;
 	}
 
+	public void rotate(float angle_in_degrees) {
+		rotation_active += angle_in_degrees;
+	}
+	
 	public void setRotation(float angle_in_degrees) {
-		rotation += angle_in_degrees;
+		rotation_base = angle_in_degrees;
+		rotation_active = rotation_base;
+	}
+	
+	public void setRotationActive(float angle_in_degrees) {
+		rotation_active = angle_in_degrees;
 	}
 
+	public void resetRotation() {
+		rotation_active = rotation_base;
+	}
+	
 	public float getRotation() {
-		return rotation;
+		return rotation_active;
 	}
 
 	public void move(float x, float y) {
 		this.location = new PVector(x, y);
 	}
 
+	public void setSize(float width, float height) {
+		this.size_base = new PVector(width, height);
+		this.size_active = new PVector(width, height);
+		this.scale = 1;
+	}
+
+	public void setSizeActive(float width, float height) {
+		this.scale = (float)(width/size_base.x);
+		this.size_active = new PVector(width, height);
+	}
+
+	public PVector getSize() {
+		return size_base;
+	}
+
+	public PVector getSizeActive() {
+		return size_active;
+	}
+
+	public void resetSize() {
+		this.scale = 1;
+		this.size_active = new PVector(this.size_base.x, this.size_base.y);
+	}
+	
 	public void setScale(float new_scale) {
 		this.scale = new_scale;
+		this.size_active = new PVector ((float)(this.size_base.x*this.scale), (float)(this.size_base.y*this.scale)); 
 	}
 
 	public void setScaleRel(float new_scale_perecent) {
 		this.scale = this.scale * new_scale_perecent;
+		this.size_active = new PVector ((float)(this.size_base.x*this.scale), (float)(this.size_base.y*this.scale)); 
 	}
 
 	public double getScale() {
@@ -129,6 +171,18 @@ public class Shape extends DataVizElement{
 	public PVector getLocation() {
 		return location;
 	}
+
+	  /*********************************************************
+	   ** SCALE SHIFT METHODS 
+	   **/
+	
+	  public void shiftScale(float shift_scale) {
+		  this.size_active = new PVector((float)(this.size_active.x * (this.scale + shift_scale)), (float)(this.size_active.y * (this.scale + shift_scale)));
+	  }
+
+	  public void shiftScaleReset() {
+		  this.size_active = new PVector ((float)(this.size_base.x * this.scale), (float)(this.size_base.y * this.scale));
+	  }
 
 	/*********************************************************
 	 ** MOUSE EVENT METHODS 
@@ -306,27 +360,5 @@ public class Shape extends DataVizElement{
 		return mouse_clicked_active;
 	}
 
-	  /*********************************************************
-	   ** SCALE SHIFT METHODS 
-	   **/
-	
-	  public void shiftSize(float shift_size) {
-	  }
 
-	  public void shiftScaleReset() {
-	  }
-
-	  public void shiftScaleResetToBase() {
-	  }
-
-	  public void setSizeShiftMouseOver(float scale_shift) {
-		  // input parameter should range from 0 - 1;
-		  this.size_shift_mouse_over = scale_shift;
-	  }
-
-	  public void setSizeShiftMousePress(float scale_shift) {
-		  // input parameter should range from 0 - 1;
-		  this.size_shift_mouse_clicked = scale_shift;
-	  }
-	  
 }

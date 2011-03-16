@@ -16,6 +16,7 @@ import com.julioterra.moodyjulio.dataviz.shapes.ShapeColor;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeRect;
 import com.julioterra.moodyjulio.dataviz.shapes.ShapeRectText;
 import com.julioterra.moodyjulio.dataviz.shapes.bar.Bar;
+import com.julioterra.moodyjulio.dataviz.shapes.bar.BarArray;
 import com.julioterra.moodyjulio.dataviz.shapes.panel.ButtonDropDown;
 import com.julioterra.moodyjulio.dataviz.shapes.panel.Panel;
 import com.julioterra.moodyjulio.dataviz.shapes.panel.ShapeText;
@@ -24,6 +25,7 @@ import com.julioterra.moodyjulio.dataviz.shapes.pie.Pie_Arc;
 
 public class BarCreator extends DataProcessor {
 
+	BarArray bar_array;
 	ArrayList<Data> bar_data;
 	ArrayList<Bar> bars;
 	public Bar bar;
@@ -115,7 +117,7 @@ public class BarCreator extends DataProcessor {
 		this.bar_title = Date.getDateInString(date_range_start);
 		
 		bar = new Bar((int)(location.x + ((size.x+this.bar_offset)*(bars.size()))), (int)location.y, (int)size.x, (int)size.y, ShapeColor.colorARGB(255,220,220,220), 0, (int)Time.calculate_time_dif_seconds(new Time("00:00:00"), new Time("23:59:59")));
-		bar.setShiftMouseOverBar((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, true, true);
+		bar.setShiftMouseOver((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, true, false);
 		bar.setTextLocationAll(675, 175, (this.location_description.x-this.location_title.x), (this.location_description.y-this.location_title.y));
 		bar.label.loadFont(font_main_header, DataVizElement.fonts_size[font_main_header]);
 		bar.label.setText(this.bar_title);
@@ -132,16 +134,17 @@ public class BarCreator extends DataProcessor {
 			Time temp_time_end = new Time(bar_record.time_end);
 			Time temp_time_start = new Time(bar_record.time_stamp);
 			if (bar_record.date_end.month > bar_record.date_stamp.month || bar_record.date_end.day > bar_record.date_stamp.day) {
-				if (bar.getSizeSlices() == 0) temp_time_start = new Time("00:00:00");
+				if (bar.getElementCount() == 0) temp_time_start = new Time("00:00:00");
 				else temp_time_end = new Time("23:59:59");
 			}
-			bar.addSlice(name, description, bar_record.activity.toLowerCase(), Time.calculate_time_dif_seconds(new Time("00:00:00"), temp_time_start), Time.calculate_time_dif_seconds_maxout(new Time("00:00:00"), temp_time_end));
+			bar.addElement(name, description, bar_record.activity.toLowerCase(), Time.calculate_time_dif_seconds(new Time("00:00:00"), temp_time_start), Time.calculate_time_dif_seconds_maxout(new Time("00:00:00"), temp_time_end));
 			this.add_time_count(bar_record.activity, Time.calculate_time_dif_seconds(bar_record.time_stamp, bar_record.time_end));
 		}
-		bar.setShiftMouseOverSlices((float) 0.2, (float) 0.0, (float) -0.2, (float) 0, true, true);
-		bar.loadFontSlices(DataVizElement.font_main_text, DataVizElement.fonts_size[DataVizElement.font_main_text], 1f);
-		bar.textLocationNameDescriptionSlices(675, 175, 0, 50);
-		PApplet.println("number of slices " + bar.slices.size());
+		bar.setElementAllShiftMouseOver((float) 0.2, (float) 0.0, (float) -0.2, (float) 0, true, true);
+		bar.setElementAllShiftMouseClicked((float) 0, (float) 0.0, (float) -0, (float) 0, false, false);
+		bar.loadElementAllFont(DataVizElement.font_main_text, DataVizElement.fonts_size[DataVizElement.font_main_text]);
+		bar.setElementAllTextLocation(675, 175, 0, 50);
+		PApplet.println("number of slices " + bar.elements.size());
 		bars.add(bar);
 	}
 

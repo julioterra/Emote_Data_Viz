@@ -4,7 +4,7 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 
-public class ShapeCircle extends ShapeLabel {
+public class ShapeCircle extends ShapeViz {
 
 	  public static final int UNDEFINED = -1;
 	  public static final int PIE_ARC_SET_RADIUS = 0;
@@ -13,24 +13,11 @@ public class ShapeCircle extends ShapeLabel {
 	  public static final int PIE_LINE_VAR_RADIUS = 3; 
 	  protected int pie_shape_type = UNDEFINED;
 
-	  public static final int ANGLE = 0;
-	  public static final int RADIUS = 1;
-	  public static final int HUE = 2; 
-	  public static final int SATURATION = 3; 
-	  protected int value_1_type = UNDEFINED;
-	  protected int value_2_type = UNDEFINED;
-	  protected int value_3_type = UNDEFINED;
-
-	  protected float radius_active;
-	  protected float radius_base;
-	  protected float diameter_active;
-	  protected float diameter_base;
+	  protected PVector radius_active;
+	  protected PVector radius_base;
 
 	  protected float angle_start;
 	  protected float angle_slice;
-	  public double value_one;
-	  public double value_two;
-	  public double value_three;
 
 	  // the slice_mouse_over variable holds a Arc2D object used to determine if mouse is hovering
 	  // the slice that is displayed on screen is created using the PApplet arc() method.
@@ -46,28 +33,27 @@ public class ShapeCircle extends ShapeLabel {
 
 	  public ShapeCircle(int x_loc, int y_loc, float radius, float angle_start) {
 		  super(x_loc, y_loc, ShapeColor.colorARGB(255,255,255,255));
-	      this.radius_active = radius;
-	      this.radius_base = this.radius_active;
-	      this.diameter_active = this.radius_active*2;
-	      this.diameter_base = this.diameter_active;
-
-	      this.angle_slice = 0;
-	      this.value_one = PApplet.degrees(this.angle_slice);
-	      this.angle_start = PApplet.radians(angle_start - 90);
+	      this.rotation_base = angle_start;
+	      this.rotation_active = this.rotation_base;
+	      
+	      this.value_one = 0;
+	      this.angle_start = convertRotationToAngleStart(this.rotation_active);
 	      this.angle_slice = PApplet.radians(360);
 
-	      resetMouseOverShape();
+	      this.radius_base = new PVector (radius, radius);
+	      this.radius_active = new PVector(this.radius_base.x, this.radius_base.y);
+	      this.size_base = new PVector(this.radius_base.x*2, this.radius_base.y*2);
+	      this.size_active = new PVector(this.size_base.x, this.size_base.y);
 
-//	      PApplet.println("set-up arc: x " + x_loc + " y " + y_loc + " diameter " + diameter + " angle_start " +  angle_start + " angle_slice " +  PApplet.degrees(angle_slice) + " color " +  this.color);      
-//	      PApplet.println("set-up mouse: x " + mouse_over_location.x + " y " + mouse_over_location.y + " radius " + radius + " angle_start " +  mouse_over_angle_start + " angle_slice " +  mouse_over_angle_slice + " color " +  color);
+	      resetMouseOverShape();
 	  }
 	  
 	  public void resetMouseOverShape() {
 	      this.mouse_over_angle_slice = PApplet.degrees(this.angle_slice);
 	      this.mouse_over_angle_start = -PApplet.degrees(this.angle_start) - this.mouse_over_angle_slice;
-	      this.mouse_over_location = new PVector (this.location.x - this.radius_active, this.location.y - this.radius_active);   
+	      this.mouse_over_location = new PVector (this.location.x - this.radius_active.x, this.location.y - this.radius_active.y);   
 	      this.mouse_over_shape = new java.awt.geom.Arc2D.Float(this.mouse_over_location.x, this.mouse_over_location.y, 
-	                                                       this.diameter_active, this.diameter_active, 
+	                                                       (float)(this.size_active.x), (float)(this.size_active.y), 
 	                                                       this.mouse_over_angle_start, this.mouse_over_angle_slice, 
 	                                                       java.awt.geom.Arc2D.PIE);
 	  }
@@ -76,10 +62,23 @@ public class ShapeCircle extends ShapeLabel {
 	   ** DISPLAY METHODS 
 	   **/
 
-	  public void turn(float turn_start_angle) {
-		  this.angle_start += PApplet.radians(turn_start_angle);
-	      this.mouse_over_shape.setAngleStart(mouse_over_shape.getAngleStart() - turn_start_angle);
+	  public float convertRotationToAngleStart(float angle_in_degrees) {
+		  return PApplet.radians(angle_in_degrees - 90);
 	  }
+	  
+	  public void display() {
+		  super.display();
+		  processing_app.pushMatrix();
+		      processing_app.translate(location.x, location.y);
+		      processing_app.rotate(this.angle_start);
+	  		  processing_app.noStroke();
+		      processing_app.fill(this.color_active);
+		      processing_app.arc(0, 0, (float)(size_active.x), (float)(size_active.y), 0, angle_slice);
+		 processing_app.popMatrix();
+	  }
+
+	  /* ****** ANGLE START GET & SET METHODS ******* */
+	  	
 
 	  public void move(float x, float y) {
 		  super.move(x, y);
@@ -88,26 +87,85 @@ public class ShapeCircle extends ShapeLabel {
 
 	  public void setScale(float percent_scale) {
 		  super.setScale(percent_scale);
-		  setRadius((float) (this.radius_base * this.scale));
 		  this.resetMouseOverShape();
 	  }
 
+	  public void setSize(float width, float height) {
+		  super.setSize(width, height);
+		  this.radius_base = new PVector(width/2, height/2);
+		  this.radius_active = new PVector(width/2, height/2);
+		  this.resetMouseOverShape();
+	  }
+
+	  public void setSizeActive(float width, float height) {
+		  super.setSizeActive(width, height);
+		  this.radius_active = new PVector(width/2, height/2);
+		  this.resetMouseOverShape();
+	  }
+
+	  public void resetSize() {
+		  this.setSize(this.size_base.x, this.size_base.y);
+	  }
+
+	  public void setRadius(float radius_x, float radius_y) {
+	      this.radius_base = new PVector(radius_x, radius_y);
+		  this.radius_active = new PVector(radius_base.x, radius_base.y);
+	      this.size_base = new PVector(radius_base.x*2, radius_base.y*2);
+		  this.size_active = new PVector(size_base.x, size_base.y);
+		  this.resetMouseOverShape();
+	  }
+
+	  public void setRadiusActive(float radius_x, float radius_y) {
+	      this.radius_active = new PVector(radius_x, radius_y);
+	      this.size_active = new PVector(radius_active.x*2, radius_active.y*2);
+		  this.resetMouseOverShape();
+  }
+
+	  public void resetRadius() {
+		  this.setRadiusActive(this.radius_base.x, this.radius_base.y);
+	  }
+
+	  public void rotate(float angle_in_degrees) {
+		  super.rotate(angle_in_degrees);
+		  this.angle_start = PApplet.radians(this.rotation_active);
+	      this.mouse_over_shape.setAngleStart(mouse_over_shape.getAngleStart() - angle_in_degrees);
+	  }
+
+	  public void setRotation(float angle_in_degrees) {
+		  super.setRotation(angle_in_degrees);
+		  this.angle_start = PApplet.radians(this.rotation_active - 90);
+	      this.mouse_over_shape.setAngleStart(mouse_over_shape.getAngleStart() - angle_in_degrees);
+	  }
+	  
+	  public void setRotationActive(float angle_in_degrees) {
+		  super.setRotationActive(angle_in_degrees);
+		  this.angle_start = PApplet.radians(this.rotation_active - 90);
+	      this.mouse_over_shape.setAngleStart(mouse_over_shape.getAngleStart() - angle_in_degrees);
+	  }
+	  
+	  public void resetRotation() {
+		  float reset_rotation = this.rotation_active - this.rotation_base;
+		  super.resetRotation();
+		  this.angle_start = PApplet.radians(this.rotation_active - 90);
+	      this.mouse_over_shape.setAngleStart(mouse_over_shape.getAngleStart() - reset_rotation);
+	  }
+	  
 
 	  /*********************************************************
 	   ** SCALE SHIFT METHODS 
 	   **/
 	  
-	  public void shiftSize(float shift_scale) {		  
-		  this.setRadius((float) (this.radius_active * (this.scale+shift_scale)));
+	  public void shiftScale(float shift_scale) {		  
+		  this.setRadiusActive((float)(this.radius_base.x * (this.scale+shift_scale)), (float)(this.radius_base.y * (this.scale+shift_scale)));
 	  }
 
 	  public void shiftScaleReset() {
-		  this.setRadius((float) (this.radius_base * this.scale));
+		  this.setRadiusActive((float) (this.radius_base.x * this.scale), (float) (this.radius_base.y * this.scale));
 	  }
 
 	  public void shiftScaleResetToBase() {
 		  this.scale = 1;
-		  this.setRadius(this.radius_base);
+		  this.shiftScaleReset();
 	  }
 
 	  /*********************************************************
@@ -121,82 +179,6 @@ public class ShapeCircle extends ShapeLabel {
 	            else { mouseOffActions(); }
 	      }        
 	  }
+
 	  
-	  /*********************************************************
-	   ** SIZE SETTING METHODS 
-	   **/
-
-	  /* ****** SET METHODS ******* */
-
-	  public void setBaseRadius(float radius) {
-		  this.radius_active = radius;
-	      this.radius_base = this.radius_active;
-		  this.diameter_active = this.radius_active * 2;
-	      this.diameter_base = this.diameter_active;
-		  this.resetMouseOverShape();
-	  }
-
-	  public void setRadius(float radius) {
-		  this.radius_active = radius;
-		  this.diameter_active = this.radius_active * 2;
-		  this.resetMouseOverShape();
-  }
-
-	  public void resetRadius() {
-		  this.setRadius(this.radius_base);
-	  }
-
-	  /* ****** GET METHODS ******* */
-	  
-	  public float getRadius() {
-		  return this.radius_active;
-	  }
-
-	  public float getDiameter() {
-		  return this.diameter_active;
-	  }
-	  
-	  /*********************************************************
-	   ** LOCATION METHODS 
-	   **/
-
-	  /* ****** ANGLE START GET & SET METHODS ******* */
-	  	
-	  public float getPieElementAngleStart() {
-		  return this.angle_start;
-	  }
-
-	  public void setPieElementAngleStart(float angle_start) {
-		  this.angle_start = PApplet.radians(angle_start - 90);
-	      this.mouse_over_shape.setAngleStart(mouse_over_shape.getAngleStart() - angle_start);
-	  }
-	  
-	  /*********************************************************
-	   ** SET VALUE METHODS 
-	   **/
-	  
-	  public void setValue(double new_value) {
-		  this.value_one = new_value;
-	  }
-	  
-	  public double getValue() {
-		  return this.value_one;
-	  }
-
-	  public void setValue2(double new_value) {
-		  this.value_two = new_value;
-	  }
-	  
-	  public double getValue2() {
-		  return this.value_two;
-	  }
-
-	  public void setValue3(double new_value) {
-		  this.value_three = new_value;
-	  }
-	  
-	  public double getValue3() {
-		  return this.value_three;
-	  }
-
 }

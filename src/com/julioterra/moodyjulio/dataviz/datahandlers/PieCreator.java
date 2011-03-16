@@ -66,10 +66,10 @@ public class PieCreator extends DataProcessor {
 		this.date_range_start.update_day(direction); 
 		this.date_range_end.update_day(direction); 
 		PApplet.println("PIE CREATOR - scroll days start " + date_range_start.get_date_for_sql() + " " + time_range_start.get_time_for_sql());
-		loadDateTimeRange(date_range_start, time_range_start, date_range_end, time_range_end);
+		loadViz_DateTimeRange(date_range_start, time_range_start, date_range_end, time_range_end);
 	}
 	
-	public void loadDateTimeRange(Date date_range_start, Time time_range_start, Date date_range_end, Time time_range_end) {
+	public void loadViz_DateTimeRange(Date date_range_start, Time time_range_start, Date date_range_end, Time time_range_end) {
 	}
 	
 	public void display() {
@@ -81,38 +81,13 @@ public class PieCreator extends DataProcessor {
 	 * GETTER & SETTER METHODS
 	 ***************************************/	
 
-	
-	public ArrayList<Data> getPie_data() {
-		return pie_data;
-	}
-
-	public Pie getPie() {
-		return pie;
-	}
-
-	public PVector getLocation() {
-		return location;
-	}
-
-	public void setLocation(int x, int y) {
-		this.location = new PVector(x, y);
-	}
-
 	public void setLocationNameDescriptionRel(int x, int y, int rel_x, int rel_y) {
 		this.location_name = new PVector(x, y);
 		this.location_description = new PVector(x+rel_x, y+rel_y);
 	}
 	
-	public PVector getLocation_name() {
-		return location_name;
-	}
-
 	public void setLocation_name(int x, int y) {
 		this.location_name = new PVector(x, y);
-	}
-
-	public PVector getLocation_description() {
-		return location_description;
 	}
 
 	public void setLocation_description(int x, int y) {
@@ -124,68 +99,16 @@ public class PieCreator extends DataProcessor {
 		this.setLocation_description_slice(x+rel_x, y+rel_y);
 	}	
 
-	public PVector getLocation_name_slice() {
-		return location_name_slice;
-	}
-
 	public void setLocation_name_slice(int x, int y) {
 		this.location_name_slice = new PVector(x, y);
-	}
-
-	public PVector getLocation_description_slice() {
-		return location_description_slice;
 	}
 
 	public void setLocation_description_slice(int x, int y) {
 		this.location_description_slice = new PVector(x, y);
 	}
 
-	public void setLocation_name(PVector location_name) {
-		this.location_name = location_name;
-	}
-
 	public void setLocation_description(PVector location_description) {
 		this.location_description = location_description;
-	}
-
-	public float getRadius() {
-		return radius;
-	}
-
-	public void setRadius(float radius) {
-		this.radius = radius;
-	}
-
-	public float getDiameter() {
-		return diameter;
-	}
-
-	public void setDiameter(float diameter) {
-		this.diameter = diameter;
-	}
-
-	public float getPie_slices() {
-		return pie_slices;
-	}
-
-	public void setPie_slices(float pie_slices) {
-		this.pie_slices = pie_slices;
-	}
-
-	public String getPie_name() {
-		return title;
-	}
-
-	public void setPie_name(String pie_name) {
-		this.title = pie_name;
-	}
-
-	public String getPie_description() {
-		return description;
-	}
-
-	public void setPie_description(String pie_description) {
-		this.description = pie_description;
 	}
 
 	public static String applyLineBreaks(String input_string, int chars_per_line) {

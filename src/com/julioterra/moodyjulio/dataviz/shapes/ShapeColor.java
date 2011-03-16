@@ -4,18 +4,18 @@ import java.awt.Color;
 
 import processing.core.PApplet;
 
-public class ShapeColor extends Shape {
+public abstract class ShapeColor extends Shape {
 
 	public int color_base = colorARGB(0, 255, 255, 255);
 	public int color_active = color_base;
 
-	protected float 	hue_shift_mouse_over;
-	protected float 	sat_shift_mouse_over;
-	protected float 	bright_shift_mouse_over;	
+	public float 	hue_shift_mouse_over;
+	public float 	sat_shift_mouse_over;
+	public float 	bright_shift_mouse_over;	
 
-	protected float 	hue_shift_mouse_clicked;
-	protected float 	sat_shift_mouse_clicked;
-	protected float 	bright_shift_mouse_clicked;	
+	public float 	hue_shift_mouse_clicked;
+	public float 	sat_shift_mouse_clicked;
+	public float 	bright_shift_mouse_clicked;	
 
 	/*********************************************************
 	 ** CONSTRUCTOR METHODS 
@@ -122,7 +122,7 @@ public class ShapeColor extends Shape {
 
 	/** RESET COLOR METHOD **/
 
-	public void shiftColorReset() {
+	public void resetColor() {
 		this.color_active = this.color_base;
 	}
 

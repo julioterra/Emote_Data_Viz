@@ -77,7 +77,7 @@ public class PieCreatorEmotion extends PieCreator {
 	}
 
 	
-	public void loadDateTimeRange(Date date_range_start, Time time_range_start, Date date_range_end, Time time_range_end) {		
+	public void loadViz_DateTimeRange(Date date_range_start, Time time_range_start, Date date_range_end, Time time_range_end) {		
 		this.pie_data = load_date_and_time_range(EMOTION, date_range_start, time_range_start, date_range_end, time_range_end);
 		this.pie_mode = 0;
 		this.date_range_start = new Date (date_range_start); 
@@ -108,12 +108,12 @@ public class PieCreatorEmotion extends PieCreator {
 		pie.label.setText(this.title);
 		pie.description.setText(this.description);
 		pie.setColorActiveARGB(Cur_Background_Color);
-		pie.setShiftAllMouseOver((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false, false);
+		pie.setShiftMouseOver((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false, false);
 		pie.setTextLocationAll(this.location_name.x, this.location_name.y, (this.location_description.x-this.location_name.x), (this.location_description.y-this.location_name.y));
-		pie.loadFontPie(font_main_bar_legend, 18, 1.4f);
+		pie.loadFontAll(font_main_bar_legend, 18, 1.4f);
 		pie.setTextVisibleAll();
-		float slice_time = 0;
 
+		float slice_time = 0;
 		for (int i = 0; i < pie_data.size(); i++) {
 			PieEmotionData pie_record = new PieEmotionData((PieEmotionData) pie_data.get(i));
 			slice_time = Time.calculate_time_dif_seconds(pie_record.time_stamp, pie_record.time_end);
@@ -144,15 +144,16 @@ public class PieCreatorEmotion extends PieCreator {
 			else if (this.pie_mode == 1) {
 				description += "\n" + "feeling " + applyLineBreaks(pie_record.emotion.toLowerCase(), 40);
 			}
-			pie.addSlice(name, description, slice_time, cur_color);
+			pie.addElement(name, description, slice_time, cur_color);
 		}
-		pie.setShiftAllMouseOverSlices((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.1, true);
-		pie.textLocationNameDescriptionSlices(this.location_name_slice.x, this.location_name_slice.y, (this.location_description_slice.x-this.location_name_slice.x), (this.location_description_slice.y-this.location_name_slice.y));
-		pie.loadFontTitleSlices(font_main_bar_legend, 16);
-		pie.loadFontDescriptionSlices(font_main_text, 20);
-		pie.applyValuesToSliceDisplay();
 
-		PApplet.println("number of slices " + pie.slices.size() + "  " + slice_time);
+		pie.setElementAllShiftMouseOver((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.1, true, true);
+		pie.setElementAllTextLocation(this.location_name_slice.x, this.location_name_slice.y, (this.location_description_slice.x-this.location_name_slice.x), (this.location_description_slice.y-this.location_name_slice.y));
+		pie.loadElementAllLabelFont(font_main_bar_legend, 16);
+		pie.loadElementAllDescriptionFont(font_main_text, 20);
+		pie.applyValuesToSliceDisplay("base");
+
+		PApplet.println("number of slices " + pie.elements.size() + "  " + slice_time);
 		Emotion_Legend_Rollover[emotion_positive] = "" + (int)(time_per_emotion[emotion_positive]/time_emotion_total*100);
 		Emotion_Legend_Rollover[emotion_negative] = "" + (int)(time_per_emotion[emotion_negative]/time_emotion_total*100);
 		PApplet.println("time per emotion type " + time_per_emotion[emotion_positive] + " " + time_per_emotion[emotion_negative] + " " + time_emotion_total);

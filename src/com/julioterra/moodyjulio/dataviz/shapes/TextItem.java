@@ -10,13 +10,10 @@ public class TextItem extends ShapeColor {
 
 	public String text;
 	public int font_number;
-	public float size_base;
 	public int alignment;
 	public String output_area;
-	
 	public PFont font;
 	public boolean font_loaded;
-	public float size_active;
 	
 	public TextItem () {
 		super(-1000, -1000, Black);
@@ -53,10 +50,10 @@ public class TextItem extends ShapeColor {
 				super.display();
 				processing_app.pushMatrix();
 					processing_app.translate(this.location.x, this.location.y);
-					processing_app.rotate(PApplet.radians(this.rotation));
+					processing_app.rotate(PApplet.radians(this.rotation_active));
 					processing_app.fill(this.color_active);
 					processing_app.textFont(this.font);
-					processing_app.textSize((float) (this.size_active*this.scale));
+					processing_app.textSize((float) (this.size_active.x));
 					processing_app.textAlign(this.alignment);
 					processing_app.text(this.text, 0,0);
 				processing_app.popMatrix();
@@ -98,12 +95,12 @@ public class TextItem extends ShapeColor {
 	}
 
 	public void setSize(float size) {
-		this.size_base = size;
-		this.size_active = (float)(this.size_base*this.scale);
+		this.size_base = new PVector(size, size);
+		this.size_active = new PVector(size, size);
 	}
 
-	public float getSize() {
-		return this.size_base;
+	public float getFontSize() {
+		return this.size_base.x;
 	}
 
 	public void setAlignment(int alignment) {
@@ -118,20 +115,10 @@ public class TextItem extends ShapeColor {
 	 ** MOUSE SHIFT METHODS 
 	 **/
 
-	public void shiftSize(float shift_size) {
-		super.shiftSize(shift_size);
-		this.size_active = (float)(this.size_base * (this.scale + shift_size));
-	}
-
-	public void shiftScaleReset() {
-		super.shiftScaleReset();
-		this.size_active = (float)(this.size_base * this.scale);		
-	}
-
-	public void shiftScaleResetToBase() {
-		super.shiftScaleResetToBase();
-		this.scale = 1;
-		this.shiftScaleReset();
+	public void shiftScale(float shift_size) {
+		super.shiftScale(shift_size);
+		this.size_active.x = (float)(this.size_base.x * (this.scale + shift_size));
+		this.size_active.y = this.size_active.x;
 	}
 
 	public void shiftMouseOverOn() {

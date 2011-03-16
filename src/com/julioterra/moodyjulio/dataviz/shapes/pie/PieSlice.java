@@ -40,12 +40,12 @@ public class PieSlice extends ShapeCircle {
 		      	  case PIE_ARC_SET_RADIUS:
 		      		  processing_app.noStroke();
 				      processing_app.fill(this.color_active);
-				      processing_app.arc(0, 0, diameter_active, diameter_active, 0, angle_slice);
+				      processing_app.arc(0, 0, (float)(size_active.x*this.scale), (float)(size_active.y*this.scale), 0, angle_slice);
 				      break;
 		      	  case PIE_LINE_VAR_RADIUS:
 				      processing_app.strokeWeight(this.width);
 				      processing_app.stroke(this.color_active);
-				      processing_app.line(this.radius_active,0,0,0);
+				      processing_app.line((float)(this.radius_active.x*this.scale),0,0,0);
 				      break;
 		      }		      
 		 processing_app.popMatrix();

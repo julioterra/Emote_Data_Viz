@@ -20,24 +20,41 @@ public class PieCreatorHeartrate extends PieCreator {
 		super(x, y, diameter);
 		this.pie_slices = pie_slices;
 		this.title = name;		
-
 	} 
+	
+	public void loadViz_DateTimeRange(Date date_range_start, Time time_range_start, Date date_range_end, Time time_range_end) {
+		pie_data = load_date_and_time_range(PieData_HeartRate, date_range_start, time_range_start, date_range_end, time_range_end);				
+		this.date_range_start = new Date (date_range_start); 
+		this.time_range_start = new Time (time_range_start); 
+		this.date_range_end = new Date (date_range_end); 
+		this.time_range_end = new Time (time_range_end);		
+		this.loadViz();
+	}
 
-	public void loadDayOfWeek(int day_of_week) {
+	public void loadViz_Date(Date date) {		
+		this.pie_data = load_date_and_time_range(PieData_HeartRate, date, new Time("00:00:00"), date, new Time("23:59:59"));
+		this.date_range_start = new Date (date); 
+		this.time_range_start = new Time (new Time("00:00:00")); 
+		this.date_range_end = new Date (date); 
+		this.time_range_end = new Time (new Time("23:59:59"));	
+		this.loadViz();
+	}
+	
+	public void loadViz_DayOfWeekAvg(int day_of_week) {
 		pie_data = new ArrayList<Data>();
 		Time temp_start_time = new Time(time_range_start);
 		float time_dif = Time.calculate_time_dif_seconds(time_range_start, time_range_end)/pie_slices;
 		Time temp_end_time = new Time(time_range_start);
 		temp_end_time.update_seconds((int)time_dif);
 		for(int i = 0; i < pie_slices; i ++) {
-			pie_data.add(loadPieSlice(day_of_week, temp_start_time, temp_end_time));
+			pie_data.add(loadViz_DayOfWeekAvgTimeRange(day_of_week, temp_start_time, temp_end_time));
 			temp_start_time.update_seconds((int)time_dif);
 			temp_end_time.update_seconds((int)time_dif);
 		}
-		loadPie();
+		loadViz();
 	}
 	
-	private PieHeartData loadPieSlice(int day_of_week, Time time_range_start, Time time_range_end) {
+	private PieHeartData loadViz_DayOfWeekAvgTimeRange(int day_of_week, Time time_range_start, Time time_range_end) {
 		ArrayList<Data> temp_pie_data = load_multiple_date_time_range(PieData_HeartRate, DaysOfWeek.get(day_of_week), time_range_start, time_range_end);
 		PieHeartData new_data = new PieHeartData(new Date("2000/01/01"), time_range_start, new Date("2000/01/01"), time_range_end);
 		int valid_reads_gsr = 0;
@@ -70,28 +87,8 @@ public class PieCreatorHeartrate extends PieCreator {
 		} 
 		return new_data;
 	}
-	
-	public void loadDateTimeRange(Date date_range_start, Time time_range_start, Date date_range_end, Time time_range_end) {
-		pie_data = load_date_and_time_range(PieData_HeartRate, date_range_start, time_range_start, date_range_end, time_range_end);				
-		this.date_range_start = new Date (date_range_start); 
-		this.time_range_start = new Time (time_range_start); 
-		this.date_range_end = new Date (date_range_end); 
-		this.time_range_end = new Time (time_range_end);		
-		this.loadPie();
 
-	}
-
-	public void loadDate(Date date) {		
-		this.pie_data = load_date_and_time_range(PieData_HeartRate, date, new Time("00:00:00"), date, new Time("23:59:59"));
-		this.loadPie();
-
-		this.date_range_start = new Date (date); 
-		this.time_range_start = new Time (new Time("00:00:00")); 
-		this.date_range_end = new Date (date); 
-		this.time_range_end = new Time (new Time("23:59:59"));	
-	}
-	
-	private void loadPie() {
+	private void loadViz() {
 		int transparent_color = ShapeColor.colorARGB(0, 255, 255, 255);
 		int red_color = ShapeColor.colorARGB(255, 255, 0, 0);
 
@@ -101,9 +98,8 @@ public class PieCreatorHeartrate extends PieCreator {
 		pie.setColorActiveARGB(transparent_color);
 		pie.setTextLocationAll(this.location_name.x, this.location_name.y, (this.location_description.x-this.location_name.x), (this.location_description.y-this.location_name.y));
 		pie.setTextVisibleAll();
-		pie.setShiftAllMouseOverPieSlices((float) 0.0, (float) 0.0, (float) 0.0, (float) 0.0, false);
-		pie.loadFontPie(font_main_bar_legend, 16, 1.0f);
-		pie.setWidthAll(4);
+		pie.loadFontAll(font_main_bar_legend, 16, 1.0f);
+		pie.setWidthAll(3);
 
 		// initialize the slices of the pie
 		for (int i = 0; i < pie_data.size(); i++) {
@@ -111,17 +107,17 @@ public class PieCreatorHeartrate extends PieCreator {
 			String name = "heart rate";
 			String description = "" + pie_record.heart_rate;
 			if (pie_record.heart_rate == 0) name = "unplugged";
-			pie.setSliceValue(i, (float) (pie_record.heart_rate));
-			pie.textSetNameSlice(i, name);
-			pie.textSetDescriptionSlice(i,description);
+			pie.setElementValue(i, "base", (float) (pie_record.heart_rate));
+			pie.setElementLabel(""+i, name);
+			pie.setElementDescription(""+i,description);
 		}
-		pie.setColorAllSlices(red_color);
-		pie.setShiftAllMouseOverSlices((float) 0.0, (float) 0.0, (float) -0.1, (float) 0.0, true);
-		pie.textLocationNameDescriptionSlices(this.location_name_slice.x, this.location_name_slice.y, (this.location_description_slice.x-this.location_name_slice.x), (this.location_description_slice.y-this.location_name_slice.y));
-		pie.loadFontTitleSlices(font_main_bar_legend, 16);
-		pie.loadFontDescriptionSlices(font_main_text, 20);
-		pie.loadFontDescriptionSlices(font_main_text, fonts_size[font_main_text]);
-		pie.applyValuesToSliceDisplay();
+		pie.setElementAllColor(red_color);
+		pie.setElementAllShiftMouseOver((float) 0.0, (float) 0.0, (float) -0.1, (float) 0.0, true, true);
+		pie.setElementAllTextLocation(this.location_name_slice.x, this.location_name_slice.y, (this.location_description_slice.x-this.location_name_slice.x), (this.location_description_slice.y-this.location_name_slice.y));
+		pie.loadElementAllLabelFont(font_main_bar_legend, 16);
+		pie.loadElementAllDescriptionFont(font_main_text, 20);
+		pie.loadElementAllDescriptionFont(font_main_text, fonts_size[font_main_text]);
+		pie.applyValuesToSliceDisplay("base");
 	}
 	
 }

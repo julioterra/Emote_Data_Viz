@@ -44,7 +44,7 @@ public class ShapeText extends ShapeRectText {
 	public void setLocation(int x, int y) {
 		super.setLocation(x, y);
 		processing_app.textFont(this.label.font);
-		processing_app.textSize(this.label.size_active);
+		processing_app.textSize((float)(this.label.size_active.x*this.label.scale));
 		this.label.location = new PVector(location.x, (location.y+processing_app.textAscent()) );	
 	}
 	
@@ -57,7 +57,7 @@ public class ShapeText extends ShapeRectText {
 		if (visible) {
 			processing_app.fill(this.label.color_active);
 			processing_app.textFont(this.label.font);
-			processing_app.textSize((float) (this.label.size_active*this.label.scale));
+			processing_app.textSize((float) (this.label.size_active.x*this.label.scale));
 			processing_app.textAlign(this.label.alignment);
 			processing_app.text(this.label.text, this.label.location.x, this.label.location.y);
 			// DEBUG MOUSE OVER
@@ -86,12 +86,12 @@ public class ShapeText extends ShapeRectText {
 	 ** 
 	 ************************************/	
 
-	  public void shiftSize(float shift_scale) {		
-		  this.label.size_active = (int) (this.label.size_base * (this.label.scale + shift_scale));
+	  public void shiftScale(float shift_scale) {		
+		  this.label.size_active.x = (int) (this.label.size_base.x * (this.label.scale + shift_scale));
 	  }
 
 	  public void shiftScaleReset() {
-		  this.label.size_active = (int) (this.label.size_base * (this.label.scale));
+		  this.label.size_active.x = (int) (this.label.size_base.x * (this.label.scale));
 	  }
 
 	  public void shiftScaleResetToBase() {

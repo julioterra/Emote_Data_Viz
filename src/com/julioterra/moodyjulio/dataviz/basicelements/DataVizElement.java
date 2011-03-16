@@ -55,11 +55,11 @@ public class DataVizElement {
 
 	// variables that govern whether the application can access the database or not 
 	public static boolean 			auto_read = 		true;
-	public static boolean 			data_load = 		false;	
+	public static boolean 			data_load = 		true;	
 	public static boolean 			data_read = 		true;	
 
 	// array with name of databases 
-	public static final String []	database_name		= {"MobileData", "JournalData", "PieData_Emotion", "PieData_HeartRate", "PieData_Activity"};
+	public static final String []	database_name		= {"MobileData", "EmotionJournalData", "PieData_Emotion", "PieData_HeartRate", "PieData_Activity", "EmotionJournalData"};
 
 	// constants that are used to refer to the appropriate database name 
 	public static final int 		MOBILE = 			0;
@@ -184,25 +184,45 @@ public class DataVizElement {
 	/*******************************************
 	 ** CALENDAR RELATED CONSTANTS
 	 *******************************************/
-	public final static String[]	Sunday = {"2010/11/21", "2010/11/28"};
-	public final static String[]	Monday = {"2010/11/22", "2010/11/29"};
-	public final static String[]	Tuesday = {"2010/11/23", "2010/11/30"};
-	public final static String[]	Wednesday = {"2010/11/17", "2010/11/24", "2010/12/01"};
-	public final static String[]	Thursday = {"2010/11/18", "2010/11/25", "2010/12/02"};
-	public final static String[]	Friday = {"2010/11/19", "2010/11/26", "2010/12/03"};
-	public final static String[]	Saturday = {"2010/11/20", "2010/11/27", "2010/12/04"};
-	public final static String[]	AllWeeks = {		"2010/11/17", "2010/11/18", "2010/11/19",
-													"2010/11/20", "2010/11/21", "2010/11/22",
-													"2010/11/23", "2010/11/24", "2010/11/25",
-													"2010/11/26", "2010/11/27", "2010/11/28",
-													"2010/11/29", "2010/11/30",
-													"2010/12/01", "2010/12/02",
-													"2010/12/03", "2010/12/04"};
+	public final static String[]	Sunday = {"2011/02/27", "2011/03/05"};
+	public final static String[]	Monday = {"2011/02/28", "2011/03/06"};
+	public final static String[]	Tuesday = {"2011/02/23", "2011/03/01"};
+	public final static String[]	Wednesday = {"2011/02/23", "2011/03/02"};
+	public final static String[]	Thursday = {"2011/02/24", "2011/03/03"};
+	public final static String[]	Friday = {"2011/02/25", "2011/03/04"};
+	public final static String[]	Saturday = {"2011/02/26", "2010/11/27"};
+	public final static String[]	AllWeeks = {	"2011/02/22","2011/02/23", "2011/02/24",
+													"2011/02/25", "2011/02/26", "2011/02/27", 
+													"2011/02/28", "2011/03/01", "2011/03/02", 
+													"2011/03/03", "2011/03/04", "2011/03/05",
+													"2011/03/06"};
+
+//	public final static String[]	Sunday = {"2010/11/21", "2010/11/28"};
+//	public final static String[]	Monday = {"2010/11/22", "2010/11/29"};
+//	public final static String[]	Tuesday = {"2010/11/23", "2010/11/30"};
+//	public final static String[]	Wednesday = {"2010/11/17", "2010/11/24", "2010/12/01"};
+//	public final static String[]	Thursday = {"2010/11/18", "2010/11/25", "2010/12/02"};
+//	public final static String[]	Friday = {"2010/11/19", "2010/11/26", "2010/12/03"};
+//	public final static String[]	Saturday = {"2010/11/20", "2010/11/27", "2010/12/04"};
+//	public final static String[]	AllWeeks = {	"2010/11/17", "2010/11/18", "2010/11/19",
+//													"2010/11/20", "2010/11/21", "2010/11/22",
+//													"2010/11/23", "2010/11/24", "2010/11/25",
+//													"2010/11/26", "2010/11/27", "2010/11/28",
+//													"2010/11/29", "2010/11/30",
+//													"2010/12/01", "2010/12/02",
+//													"2010/12/03", "2010/12/04"};
+
 	public final static ArrayList<String[]>	DaysOfWeek = new ArrayList<String[]>();	
-	public final static String[]	NamesOfDays = {"Sunday", "Monday" , "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Overall"};
+	public final static String[]	NamesOfDays = {"Sunday", "Monday" , "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Overall", "Dubstep", "Reggae", "Indie Dance", "Ambient", "Eighties"};
 	public final static String[]	NamesOfMonths = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	public final static String[]	NamesOfMonthsShort = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-	
+
+	public final static String[]	Dubstep = {"2011/02/21", "2011/02/26", "2011/03/03"};
+	public final static String[]	Reggae = {"2011/02/22", "2011/02/27", "2011/03/04"};
+	public final static String[]	Indie = {"2011/02/23", "2011/02/28", "2011/03/05"};
+	public final static String[]	Ambient = {"2011/02/24", "2011/03/01", "2011/03/06"};
+	public final static String[]	Eighties = {"2011/02/25", "2011/03/02", "2011/03/07"};
+
 
 	/*******************************************
 	 ** APPLICATION INIT METHODS
@@ -222,6 +242,11 @@ public class DataVizElement {
 		DaysOfWeek.add(Friday);
 		DaysOfWeek.add(Saturday);
 		DaysOfWeek.add(AllWeeks);
+		DaysOfWeek.add(Dubstep);
+		DaysOfWeek.add(Reggae);
+		DaysOfWeek.add(Indie);
+		DaysOfWeek.add(Ambient);
+		DaysOfWeek.add(Eighties);
 	}
 
 	public static void loadFonts(String filename_prefix) {
