@@ -23,7 +23,8 @@ public class DataVizElement {
 	 ** FONT RELATED CONSTANTS
 	 *******************************************/
 	public static final String		font_prefix = "font";
-	public static final int [] 		fonts_size = {27, 20, 27, 24, 18, 24, 24, 48, 14, 20, 34, 24};
+//	public static final int [] 		fonts_size = {27, 20, 27, 24, 18, 24, 24, 48, 14, 20, 34, 24};
+	public static final int [] 		fonts_size = {27, 20, 27, 24, 18, 24, 24, 48, 14, 20};
 	public static final PFont [] 	fonts = new PFont[fonts_size.length];
 	public static boolean 			font_loaded = false;
 	public static final int			font_nav_title = 		0;
@@ -197,6 +198,7 @@ public class DataVizElement {
 													"2011/03/03", "2011/03/04", "2011/03/05",
 													"2011/03/06"};
 
+	// Dates from first data collection period
 //	public final static String[]	Sunday = {"2010/11/21", "2010/11/28"};
 //	public final static String[]	Monday = {"2010/11/22", "2010/11/29"};
 //	public final static String[]	Tuesday = {"2010/11/23", "2010/11/30"};
@@ -252,7 +254,7 @@ public class DataVizElement {
 	public static void loadFonts(String filename_prefix) {
 		if (DataVizElement.processing_app_linked) {
 			for(int i = 0; i < fonts_size.length; i ++) {
-				String filename = filename_prefix + "_" + i +".vlw";
+				String filename = filename_prefix + "_" + i + ".vlw";
 				fonts[i] = processing_app.loadFont(filename);
 			}
 			DataVizElement.font_loaded = true;
