@@ -207,6 +207,13 @@ public class PieView extends DataVizElement {
 		this.small_pie_night.scrollDays(days);
 	}
 
+	public void loadDate(Date date) {
+		this.large_pie_night.loadDate(date);
+		this.small_pie_night.loadViz_Date(date);
+		this.large_pie_day.loadDate(date);
+		this.small_pie_day.loadViz_Date(date);
+	}
+
 	public void loadDayOfWeek(int date) {
 		this.large_pie_night.loadDayOfWeek(date);
 		this.small_pie_night.loadViz_DayOfWeekAvg(date);

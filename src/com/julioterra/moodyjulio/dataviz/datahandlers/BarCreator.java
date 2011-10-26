@@ -96,6 +96,7 @@ public class BarCreator extends DataProcessor {
 	}
 		
 	public void load(Date selected_date) {
+		System.out.println("data requested: " + selected_date);
 		this.bar_data = load_date_and_time_range_end(JournalData, selected_date, new Time("00:00:00"), selected_date, new Time("23:59:59"));
 		this.date_range_start = new Date(selected_date);
 		this.date_range_end = new Date(selected_date);

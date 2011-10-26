@@ -185,18 +185,20 @@ public class DataVizElement {
 	/*******************************************
 	 ** CALENDAR RELATED CONSTANTS
 	 *******************************************/
-	public final static String[]	Sunday = {"2011/02/27", "2011/03/05"};
-	public final static String[]	Monday = {"2011/02/28", "2011/03/06"};
-	public final static String[]	Tuesday = {"2011/02/23", "2011/03/01"};
-	public final static String[]	Wednesday = {"2011/02/23", "2011/03/02"};
-	public final static String[]	Thursday = {"2011/02/24", "2011/03/03"};
-	public final static String[]	Friday = {"2011/02/25", "2011/03/04"};
-	public final static String[]	Saturday = {"2011/02/26", "2010/11/27"};
+	public final static String[]	Sunday = {"2011/02/27", "2011/03/06"};
+	public final static String[]	Monday = {"2011/02/28", "2011/03/07"};
+	public final static String[]	Tuesday = {"2011/02/23", "2011/03/01", "2011/03/08"};
+	public final static String[]	Wednesday = {"2011/02/23", "2011/03/02", "2011/03/09"};
+	public final static String[]	Thursday = {"2011/02/24", "2011/03/03", "2011/03/10"};
+	public final static String[]	Friday = {"2011/02/25", "2011/03/04", "2011/03/11"};
+	public final static String[]	Saturday = {"2011/02/26", "2010/11/27", "2011/03/05", "2011/03/12"};
 	public final static String[]	AllWeeks = {	"2011/02/22","2011/02/23", "2011/02/24",
 													"2011/02/25", "2011/02/26", "2011/02/27", 
 													"2011/02/28", "2011/03/01", "2011/03/02", 
 													"2011/03/03", "2011/03/04", "2011/03/05",
-													"2011/03/06"};
+													"2011/03/06", "2011/03/07", "2011/03/08",
+													"2011/03/09", "2011/03/10", "2011/03/11",
+													"2011/03/12"};
 
 	// Dates from first data collection period
 //	public final static String[]	Sunday = {"2010/11/21", "2010/11/28"};

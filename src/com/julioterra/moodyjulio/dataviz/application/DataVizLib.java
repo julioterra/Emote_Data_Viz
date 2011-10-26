@@ -52,7 +52,7 @@ public class DataVizLib extends PApplet {
 		
 		bar_creator = new BarCreator(50, 75, 30, 600, 2);
 //    	bar_creator.load(new Date("2010/11/17"), new Date("2010/12/04"));
-    	bar_creator.load(new Date("2011/02/21"), new Date("2011/03/05"));
+    	bar_creator.load(new Date("2011/02/21"), new Date("2011/03/04"));
 
     	// writing text above the bars
     	for (int i = 0; i < DataVizElement.AllWeeks.length; i++) {
@@ -129,6 +129,9 @@ public class DataVizLib extends PApplet {
 	    else if (key == '+') {
 	    	emotion_view.scrollDays(1);
 	    }
+//	    else if (key == 'd' ) {
+//	    	emotion_view.loadDate(new Date("2011/02/21"));
+//	    }
 //	    else if (key == 'c') {
 //		    if (current_view == 0) current_view = 1;
 //		    else current_view = 0;
